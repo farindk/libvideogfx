@@ -178,7 +178,9 @@ namespace videogfx {
     Image<Pixel> dummy;
     while (nr > d_nextFrame)
       {
-	ReadImage(dummy);
+	bool success = ReadImage(dummy);
+	if (!success)
+	  { AssertDescr(false, "yuv4mpeg loader: skipping beyond the end of the stream"); }
       }
   }
 
