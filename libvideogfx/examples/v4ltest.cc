@@ -15,6 +15,7 @@ int main(int argc,char** argv)
   try
     {
       V4L_Grabber grabber;
+      grabber.SetDevice("/dev/video0");
 
       //grabber.SetGreyscaleMode();
       //grabber.DoChromaAvgOn422To420();

@@ -103,12 +103,61 @@ namespace videogfx {
     }
 
 
+    // query video palette formats
+
+    struct video_picture pictspec;
+
+    if (-1 == ioctl(d_fd,VIDIOCGPICT,&pictspec)) {
+      perror("ioctl VIDIOCGPICT");
+    }
+
+    pictspec.palette = (d_greyscale ? VIDEO_PALETTE_GREY : VIDEO_PALETTE_YUV422);
+    if (-1 == ioctl(d_fd,VIDIOCSPICT,&pictspec)) {
+      if (errno == EINVAL)
+	{
+	  //if (pictspec.palette == VIDEO_PALETTE_YUV422)
+	  pictspec.palette = VIDEO_PALETTE_YUV420P;
+
+	  if (-1 == ioctl(d_fd,VIDIOCSPICT,&pictspec))
+	    { perror("ioctl VIDIOCSPICT (2nd try)"); }
+	}
+      else
+	{ perror("ioctl VIDIOCSPICT"); }
+    }
+
+    palette = pictspec.palette;
+
+
+    // set framerate
+
+    struct video_window vwin;
+
+#define PWC_FPS_SHIFT           16
+#define PWC_FPS_MASK            0x00FF0000
+#define PWC_FPS_FRMASK          0x003F0000
+#define PWC_FPS_SNAPSHOT        0x00400000
+
+    ioctl(d_fd, VIDIOCGWIN, &vwin);
+    if (vwin.flags & PWC_FPS_FRMASK)
+      {
+	/*
+	  printf("Camera has framerate setting; current framerate: %d fps\n",
+	  (vwin.flags & PWC_FPS_FRMASK) >> PWC_FPS_SHIFT);
+	*/
+
+	/* Set new framerate */
+	vwin.flags &= ~PWC_FPS_FRMASK;
+	vwin.flags |= (25 /* fps */ << PWC_FPS_SHIFT);
+   
+	ioctl(d_fd, VIDIOCSWIN, &vwin);
+      }
+
 
     // start grabbing
 
     d_grabdata->d_vidmmap.width =d_width;
     d_grabdata->d_vidmmap.height=d_height;
-    d_grabdata->d_vidmmap.format = (d_greyscale ? VIDEO_PALETTE_GREY : VIDEO_PALETTE_YUV422);
+    d_grabdata->d_vidmmap.format = pictspec.palette;
 
     for (int i=0;i<d_grabdata->d_vidmbuf.frames;i++)
       {
@@ -170,142 +219,163 @@ namespace videogfx {
 
 	unsigned char* mapptr=d_grabdata->d_map + d_grabdata->d_vidmbuf.offsets[d_nextbuf];
 
+	if (palette == VIDEO_PALETTE_YUV420P)
+	  {
+	    for (int y=0;y<d_height;y++)
+	      {
+		memcpy(yp[y],mapptr,d_width);
+		mapptr += d_width;
+	      }
+	    for (int y=0;y<d_height/2;y++)
+	      {
+		memcpy(vp[y],mapptr,d_width/2);
+		mapptr += d_width/2;
+	      }
+	    for (int y=0;y<d_height/2;y++)
+	      {
+		memcpy(up[y],mapptr,d_width/2);
+		mapptr += d_width/2;
+	      }
+	  }
+	else
+	  {
 #ifndef ENABLE_MMX
-	for (int y=0;y<d_height;y++)
-	  {
-	    if (do_avg_422_to_420)
+	    for (int y=0;y<d_height;y++)
 	      {
-		for (int x=0;x<d_width;x++)
+		if (do_avg_422_to_420)
 		  {
-		    yp[y   ][x]    = *mapptr++;
-		    vp[y>>1][x>>1] = (mapptr[0] + mapptr[d_width*2])>>1; mapptr++;
-		    x++;
-		    yp[y   ][x]    = *mapptr++;
-		    up[y>>1][x>>1] = (mapptr[0] + mapptr[d_width*2])>>1; mapptr++;
+		    for (int x=0;x<d_width;x++)
+		      {
+			yp[y   ][x]    = *mapptr++;
+			vp[y>>1][x>>1] = (mapptr[0] + mapptr[d_width*2])>>1; mapptr++;
+			x++;
+			yp[y   ][x]    = *mapptr++;
+			up[y>>1][x>>1] = (mapptr[0] + mapptr[d_width*2])>>1; mapptr++;
+		      }
 		  }
-	      }
-	    else
-	      {
-		for (int x=0;x<d_width;x++)
+		else
 		  {
-		    yp[y   ][x]    = *mapptr++;
-		    vp[y>>1][x>>1] = *mapptr++;
-		    x++;
-		    yp[y   ][x]    = *mapptr++;
-		    up[y>>1][x>>1] = *mapptr++;
+		    for (int x=0;x<d_width;x++)
+		      {
+			yp[y   ][x]    = *mapptr++;
+			vp[y>>1][x>>1] = *mapptr++;
+			x++;
+			yp[y   ][x]    = *mapptr++;
+			up[y>>1][x>>1] = *mapptr++;
+		      }
 		  }
-	      }
 
 
-	    if (spec.chroma == Chroma_420)
-	      {
-		y++;
-		for (int x=0;x<d_width;x++)
+		if (spec.chroma == Chroma_420)
 		  {
-		    yp[y][x] = *mapptr;
-		    mapptr+=2;
+		    y++;
+		    for (int x=0;x<d_width;x++)
+		      {
+			yp[y][x] = *mapptr;
+			mapptr+=2;
+		      }
 		  }
 	      }
-	  }
 #else
-	__asm__
-	  (
-	   "movq %0,%%mm7\n\t"
-	   : : "m"(mask_Y)
-	   );
+	    __asm__
+	      (
+	       "movq %0,%%mm7\n\t"
+	       : : "m"(mask_Y)
+	       );
 
-	for (int y=0;y<d_height;y++)
-	  {
-	    Pixel* dest = yp[y];
-
-	    if (do_avg_422_to_420)
+	    for (int y=0;y<d_height;y++)
 	      {
-		for (int x=0;x<d_width;x+=8)
+		Pixel* dest = yp[y];
+
+		if (do_avg_422_to_420)
 		  {
-		    __asm__
-		      (
-		       "movq  (%1),%%mm1\n\t"
-		       "movq 8(%1),%%mm2\n\t"
-		       "pand %%mm7,%%mm1\n\t"
-		       "pand %%mm7,%%mm2\n\t"
-		       "packuswb %%mm2,%%mm1\n\t"
-		       "movq %%mm1,(%0)\n\t"
+		    for (int x=0;x<d_width;x+=8)
+		      {
+			__asm__
+			  (
+			   "movq  (%1),%%mm1\n\t"
+			   "movq 8(%1),%%mm2\n\t"
+			   "pand %%mm7,%%mm1\n\t"
+			   "pand %%mm7,%%mm2\n\t"
+			   "packuswb %%mm2,%%mm1\n\t"
+			   "movq %%mm1,(%0)\n\t"
 
-		       : : "r" (dest), "r"(mapptr)
-		       );
+			   : : "r" (dest), "r"(mapptr)
+			   );
 
-		    vp[(y>>1)][(x>>1)  ] = (mapptr[ 1]+mapptr[2*d_width+ 1])/2;
-		    up[(y>>1)][(x>>1)  ] = (mapptr[ 3]+mapptr[2*d_width+ 3])/2;
-		    vp[(y>>1)][(x>>1)+1] = (mapptr[ 5]+mapptr[2*d_width+ 5])/2;
-		    up[(y>>1)][(x>>1)+1] = (mapptr[ 7]+mapptr[2*d_width+ 7])/2;
-		    vp[(y>>1)][(x>>1)+2] = (mapptr[ 9]+mapptr[2*d_width+ 9])/2;
-		    up[(y>>1)][(x>>1)+2] = (mapptr[11]+mapptr[2*d_width+11])/2;
-		    vp[(y>>1)][(x>>1)+3] = (mapptr[13]+mapptr[2*d_width+13])/2;
-		    up[(y>>1)][(x>>1)+3] = (mapptr[15]+mapptr[2*d_width+15])/2;
+			vp[(y>>1)][(x>>1)  ] = (mapptr[ 1]+mapptr[2*d_width+ 1])/2;
+			up[(y>>1)][(x>>1)  ] = (mapptr[ 3]+mapptr[2*d_width+ 3])/2;
+			vp[(y>>1)][(x>>1)+1] = (mapptr[ 5]+mapptr[2*d_width+ 5])/2;
+			up[(y>>1)][(x>>1)+1] = (mapptr[ 7]+mapptr[2*d_width+ 7])/2;
+			vp[(y>>1)][(x>>1)+2] = (mapptr[ 9]+mapptr[2*d_width+ 9])/2;
+			up[(y>>1)][(x>>1)+2] = (mapptr[11]+mapptr[2*d_width+11])/2;
+			vp[(y>>1)][(x>>1)+3] = (mapptr[13]+mapptr[2*d_width+13])/2;
+			up[(y>>1)][(x>>1)+3] = (mapptr[15]+mapptr[2*d_width+15])/2;
 
-		    mapptr += 16;
-		    dest   += 8;
+			mapptr += 16;
+			dest   += 8;
+		      }
+		  }
+		else
+		  {
+		    for (int x=0;x<d_width;x+=8)
+		      {
+			__asm__
+			  (
+			   "movq  (%1),%%mm1\n\t"
+			   "movq 8(%1),%%mm2\n\t"
+			   "pand %%mm7,%%mm1\n\t"
+			   "pand %%mm7,%%mm2\n\t"
+			   "packuswb %%mm2,%%mm1\n\t"
+			   "movq %%mm1,(%0)\n\t"
+
+			   : : "r" (dest), "r"(mapptr)
+			   );
+
+			vp[(y>>1)][(x>>1)  ] = mapptr[ 1];
+			up[(y>>1)][(x>>1)  ] = mapptr[ 3];
+			vp[(y>>1)][(x>>1)+1] = mapptr[ 5];
+			up[(y>>1)][(x>>1)+1] = mapptr[ 7];
+			vp[(y>>1)][(x>>1)+2] = mapptr[ 9];
+			up[(y>>1)][(x>>1)+2] = mapptr[11];
+			vp[(y>>1)][(x>>1)+3] = mapptr[13];
+			up[(y>>1)][(x>>1)+3] = mapptr[15];
+
+			mapptr += 16;
+			dest   += 8;
+		      }
+		  }
+
+		if (spec.chroma == Chroma_420)
+		  {
+		    y++;
+
+		    for (int x=0;x<d_width;x+=8)
+		      {
+			__asm__
+			  (
+			   "movq  (%1),%%mm1\n\t"
+			   "movq 8(%1),%%mm2\n\t"
+			   "pand %%mm7,%%mm1\n\t"
+			   "pand %%mm7,%%mm2\n\t"
+			   "packuswb %%mm2,%%mm1\n\t"
+			   "movq %%mm1,(%0)\n\t"
+
+			   : : "r" (dest), "r"(mapptr)
+			   );
+
+			mapptr += 16;
+			dest   += 8;
+		      }
 		  }
 	      }
-	    else
-	      {
-		for (int x=0;x<d_width;x+=8)
-		  {
-		    __asm__
-		      (
-		       "movq  (%1),%%mm1\n\t"
-		       "movq 8(%1),%%mm2\n\t"
-		       "pand %%mm7,%%mm1\n\t"
-		       "pand %%mm7,%%mm2\n\t"
-		       "packuswb %%mm2,%%mm1\n\t"
-		       "movq %%mm1,(%0)\n\t"
 
-		       : : "r" (dest), "r"(mapptr)
-		       );
-
-		    vp[(y>>1)][(x>>1)  ] = mapptr[ 1];
-		    up[(y>>1)][(x>>1)  ] = mapptr[ 3];
-		    vp[(y>>1)][(x>>1)+1] = mapptr[ 5];
-		    up[(y>>1)][(x>>1)+1] = mapptr[ 7];
-		    vp[(y>>1)][(x>>1)+2] = mapptr[ 9];
-		    up[(y>>1)][(x>>1)+2] = mapptr[11];
-		    vp[(y>>1)][(x>>1)+3] = mapptr[13];
-		    up[(y>>1)][(x>>1)+3] = mapptr[15];
-
-		    mapptr += 16;
-		    dest   += 8;
-		  }
-	      }
-
-	    if (spec.chroma == Chroma_420)
-	      {
-		y++;
-
-		for (int x=0;x<d_width;x+=8)
-		  {
-		    __asm__
-		      (
-		       "movq  (%1),%%mm1\n\t"
-		       "movq 8(%1),%%mm2\n\t"
-		       "pand %%mm7,%%mm1\n\t"
-		       "pand %%mm7,%%mm2\n\t"
-		       "packuswb %%mm2,%%mm1\n\t"
-		       "movq %%mm1,(%0)\n\t"
-
-		       : : "r" (dest), "r"(mapptr)
-		       );
-
-		    mapptr += 16;
-		    dest   += 8;
-		  }
-	      }
-	  }
-
-	__asm__
-	  (
-	   "emms\n\t"
-	   );
+	    __asm__
+	      (
+	       "emms\n\t"
+	       );
 #endif
+	  }
       }
 
     d_grabdata->d_vidmmap.frame =d_nextbuf;

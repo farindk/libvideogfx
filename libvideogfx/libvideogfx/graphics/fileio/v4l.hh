@@ -62,6 +62,7 @@ namespace videogfx {
   private:
     char* d_device;
     int  d_fd;
+    int  palette;
 
     int d_width,d_height;
     bool d_greyscale;

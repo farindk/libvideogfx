@@ -1,9 +1,12 @@
 // use option -xv to open image with Xv extension
 
-#include "libvideogfx/x11/imgwin.cc"
-#include "libvideogfx.hh"
+#include "libvideogfx/x11/imgwin.hh"
+#include "libvideogfx/libvideogfx.hh"
 #include <unistd.h>
 using namespace videogfx;
+
+#include <iostream>
+using namespace std;
 
 
 void FillStep(Bitmap<Pixel>& bm, Pixel a,Pixel b, Pixel c,Pixel d)
