@@ -16,7 +16,7 @@ INTRODUCTION
     - color-space convertion for RGB, YUV, HSV
     - drawing primitives (lines, circles, ...)
     - image manipulation (scaling, pixel-ops, convolution)
-    - file-IO (ppm, yuv, jpeg, mpeg, V4L-grabbing)
+    - file-IO (ppm, yuv, jpeg, png, mpeg, V4L-grabbing)
     - X11 image display (including Xv-extension support)
 
   Furthermore, it includes support for:

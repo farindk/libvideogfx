@@ -43,7 +43,7 @@ libvideogfx_graphics_fileio_la_SOURCES = \
 #	read_yuv.cc	\
 #	read_yuv.hh	\
 #	write_yuv.cc	\
-#	write_yuv.hh	\
+#	write_yuv.hh
 
 libvideogfx_graphics_fileio_include_HEADERS = \
         uyvy.hh	\
@@ -58,7 +58,7 @@ libvideogfx_graphics_fileio_include_HEADERS = \
 	$(linux_headers)
 
 #	read_yuv.hh	\
-#	write_yuv.hh	\
+#	write_yuv.hh
 
 INCLUDES = \
 	-I$(top_srcdir)

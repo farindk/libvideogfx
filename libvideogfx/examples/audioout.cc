@@ -42,10 +42,8 @@ int main()
 
       while (snd.PresentationDataPending())
 	{
-	  int64 next = snd.NextDataPresentationTime();
-	  usleep(next*1000);
-
-	  snd.PresentData(0);
+	  snd.PresentData(snd.NextDataPresentationTime());
+	  usleep(100000);
 	}
     }
   catch (const Excpt_Base& e)

@@ -51,7 +51,7 @@ libvideogfx_la_LIBADD = \
 
 #	graphics/fileio/avi/libvideogfx-graphics-fileio-avi.la	\
 #	graphics/lowlevel/libvideogfx-graphics-lowlevel.la	\
-#	postscript/libvideogfx-postscript.la			\
+#	postscript/libvideogfx-postscript.la
 
 #
 # setup source file variables
@@ -80,6 +80,5 @@ libvideogfx_c_sources = \
 #
 libvideogfx_include_HEADERS = $(libvideogfx_public_h_sources)
 libvideogfx_la_SOURCES = $(libvideogfx_c_sources)
-EXTRA_HEADERS +=
-EXTRA_DIST += $(libvideogfx_private_h_sources) libvideogfx.hh.in
-
+EXTRA_HEADERS =
+EXTRA_DIST = $(libvideogfx_private_h_sources) libvideogfx.hh.in

@@ -198,13 +198,6 @@ namespace videogfx {
 	if (d_queue_pts.IsEmpty())
 	  return d_last_pts;
 
-#if 0
-	audio_buf_info info;
-	if ( ioctl(d_fd, SNDCTL_DSP_GETOSPACE, &info) == -1 ) perror("SNDCTL_DSP_GETOSPACE");
-
-	int bytes_in_buffer = info.fragstotal*info.fragsize - info.bytes;
-#endif
-
 	int64 nextpts = d_queue_pts.AskHead() + (d_total_bytes_sent_to_dma-d_queue_bytenr.AskHead())*1000 / d_bytes_per_sec;
 
 	return nextpts; // - 1000;

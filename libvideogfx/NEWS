@@ -1,11 +1,12 @@
 
 version 1.0.2
 
-- corrected many small configuration problems
-- generic smart pointer templates
 - audio-sink for linux OSS drivers
+- generic smart pointer templates
 - YUV4MPEG format loader/saver based on code from
   MJPEG-tools by Matthew J. Marjanovic
+- corrected many small configuration problems
+- avoid bug that caused programs to crash immediately after start
 
 version 1.0.1
 
