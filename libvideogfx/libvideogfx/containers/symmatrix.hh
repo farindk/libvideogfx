@@ -81,13 +81,13 @@ namespace videogfx {
 	 Last equation should be a bit faster since c is constant.
       */
 
-      if (x<y) return Ask(x,y);
+      if (x<y) { int t=x; x=y; y=t; }
       return d_array[y*(d_c-y)/2 + x];
     }
 
     const T& Ask(int y,int x) const
     {
-      if (x<y) return Ask(x,y);
+      if (x<y) { int t=x; x=y; y=t; }
       return d_array[y*(d_c-y)/2 + x];
     }
 

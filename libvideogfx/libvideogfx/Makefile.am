@@ -6,6 +6,8 @@ else
 SUBDIRS = arch audio utility graphics containers # x11 postscript
 endif
 
+DIST_SUBDIRS = arch audio utility graphics containers x11
+
 INCLUDES = \
 	-DDATADIR=\"$(datadir)\"	\
 	-DLIBDIR=\"$(libdir)\"		\

@@ -62,8 +62,8 @@ namespace videogfx {
 
     void Clear() { d_entries=0; d_first=0; }
 
-    bool   IsEmpty() const { return d_entries==0; }
-    uint32 AskSize() const { return d_entries;    }
+    bool  IsEmpty() const { return d_entries==0; }
+    int32 AskSize() const { return d_entries;    }
 
   private:
     T*  d_queue;
