@@ -128,6 +128,7 @@ namespace videogfx {
       // --- grey -> raw RGB
 
       if (i2r_grey_32bit  ::s_CanConvert(img,d_spec)) { t = new i2r_grey_32bit;   goto found; }
+      if (i2r_grey_24bit  ::s_CanConvert(img,d_spec)) { t = new i2r_grey_24bit;   goto found; }
       if (i2r_grey_16bit  ::s_CanConvert(img,d_spec)) { t = new i2r_grey_16bit;   goto found; }
       if (i2r_grey_4bit   ::s_CanConvert(img,d_spec)) { t = new i2r_grey_4bit;    goto found; }
 

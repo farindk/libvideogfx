@@ -63,6 +63,48 @@ namespace videogfx {
   // --------------------------------------------------------------------------------------------
 
 
+
+  bool i2r_grey_24bit::s_CanConvert(const Image<Pixel>& img,const RawRGBImageSpec& spec)
+  {
+    if (spec.dest_width || spec.upscale_factor || spec.downscale_factor) return false;
+    if (spec.bits_per_pixel != 24) return false;
+    if (spec.r_bits != 8 || spec.g_bits != 8 || spec.b_bits != 8) return false;
+    if (spec.r_shift%8   || spec.g_shift%8   || spec.b_shift%8)   return false;
+
+    ImageParam param = img.AskParam();
+
+    if (param.colorspace == Colorspace_Greyscale) return true;
+    if (param.colorspace == Colorspace_YUV && spec.greyscale_only) return true;
+
+    return false;
+  }
+
+
+  void i2r_grey_24bit::Transform(const Image<Pixel>& img,uint8* mem,int firstline,int lastline)
+  {
+    ImageParam param = img.AskParam();
+
+    const Pixel*const * pix_y = img.AskFrameY();
+
+    for (int y=firstline;y<=lastline;y++)
+      {
+	uint8* membuf = (uint8*)(mem + d_spec.bytes_per_line*(y-firstline));
+
+	for (int x=0;x<param.width;x++)
+	  {
+	    Pixel val = pix_y[y][x];
+	    membuf[0] = val;
+	    membuf[1] = val;
+	    membuf[2] = val;
+	    membuf += 3;
+	  }
+      }
+  }
+
+
+  // --------------------------------------------------------------------------------------------
+
+
   bool i2r_grey_16bit::s_CanConvert(const Image<Pixel>& img,const RawRGBImageSpec& spec)
   {
     if (spec.dest_width || spec.upscale_factor || spec.downscale_factor) return false;
