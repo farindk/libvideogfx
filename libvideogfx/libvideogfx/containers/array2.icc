@@ -56,6 +56,52 @@ template <class T> void Array2<T>::Create(int width,int height,int xbase,int yba
 }
 
 
+template <class T> void Array2<T>::Resize(int newwidth,int newheight)
+{
+  // No old array -> simply create new one.
+
+  if (!d_array)
+    {
+       Create(newwidth,newheight,0,0);
+       return;
+    }
+
+
+  // same size as before -> do nothing
+
+  if (d_width == newwidth && d_height == newheight)
+    return;
+
+
+  // hide (but remember) old array
+
+  T** old_row_array = d_array;
+  int old_width     = d_width;
+  d_array = NULL;
+
+
+  // create new array
+
+  Create(newwidth,newheight, d_xbase,d_ybase);
+
+
+  // copy old content to new array
+
+  int copywidth  = std::min(d_width ,newwidth);
+  int copyheight = std::min(d_height,newheight);
+
+  for (int y=0;y<copyheight;y++)
+    for (int x=0;x<copywidth;x++)
+      d_array[y*d_width+x] = old_row_array[y][x];
+
+
+  // delete old array
+
+  delete[] old_row_array[0];
+  delete[] old_row_array;  
+}
+
+
 template <class T> Array2<T>::~Array2()
 {
   if (d_array)

@@ -38,6 +38,7 @@
 
 #include "libvideogfx/types.hh"
 #include <assert.h>
+#include <algorithm>
 
 namespace videogfx {
 
@@ -49,6 +50,7 @@ namespace videogfx {
     ~Array2();
 
     void Create(int width,int height,int xbase=0,int ybase=0);
+    void Resize(int newwidth,int newheight);
 
     bool IsInitialized() const { return d_array != NULL; }
 
@@ -79,8 +81,8 @@ namespace videogfx {
       return d_array[y][x];
     }
 
-    T* operator[](int y)       { return &d_array[y+d_ybase][x+d_xbase]; }
-    const T* operator[](int y) const { return &d_array[y+d_ybase][x+d_xbase]; }
+    T* operator[](int y)       { return &d_array[y+d_ybase][d_xbase]; }
+    const T* operator[](int y) const { return &d_array[y+d_ybase][d_xbase]; }
 
   private:
     int   d_width,d_height;
