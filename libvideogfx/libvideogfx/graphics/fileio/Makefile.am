@@ -41,12 +41,9 @@ libvideogfx_graphics_fileio_la_SOURCES = \
 	yuv_vqeg.hh	\
 	imagesink.hh	\
 	imagesink.cc	\
+	unified_loader.hh \
+	unified_loader.cc \
 	$(linux_sources)
-
-#	read_yuv.cc	\
-#	read_yuv.hh	\
-#	write_yuv.cc	\
-#	write_yuv.hh
 
 libvideogfx_graphics_fileio_include_HEADERS = \
         uyvy.hh	\
@@ -58,10 +55,8 @@ libvideogfx_graphics_fileio_include_HEADERS = \
 	yuv4mpeg.hh	\
 	yuv_vqeg.hh	\
 	imagesink.hh	\
+	unified_loader.hh \
 	$(linux_headers)
-
-#	read_yuv.hh	\
-#	write_yuv.hh
 
 INCLUDES = \
 	-I$(top_srcdir)
