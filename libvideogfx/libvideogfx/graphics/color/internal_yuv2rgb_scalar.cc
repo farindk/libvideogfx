@@ -209,29 +209,33 @@ namespace videogfx {
   static int s_clip[1024];
 
 
-  static struct InitClip
-  {
-    InitClip()
-    {
-      clip_0_255 = &s_clip[512];
+  static bool clipping_initialized=false;
 
-      for (int i=-512;i<512;i++)
-        {
-          if (i<0)
-            {
-              clip_0_255[i]=0;
-            }
-          else if (i>255)
-            {
-              clip_0_255[i]=255;
-            }
-          else
-            {
-              clip_0_255[i]=i;
-            }
-        }
-    }
-  } dummy_23874678;
+  void InitClip()
+  {
+    if (clipping_initialized)
+      return;
+
+    clip_0_255 = &s_clip[512];
+
+    for (int i=-512;i<512;i++)
+      {
+	if (i<0)
+	  {
+	    clip_0_255[i]=0;
+	  }
+	else if (i>255)
+	  {
+	    clip_0_255[i]=255;
+	  }
+	else
+	  {
+	    clip_0_255[i]=i;
+	  }
+      }
+
+    clipping_initialized=true;
+  }
 
 
   void i2r_yuv_32bit::Transform(const Image<Pixel>& img,uint8* mem,int firstline,int lastline)
@@ -260,6 +264,8 @@ namespace videogfx {
     const Pixel*const * pix_y = img.AskFrameY();
     const Pixel*const * pix_u = img.AskFrameU();
     const Pixel*const * pix_v = img.AskFrameV();
+
+    InitClip();
 
     for (int y=firstline;y<=lastline;y+=2)
       {
@@ -363,6 +369,8 @@ namespace videogfx {
     const Pixel*const * pix_u = img.AskFrameU();
     const Pixel*const * pix_v = img.AskFrameV();
 
+    InitClip();
+
     for (int y=firstline;y<=lastline;y++)
       {
 	uint8* membuf8a = mem + d_spec.bytes_per_line*(y-firstline);
@@ -441,6 +449,8 @@ namespace videogfx {
     const Pixel*const * pix_y = img.AskFrameY();
     const Pixel*const * pix_u = img.AskFrameU();
     const Pixel*const * pix_v = img.AskFrameV();
+
+    InitClip();
 
     for (int y=firstline;y<=lastline;y++)
       {
