@@ -41,7 +41,7 @@
 namespace videogfx {
 
   template <class T> void MakeAbsolute(Bitmap<T>&);
-  template <class T> void Inverse(const Bitmap<T>&,T maxval);
+  template <class T> void Inverse(Bitmap<T>&,T maxval);
   template <class T> void AddValues(Bitmap<T>& dest,const Bitmap<T>& a,const Bitmap<T>& b);
   template <class T> void Add(Bitmap<T>& dest,T val);
   template <class T> void HalfPlusOffset(Bitmap<T>& bm,T offset); // p = p/2+offset
