@@ -49,6 +49,7 @@
 #include <libvideogfx/graphics/fileio/ppm.hh>
 #include <libvideogfx/graphics/fileio/uyvy.hh>
 #include <libvideogfx/graphics/fileio/yuv.hh>
+#include <libvideogfx/graphics/fileio/yuv4mpeg.hh>
 #include <libvideogfx/graphics/fileio/yuv_vqeg.hh>
 #include <libvideogfx/graphics/fileio/imagesink.hh>
 #include <libvideogfx/graphics/filters/linear.hh>
