@@ -30,6 +30,7 @@
 
 #include "libvideogfx/graphics/basic/bitmap.hh"
 #include "libvideogfx/graphics/basic/image.hh"
+#include "libvideogfx/graphics/datatypes/primitives.hh"
 
 #ifndef M_PI
 #define M_PI 3.1415926535
@@ -37,12 +38,15 @@
 
 /* This function-call is very inefficient but provides clipping. */
 template <class T> void DrawPoint     (Bitmap<T>&,int x,int y,T color);
+template <class T> void DrawPoint     (Image<T>& ,int x,int y,Color<T> color);
 
 /* Set all of the bitmap to the specified color. */
 template <class T> void Clear         (Bitmap<T>&,T color);
+template <class T> void Clear         (Image<T>& ,Color<T> color);
 
 /* Draw filled H/V-aligned rectangle. */
 template <class T> void FillRectangle(Bitmap<T>&,int x0,int y0,int x1,int y1,T color);
+template <class T> void FillRectangle(Image<T>&, int x0,int y0,int x1,int y1,Color<T> color);
 
 /* Clip line to a rectangle. If false is returned, the line is not visible. */
 bool ClipLine(int& x0,int& y0,int& x1,int& y1,        // line parameters
@@ -50,14 +54,17 @@ bool ClipLine(int& x0,int& y0,int& x1,int& y1,        // line parameters
 
 // Fast line drawing, line-clipping is included.
 template <class T> void DrawLine(Bitmap<T>& bm,int x0,int y0,int x1, int y1,T color);
+template <class T> void DrawLine(Image<T>&  bm,int x0,int y0,int x1, int y1,Color<T> color);
 
 /* Only draws every 4th dot. */
 template <class T> void DrawDottedLine(Bitmap<T>&,int x1,int y1,int x2,int y2,T color);
 
 // Draw a circle
 template <class T> void DrawCircle(Bitmap<T>& bm,int x0,int y0, int radius,T color,bool fill = false);
+template <class T> void DrawCircle(Image<T>&  bm,int x0,int y0, int radius,Color<T> color,bool fill = false);
 
 template <class T> void DrawRectangle(Bitmap<T>& bm,int x1,int y1,int w, int h,T color);
+template <class T> void DrawRectangle(Image<T>&  bm,int x1,int y1,int w, int h,Color<T> color);
 
 /* This function draws a line and places a head on one (x1,y1) if bothends==false or
    both (if bothends==true) sides of the line. */
@@ -76,6 +83,17 @@ template <class T> void DrawPoint(Bitmap<T>& bm,int x,int y,T color)
   bm.AskFrame()[y][x]=color;
 }
 
+template <class T> void DrawPoint(Image<T>& bm,int x,int y,Color<T> color)
+{
+  ImageParam param = bm.AskParam();
+
+  for (int i=0;i<4;i++)
+    {
+      BitmapChannel b = (BitmapChannel)i;
+      if (!bm.AskBitmap(b).IsEmpty())
+	DrawPoint(bm.AskBitmap(b), param.ChromaScaleH(b,x), param.ChromaScaleV(b,y), color.c[i]);
+    }
+}
 
 template <class T> void Clear(Bitmap<T>& bm,T color)
 {
@@ -92,6 +110,18 @@ template <class T> void Clear(Bitmap<T>& bm,T color)
     }
 }
 
+template <class T> void Clear         (Image<T>& ,Color<T> color)
+{
+  ImageParam param = bm.AskParam();
+
+  for (int i=0;i<4;i++)
+    {
+      BitmapChannel b = (BitmapChannel)i;
+      if (!bm.AskBitmap(b).IsEmpty())
+	Clear(bm.AskBitmap(b), color.c[i]);
+    }
+}
+
 template <class T> void FillRectangle(Bitmap<T>& bm,int x0,int y0,int x1,int y1,T color)
 {
   T*const* p = bm.AskFrame();
@@ -100,6 +130,23 @@ template <class T> void FillRectangle(Bitmap<T>& bm,int x0,int y0,int x1,int y1,
     for (int x=x0;x<=x1;x++)
       p[y][x] = color;
 }
+
+
+template <class T> void FillRectangle(Image<T>& bm, int x0,int y0,int x1,int y1,Color<T> color)
+{
+  ImageParam param = bm.AskParam();
+
+  for (int i=0;i<4;i++)
+    {
+      BitmapChannel b = (BitmapChannel)i;
+      if (!bm.AskBitmap(b).IsEmpty())
+	FillRectangle(bm.AskBitmap(b),
+		      param.ChromaScaleH(b,x0), param.ChromaScaleV(b,y0),
+		      param.ChromaScaleH(b,x1), param.ChromaScaleV(b,y1),
+		      color.c[i]);
+    }
+}
+
 
 // main function to draw a line very fast. Clipping is included, so don't think about it
 template <class T> void DrawLine(Bitmap<T>& bm,int x0,int y0,int x1, int y1,T color)
@@ -186,6 +233,21 @@ template <class T> void DrawLine(Bitmap<T>& bm,int x0,int y0,int x1, int y1,T co
 	      y = y + yinc;
 	    }
 	}
+    }
+}
+
+template <class T> void DrawLine(Image<T>&  bm,int x0,int y0,int x1, int y1,Color<T> color)
+{
+  ImageParam param = bm.AskParam();
+
+  for (int i=0;i<4;i++)
+    {
+      BitmapChannel b = (BitmapChannel)i;
+      if (!bm.AskBitmap(b).IsEmpty())
+	DrawLine(bm.AskBitmap(b),
+		 param.ChromaScaleH(b,x0), param.ChromaScaleV(b,y0),
+		 param.ChromaScaleH(b,x1), param.ChromaScaleV(b,y1),
+		 color.c[i]);
     }
 }
 
@@ -335,6 +397,26 @@ template <class T> void DrawCircle(Bitmap<T>& bm,int x0,int y0, int radius,T col
     }
 }
 
+template <class T> void DrawCircle(Image<T>&  bm,int x0,int y0, int radius,Color<T> color,bool fill)
+{
+  ImageParam param = bm.AskParam();
+
+  if (param.colorspace == Colorspace_YUV)
+    {
+      AssertDescr(param.chroma == Chroma_420 ||
+		  param.chroma == Chroma_444,"cannot draw circle because chroma pixels are not square");
+    }
+
+  for (int i=0;i<4;i++)
+    {
+      BitmapChannel b = (BitmapChannel)i;
+      if (!bm.AskBitmap(b).IsEmpty())
+	DrawCircle(bm.AskBitmap(b),
+		   param.ChromaScaleH(b,x0), param.ChromaScaleV(b,y0),
+		   param.ChromaScaleH(b,radius), color.c[i], fill);
+    }
+}
+
 
 template <class T> void DrawRectangle(Bitmap<T>& bm,int x1,int y1,int w, int h,T color)
 {
@@ -346,6 +428,21 @@ template <class T> void DrawRectangle(Bitmap<T>& bm,int x1,int y1,int w, int h,T
   DrawLine(bm,x1,y1+h,x1,y1,color);
 }
 
+
+template <class T> void DrawRectangle(Image<T>&  bm,int x1,int y1,int w, int h,Color<T> color)
+{
+  ImageParam param = bm.AskParam();
+
+  for (int i=0;i<4;i++)
+    {
+      BitmapChannel b = (BitmapChannel)i;
+      if (!bm.AskBitmap(b).IsEmpty())
+	DrawRectangle(bm.AskBitmap(b),
+		      param.ChromaScaleH(b,x1), param.ChromaScaleV(b,y1),
+		      param.ChromaScaleH(b,w),  param.ChromaScaleH(b,h),
+		      color.c[i]);
+    }
+}
 
 template <class T> void DrawArrow(Bitmap<T>& bm,int x0,int y0,int x1, int y1, T color,
 				  double alpha,int l,bool bothends)
