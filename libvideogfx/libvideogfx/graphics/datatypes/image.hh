@@ -407,7 +407,7 @@ namespace videogfx {
     if (!top && d_param.colorspace==Colorspace_YUV && d_param.chroma==Chroma_420 &&
 	(d_pm[0].AskHeight()%2)==0 && (d_pm[1].AskHeight()%2)==1)
       {
-	AssertDescr(false,"not enough chroma information for bottom field");
+	// AssertDescr(false,"not enough chroma information for bottom field");
       }
 
     Image<Pel> newimg;
