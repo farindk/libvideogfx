@@ -25,7 +25,7 @@ INTRODUCTION
     - commonly used container classes (dynamic array, heap, queue, ...)
     - processor feature detection
 
-  LibVideoGfx includes MMX accelerated routines, which are used if a MMX
+  LibVideoGfx includes MMX accelerated routines, which are used if an MMX
   capable processor is detected. However, the library provides scalar
   replacement routines and can thus be compiled on all UNIX platforms
   (including CygWin).

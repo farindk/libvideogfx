@@ -26,52 +26,54 @@
 
 #include <fstream>
 #include <iostream>
-using namespace std;
 
 #include <libvideogfx/graphics/datatypes/image.hh>
 
+namespace videogfx {
 
-/* Reads PPM P5 and P6 types images.
- * If the 'srcimg' parameter is filled in, this image will be used for loading the file.
- *   It is a requirement that the image size is the same as the image file size.
- * If the 'spec' parameter is filled in, a new image will be created that uses most of
- *   the fields set in 'spec'. But width and height will be overwritten with the values from the file.
- * If none of both is specified, a completely new image without border and alignment is created.
- */
+  /* Reads PPM P5 and P6 types images.
+   * If the 'srcimg' parameter is filled in, this image will be used for loading the file.
+   *   It is a requirement that the image size is the same as the image file size.
+   * If the 'spec' parameter is filled in, a new image will be created that uses most of
+   *   the fields set in 'spec'. But width and height will be overwritten with the values from the file.
+   * If none of both is specified, a completely new image without border and alignment is created.
+   */
 
-void ReadImage_PPM(Image<Pixel>& dest,istream& stream);
-void ReadImage_PPM(Image<Pixel>& dest,const char* filename);
-
-
-/* Write RGB image into PPM P6-type file.
- */
-/* Write luminance part of YUV image into PPM P5-type file.
- * NOTE: the chrominance will simply be ignored.
- */
-void WriteImage_PPM(const Image<Pixel>&,ostream& stream);
-void WriteImage_PPM(const Image<Pixel>&,const char* filename);
+  void ReadImage_PPM(Image<Pixel>& dest,std::istream& stream);
+  void ReadImage_PPM(Image<Pixel>& dest,const char* filename);
 
 
-void WritePPM6(const Bitmap<Pixel>& r, const Bitmap<Pixel>& g, const Bitmap<Pixel>& b, ostream&);
-void WritePPM5(const Bitmap<Pixel>& pm, ostream&);
+  /* Write RGB image into PPM P6-type file.
+   */
+  /* Write luminance part of YUV image into PPM P5-type file.
+   * NOTE: the chrominance will simply be ignored.
+   */
+  void WriteImage_PPM(const Image<Pixel>&,std::ostream& stream);
+  void WriteImage_PPM(const Image<Pixel>&,const char* filename);
 
 
-class FileWriter_PPM
-{
-public:
-  FileWriter_PPM();
+  void WritePPM6(const Bitmap<Pixel>& r, const Bitmap<Pixel>& g, const Bitmap<Pixel>& b, std::ostream&);
+  void WritePPM5(const Bitmap<Pixel>& pm, std::ostream&);
 
-  void WriteYUVAsGreyscale(bool flag) { d_yuv_as_grey=flag; }
-  void WriteRGBAsGreyscale(bool flag) { d_rgb_as_grey=flag; }
-  void WriteGreyscaleAsRGB(bool flag) { d_grey_as_rgb=flag; }
 
-  void Write(const Image<Pixel>&,const char* filename);
-  void Write(const Image<Pixel>&,ostream&);
+  class FileWriter_PPM
+  {
+  public:
+    FileWriter_PPM();
 
-private:
-  bool d_yuv_as_grey;
-  bool d_rgb_as_grey;
-  bool d_grey_as_rgb;
-};
+    void WriteYUVAsGreyscale(bool flag) { d_yuv_as_grey=flag; }
+    void WriteRGBAsGreyscale(bool flag) { d_rgb_as_grey=flag; }
+    void WriteGreyscaleAsRGB(bool flag) { d_grey_as_rgb=flag; }
+
+    void Write(const Image<Pixel>&,const char* filename);
+    void Write(const Image<Pixel>&,std::ostream&);
+
+  private:
+    bool d_yuv_as_grey;
+    bool d_rgb_as_grey;
+    bool d_grey_as_rgb;
+  };
+
+}
 
 #endif

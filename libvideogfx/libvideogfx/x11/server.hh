@@ -23,22 +23,26 @@
 
 #include <X11/Xlib.h>
 
-class X11Server;
+namespace videogfx {
+
+  class X11Server;
 
 
-class X11ServerConnection
-{
-public:
-  X11ServerConnection();            // connect to the default X-server
-  X11ServerConnection(X11Server*);  // connect to a special X-server
-  ~X11ServerConnection();
+  class X11ServerConnection
+  {
+  public:
+    X11ServerConnection();            // connect to the default X-server
+    X11ServerConnection(X11Server*);  // connect to a special X-server
+    ~X11ServerConnection();
 
-  Display* AskDisplay() const;
+    Display* AskDisplay() const;
 
-private:
-  X11Server* d_parent;
+  private:
+    X11Server* d_parent;
 
-  static X11Server* s_default_server;
-};
+    static X11Server* s_default_server;
+  };
+
+}
 
 #endif

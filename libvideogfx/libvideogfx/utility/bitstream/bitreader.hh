@@ -49,37 +49,40 @@
 
 #include "libvideogfx/types.hh"
 
+namespace videogfx {
 
-#define MemBitstreamReader BitReader
+  // #define MemBitstreamReader BitReader
 
-class BitReader
-{
-public:
-  BitReader(const uint8* buffer,uint32 len);
+  class BitReader
+  {
+  public:
+    BitReader(const uint8* buffer,uint32 len);
 
-  inline uint32 GetBits (int nbits);
-  inline uint32 PeekBits(int nbits);
-  inline void   SkipBits(int nbits);
-  inline void   SkipBitsFast(int nbits); /* Use ONLY when you called PeekBits() with at
-					    least as many bits before! */
-  inline void   SkipToByteBoundary();
+    inline uint32 GetBits (int nbits);
+    inline uint32 PeekBits(int nbits);
+    inline void   SkipBits(int nbits);
+    inline void   SkipBitsFast(int nbits); /* Use ONLY when you called PeekBits() with at
+					      least as many bits before! */
+    inline void   SkipToByteBoundary();
 
-  inline int32  AskBitsLeft() const; // Return number of bits that have still not been read.
+    inline int32  AskBitsLeft() const; // Return number of bits that have still not been read.
 
-  inline bool   IsEOF() const;       // True iff current cursor position at or behind file end
-  inline int    AskPosition() const { return (d_ptr-d_start)*8 -d_bitsleft; }
+    inline bool   IsEOF() const;       // True iff current cursor position at or behind file end
+    inline int    AskPosition() const { return (d_ptr-d_start)*8 -d_bitsleft; }
 
-private:
-  uint64 d_buffer;
-  uint32 d_bitsleft;
+  private:
+    uint64 d_buffer;
+    uint32 d_bitsleft;
 
-  const uint8* d_start;
-  const uint8* d_ptr;
-  const uint8* d_endptr;
+    const uint8* d_start;
+    const uint8* d_ptr;
+    const uint8* d_endptr;
 
-  void Refill();
-};
+    void Refill();
+  };
 
 #include "bitreader.icc"
+
+}
 
 #endif

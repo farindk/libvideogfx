@@ -22,10 +22,13 @@
 
 #include <libvideogfx/graphics/datatypes/image.hh>
 
-bool JPEG_Supported();
+namespace videogfx {
 
-void ReadImage_JPEG(Image<Pixel>&,const char* filename);
-void WriteImage_JPEG(const Image<Pixel>&,const char* filename);
+  bool JPEG_Supported();
 
+  void ReadImage_JPEG(Image<Pixel>&,const char* filename);
+  void WriteImage_JPEG(const Image<Pixel>&,const char* filename);
+
+}
 
 #endif

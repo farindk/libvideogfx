@@ -21,45 +21,47 @@
 
 #include <libvideogfx/graphics/datatypes/image.hh>
 
+namespace videogfx {
 
-void ImageParam::AskChromaSizes(int& w,int &h) const
-{
-  h = AskChromaHeight();
-  w = AskChromaWidth();
+  void ImageParam::AskChromaSizes(int& w,int &h) const
+  {
+    h = AskChromaHeight();
+    w = AskChromaWidth();
+  }
+
+  int ImageParam::AskChromaBorder() const
+  {
+    if (chroma_border >= 0)
+      return chroma_border;
+    else
+      return std::max((border+ChromaSubH(chroma)-1)/ChromaSubH(chroma),
+		      (border+ChromaSubV(chroma)-1)/ChromaSubV(chroma));
+  }
+
+  int ImageParam::AskChromaHAlign() const
+  {
+    if (chroma_halign > 0)
+      return chroma_halign;
+    else if (halign==1)
+      return 1;
+    else
+      {
+	assert((halign % ChromaSubH(chroma))==0);
+	return halign / ChromaSubH(chroma);
+      }
+  }
+
+  int ImageParam::AskChromaVAlign() const
+  {
+    if (chroma_valign > 0)
+      return chroma_valign;
+    else if (valign==1)
+      return 1;
+    else
+      {
+	assert((valign % ChromaSubV(chroma))==0);
+	return valign / ChromaSubV(chroma);
+      }
+  }
+
 }
-
-int ImageParam::AskChromaBorder() const
-{
-  if (chroma_border >= 0)
-    return chroma_border;
-  else
-    return std::max((border+ChromaSubH(chroma)-1)/ChromaSubH(chroma),
-		    (border+ChromaSubV(chroma)-1)/ChromaSubV(chroma));
-}
-
-int ImageParam::AskChromaHAlign() const
-{
-  if (chroma_halign > 0)
-    return chroma_halign;
-  else if (halign==1)
-    return 1;
-  else
-    {
-      assert((halign % ChromaSubH(chroma))==0);
-      return halign / ChromaSubH(chroma);
-    }
-}
-
-int ImageParam::AskChromaVAlign() const
-{
-  if (chroma_valign > 0)
-    return chroma_valign;
-  else if (valign==1)
-    return 1;
-  else
-    {
-      assert((valign % ChromaSubV(chroma))==0);
-      return valign / ChromaSubV(chroma);
-    }
-}
-

@@ -24,16 +24,19 @@
 
 #include <libvideogfx/graphics/datatypes/bitmap.hh>
 
+namespace videogfx {
 
-/* Draw text into the bitmap. */
-enum HTextAlign   { HAlign_Left,HAlign_Center,HAlign_Right  };
-enum VTextAlign   { VAlign_Top ,VAlign_Center,VAlign_Bottom };
-enum TextDrawMode { TextDrawMode_Transparent,TextDrawMode_Opaque };
+  /* Draw text into the bitmap. */
+  enum HTextAlign   { HAlign_Left,HAlign_Center,HAlign_Right  };
+  enum VTextAlign   { VAlign_Top ,VAlign_Center,VAlign_Bottom };
+  enum TextDrawMode { TextDrawMode_Transparent,TextDrawMode_Opaque };
 
-void WriteText_X11(Bitmap<Pixel>&,const char* txt,int x,int y,
-		   Pixel front=255,Pixel back=0,
-		   const char* x11fontname="9x15",
-		   HTextAlign halign=HAlign_Left,VTextAlign valign=VAlign_Top,
-		   TextDrawMode mode = TextDrawMode_Transparent);
+  void WriteText_X11(Bitmap<Pixel>&,const char* txt,int x,int y,
+		     Pixel front=255,Pixel back=0,
+		     const char* x11fontname="9x15",
+		     HTextAlign halign=HAlign_Left,VTextAlign valign=VAlign_Top,
+		     TextDrawMode mode = TextDrawMode_Transparent);
+
+}
 
 #endif

@@ -23,18 +23,21 @@
 
 #include <libvideogfx/graphics/datatypes/image.hh>
 
+namespace videogfx {
 
-/* Low-pass filtering is done using this kernel:
+  /* Low-pass filtering is done using this kernel:
 
-    1   /  1  2  1  \
-   -- * |  2  4  2  |
-   16   \  1  2  1  /
+     1   /  1  2  1  \
+     -- * |  2  4  2  |
+     16   \  1  2  1  /
 
-   Processing is 3-4 times faster than scalar C code.
+     Processing is 3-4 times faster than scalar C code.
 
-   NOTE: this algorithm expectes an alignment of 8 pixels
-         plus a border of 8 pixels.
-*/
-void LowPass_3x3Gauss_MMX(const Bitmap<Pixel>& img,Bitmap<Pixel>& dest);
+     NOTE: this algorithm expectes an alignment of 8 pixels
+     plus a border of 8 pixels.
+  */
+  void LowPass_3x3Gauss_MMX(const Bitmap<Pixel>& img,Bitmap<Pixel>& dest);
+
+}
 
 #endif

@@ -22,15 +22,18 @@
 
 #include <fstream>
 #include <iostream>
-using namespace std;
+//using namespace std;
 
 #include <libvideogfx/graphics/datatypes/image.hh>
 
+namespace videogfx {
 
-// Return true if the image file size matches the specified size.
-bool CheckFileSize_UYVY(ifstream& istr,int w,int h);
+  // Return true if the image file size matches the specified size.
+  bool CheckFileSize_UYVY(std::ifstream& istr,int w,int h);
 
-void ReadImage_UYVY (Image<Pixel>&,ifstream& istr,int w,int h);
-void WriteImage_UYVY(const Image<Pixel>&,ofstream& ostr);
+  void ReadImage_UYVY (Image<Pixel>&,std::ifstream& istr,int w,int h);
+  void WriteImage_UYVY(const Image<Pixel>&,std::ofstream& ostr);
+
+}
 
 #endif

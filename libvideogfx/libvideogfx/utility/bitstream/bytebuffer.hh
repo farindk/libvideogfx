@@ -56,50 +56,53 @@
 #include <libvideogfx/types.hh>
 #include <libvideogfx/utility/fastalloc.hh>
 
+namespace videogfx {
 
-class ByteBufferParams;
+  class ByteBufferParams;
 
-class ByteBufferPool
-{
-public:
-  ByteBufferPool();
-  ~ByteBufferPool();
+  class ByteBufferPool
+  {
+  public:
+    ByteBufferPool();
+    ~ByteBufferPool();
 
-  friend class ByteBuffer;
+    friend class ByteBuffer;
 
-private:
-  ByteBufferParams* d_param;
-};
+  private:
+    ByteBufferParams* d_param;
+  };
 
 
-class ByteBuffer
-{
-public:
-  ByteBuffer(ByteBufferPool* pool = NULL);
-  ~ByteBuffer();
+  class ByteBuffer
+  {
+  public:
+    ByteBuffer(ByteBufferPool* pool = NULL);
+    ~ByteBuffer();
 
-  void AttachToPool(ByteBufferPool*);
+    void AttachToPool(ByteBufferPool*);
 
-  /* Append additional data to the buffer. */
-  void AppendBytes(unsigned char* mem,unsigned int len);
+    /* Append additional data to the buffer. */
+    void AppendBytes(unsigned char* mem,unsigned int len);
 
-  /* Get a pointer to a memory area where new bytes can be filled in.
-     The advantage of using this method is that no memcpy is required. */
-  unsigned char* GetPtrToAppendToBuffer(unsigned int len); // see note 1)
+    /* Get a pointer to a memory area where new bytes can be filled in.
+       The advantage of using this method is that no memcpy is required. */
+    unsigned char* GetPtrToAppendToBuffer(unsigned int len); // see note 1)
 
-  void TruncateBuffer(unsigned int nBytes); // Throw away last 'nBytes' bytes of buffer.
-  void Clear() { d_len=0; }  // Clear buffer contents but do not free memory.
+    void TruncateBuffer(unsigned int nBytes); // Throw away last 'nBytes' bytes of buffer.
+    void Clear() { d_len=0; }  // Clear buffer contents but do not free memory.
 
-  unsigned char* AskData() const { return d_buf; }
-  int            AskLength() const { return d_len; }
+    unsigned char* AskData() const { return d_buf; }
+    int            AskLength() const { return d_len; }
 
-private:
-  unsigned char* d_buf;
-             int d_len;  // Amount of data in the buffer.
-             int d_size; // Total size of allocated buffer memory.
-  bool d_buf_from_pool;
+  private:
+    unsigned char* d_buf;
+    int d_len;  // Amount of data in the buffer.
+    int d_size; // Total size of allocated buffer memory.
+    bool d_buf_from_pool;
 
-  ByteBufferParams* d_param;
-};
+    ByteBufferParams* d_param;
+  };
+
+}
 
 #endif

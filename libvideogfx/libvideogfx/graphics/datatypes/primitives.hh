@@ -37,26 +37,30 @@
 #ifndef LIBVIDEOGFX_GRAPHICS_DATATYPES_PRIMITIVES_HH
 #define LIBVIDEOGFX_GRAPHICS_DATATYPES_PRIMITIVES_HH
 
-template <class T> struct Point2D
-{
-  T x,y;
-};
+namespace videogfx {
 
-template <class T> struct Rect2D
-{
-  Point2D<T> upperleft;
-  Point2D<T> lowerright;
-};
+  template <class T> struct Point2D
+  {
+    T x,y;
+  };
 
-template <class T> struct Color
-{
-  Color() { }
-  Color(T v1,T v2,T v3,T alpha) { c[0]=v1; c[1]=v2; c[2]=v3; c[3]=alpha; }
-  Color(T v1,T v2,T v3)         { c[0]=v1; c[1]=v2; c[2]=v3; }
-  Color(int v1,int v2,int v3,int alpha) { c[0]=(T)v1; c[1]=(T)v2; c[2]=(T)v3; c[3]=(T)alpha; }
-  Color(int v1,int v2,int v3)           { c[0]=(T)v1; c[1]=(T)v2; c[2]=(T)v3; }
+  template <class T> struct Rect2D
+  {
+    Point2D<T> upperleft;
+    Point2D<T> lowerright;
+  };
 
-  T c[4];  // 0,1,2 - color | 3 - alpha
-};
+  template <class T> struct Color
+  {
+    Color() { }
+    Color(T v1,T v2,T v3,T alpha) { c[0]=v1; c[1]=v2; c[2]=v3; c[3]=alpha; }
+    Color(T v1,T v2,T v3)         { c[0]=v1; c[1]=v2; c[2]=v3; }
+    Color(int v1,int v2,int v3,int alpha) { c[0]=(T)v1; c[1]=(T)v2; c[2]=(T)v3; c[3]=(T)alpha; }
+    Color(int v1,int v2,int v3)           { c[0]=(T)v1; c[1]=(T)v2; c[2]=(T)v3; }
+
+    T c[4];  // 0,1,2 - color | 3 - alpha
+  };
+
+}
 
 #endif

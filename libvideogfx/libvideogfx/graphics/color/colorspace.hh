@@ -27,47 +27,50 @@
 #include <libvideogfx/graphics/datatypes/image.hh>
 #include <libvideogfx/error.hh>
 
+namespace videogfx {
 
-void ChangeChroma    (Image<Pixel>& dst, const Image<Pixel>& src, ChromaFormat dstformat);
+  void ChangeChroma    (Image<Pixel>& dst, const Image<Pixel>& src, ChromaFormat dstformat);
 
-/* Copy the image contents of image "src" to image "dst" with a conversion of colorspace.
-   If target colorspace is YUV, the destination image's chroma value is used to select
-   the chroma format. If source and target image are in YUV colorspace, but their chroma
-   differs, chroma conversion is done just like ChangeChroma().
- */
-void ChangeColorspace(Image<Pixel>& dst, const Image<Pixel>& src,
-		      Colorspace colorspace, ChromaFormat chroma=Chroma_420);
+  /* Copy the image contents of image "src" to image "dst" with a conversion of colorspace.
+     If target colorspace is YUV, the destination image's chroma value is used to select
+     the chroma format. If source and target image are in YUV colorspace, but their chroma
+     differs, chroma conversion is done just like ChangeChroma().
+  */
+  void ChangeColorspace(Image<Pixel>& dst, const Image<Pixel>& src,
+			Colorspace colorspace, ChromaFormat chroma=Chroma_420);
 
 
-// -------- single pixel colorspace conversion routines -------
+  // -------- single pixel colorspace conversion routines -------
 
-// RGB/YUV
+  // RGB/YUV
 
-void RGB2YUV(Pixel& y,Pixel& u,Pixel& v, Pixel r,Pixel g,Pixel b);
-void YUV2RGB(Pixel& r,Pixel& g,Pixel& b, Pixel y,Pixel u,Pixel v);
+  void RGB2YUV(Pixel& y,Pixel& u,Pixel& v, Pixel r,Pixel g,Pixel b);
+  void YUV2RGB(Pixel& r,Pixel& g,Pixel& b, Pixel y,Pixel u,Pixel v);
 
-void RGB2YUV(Image<Pixel>& dst, const Image<Pixel>& src, ChromaFormat chroma = Chroma_Invalid);
-void YUV2RGB(Image<Pixel>& dst, const Image<Pixel>& src);
+  void RGB2YUV(Image<Pixel>& dst, const Image<Pixel>& src, ChromaFormat chroma = Chroma_Invalid);
+  void YUV2RGB(Image<Pixel>& dst, const Image<Pixel>& src);
 
-// RGB/HSV
+  // RGB/HSV
 
-void HSV2RGB(double& r,double& g,double& b, double h,double s,double v);  // input/output range: 0..1 
-void RGB2HSV(double& h,double& s,double& v, double r,double g,double b);  // input/output range: 0..1 
+  void HSV2RGB(double& r,double& g,double& b, double h,double s,double v);  // input/output range: 0..1 
+  void RGB2HSV(double& h,double& s,double& v, double r,double g,double b);  // input/output range: 0..1 
 
-void RGB2HSV(Image<double>& dst, const Image<Pixel>&  src);
-void HSV2RGB(Image<Pixel>&  dst, const Image<double>& src);
+  void RGB2HSV(Image<double>& dst, const Image<Pixel>&  src);
+  void HSV2RGB(Image<Pixel>&  dst, const Image<double>& src);
 					   
-void RGB2HSV(Image<Pixel>& dst, const Image<Pixel>& src);
-void HSV2RGB(Image<Pixel>& dst, const Image<Pixel>& src);
+  void RGB2HSV(Image<Pixel>& dst, const Image<Pixel>& src);
+  void HSV2RGB(Image<Pixel>& dst, const Image<Pixel>& src);
 
-// RGB/Greyscale
+  // RGB/Greyscale
 
-void RGB2Greyscale(Image<Pixel>& dst, const Image<Pixel>& src);
-void Greyscale2RGB(Image<Pixel>& dst, const Image<Pixel>& src);
+  void RGB2Greyscale(Image<Pixel>& dst, const Image<Pixel>& src);
+  void Greyscale2RGB(Image<Pixel>& dst, const Image<Pixel>& src);
 
-// YUV/Greyscale
+  // YUV/Greyscale
 
-void YUV2Greyscale(Image<Pixel>& dst, const Image<Pixel>& src);
-void Greyscale2YUV(Image<Pixel>& dst, const Image<Pixel>& src);
+  void YUV2Greyscale(Image<Pixel>& dst, const Image<Pixel>& src);
+  void Greyscale2YUV(Image<Pixel>& dst, const Image<Pixel>& src);
+
+}
 
 #endif

@@ -21,32 +21,35 @@
 
 #include <libvideogfx/graphics/color/img2raw.hh>
 
+namespace videogfx {
 
-class i2r_16bit_mmx : public Image2RawRGB_Transform
-{
-public:
-  virtual ~i2r_16bit_mmx() { }
+  class i2r_16bit_mmx : public Image2RawRGB_Transform
+  {
+  public:
+    virtual ~i2r_16bit_mmx() { }
 
-  virtual void Transform(const Image<Pixel>&,uint8* mem,int firstline,int lastline);
+    virtual void Transform(const Image<Pixel>&,uint8* mem,int firstline,int lastline);
 
-  static bool s_CanConvert(const Image<Pixel>&,const RawRGBImageSpec&);
-  virtual bool CanConvert(const Image<Pixel>& i,const RawRGBImageSpec& s) { return s_CanConvert(i,s); }
+    static bool s_CanConvert(const Image<Pixel>&,const RawRGBImageSpec&);
+    virtual bool CanConvert(const Image<Pixel>& i,const RawRGBImageSpec& s) { return s_CanConvert(i,s); }
 
-  virtual const char* TransformationName() { return "YUV to 16bit RGB, MMX accelerated"; }
-};
+    virtual const char* TransformationName() { return "YUV to 16bit RGB, MMX accelerated"; }
+  };
 
 
-class i2r_32bit_BGR_mmx : public Image2RawRGB_Transform
-{
-public:
-  virtual ~i2r_32bit_BGR_mmx() { }
+  class i2r_32bit_BGR_mmx : public Image2RawRGB_Transform
+  {
+  public:
+    virtual ~i2r_32bit_BGR_mmx() { }
 
-  virtual void Transform(const Image<Pixel>&,uint8* mem,int firstline,int lastline);
+    virtual void Transform(const Image<Pixel>&,uint8* mem,int firstline,int lastline);
 
-  static bool s_CanConvert(const Image<Pixel>&,const RawRGBImageSpec&);
-  virtual bool CanConvert(const Image<Pixel>& i,const RawRGBImageSpec& s) { return s_CanConvert(i,s); }
+    static bool s_CanConvert(const Image<Pixel>&,const RawRGBImageSpec&);
+    virtual bool CanConvert(const Image<Pixel>& i,const RawRGBImageSpec& s) { return s_CanConvert(i,s); }
 
-  virtual const char* TransformationName() { return "YUV to 32bit RGB, (BGR format), MMX accelerated"; }
-};
+    virtual const char* TransformationName() { return "YUV to 32bit RGB, (BGR format), MMX accelerated"; }
+  };
+
+}
 
 #endif

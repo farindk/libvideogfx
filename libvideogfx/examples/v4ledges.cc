@@ -10,6 +10,7 @@
 #include <fstream>
 #include <algorithm>
 using namespace std;
+using namespace videogfx;
 
 
 void main(int argc,char** argv)

@@ -40,28 +40,31 @@
 
 #include <libvideogfx/types.hh>
 
+namespace videogfx {
 
-struct AudioParam
-{
-  AudioParam() : n_channels(2), rate(44100), bits_per_sample(16), little_endian(true) { }
+  struct AudioParam
+  {
+    AudioParam() : n_channels(2), rate(44100), bits_per_sample(16), little_endian(true) { }
 
-  int  n_channels;
-  int  rate;
-  int  bits_per_sample;
-  bool little_endian;
-};
+    int  n_channels;
+    int  rate;
+    int  bits_per_sample;
+    bool little_endian;
+  };
 
 
-class AudioSink
-{
-public:
-  virtual ~AudioSink() { }
+  class AudioSink
+  {
+  public:
+    virtual ~AudioSink() { }
 
-  virtual void SetParam(const AudioParam& p) { }
-  virtual AudioParam AskParam() const { return AudioParam(); }
+    virtual void SetParam(const AudioParam& p) { }
+    virtual AudioParam AskParam() const { return AudioParam(); }
 
-  virtual void  SendSamples(int16* left,int16* right,int len) = 0;
-  virtual int   AskBufferingDelay() const { return 0; } // buffering delay in msecs
-};
+    virtual void  SendSamples(int16* left,int16* right,int len) = 0;
+    virtual int   AskBufferingDelay() const { return 0; } // buffering delay in msecs
+  };
+
+}
 
 #endif

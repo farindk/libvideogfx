@@ -41,54 +41,56 @@
 #include "libvideogfx/types.hh"
 #include <assert.h>
 
+namespace videogfx {
 
-template <class T> class Array2
-{
-public:
-  Array2();
-  Array2(int width,int height,int xbase=0,int ybase=0);
-  ~Array2();
-
-  void Create(int width,int height,int xbase=0,int ybase=0);
-
-  bool IsInitialized() const { return d_array != NULL; }
-
-  int AskWidth()  const { return d_width;  }
-  int AskHeight() const { return d_height; }
-  int AskXBase()  const { return d_xbase;  }
-  int AskYBase()  const { return d_ybase;  }
-
-  T& Ask(int y,int x)
+  template <class T> class Array2
   {
-    x+= d_xbase;
-    y+= d_ybase;
+  public:
+    Array2();
+    Array2(int width,int height,int xbase=0,int ybase=0);
+    ~Array2();
 
-    assert(IsInitialized());
-    assert(x>=0); assert(x<d_width);
-    assert(y>=0); assert(y<d_height);
-    return d_array[y][x];
-  }
+    void Create(int width,int height,int xbase=0,int ybase=0);
 
-  const T& Ask(int y,int x) const
-  {
-    x+= d_xbase;
-    y+= d_ybase;
+    bool IsInitialized() const { return d_array != NULL; }
 
-    assert(IsInitialized());
-    assert(x>=0); assert(x<d_width);
-    assert(y>=0); assert(y<d_height);
-    return d_array[y][x];
-  }
+    int AskWidth()  const { return d_width;  }
+    int AskHeight() const { return d_height; }
+    int AskXBase()  const { return d_xbase;  }
+    int AskYBase()  const { return d_ybase;  }
 
-        T* operator[](int y)       { return &d_array[y+d_ybase][x+d_xbase]; }
-  const T* operator[](int y) const { return &d_array[y+d_ybase][x+d_xbase]; }
+    T& Ask(int y,int x)
+    {
+      x+= d_xbase;
+      y+= d_ybase;
 
-private:
-  int   d_width,d_height;
-  int   d_xbase,d_ybase;
-  T**   d_array;
-};
+      assert(IsInitialized());
+      assert(x>=0); assert(x<d_width);
+      assert(y>=0); assert(y<d_height);
+      return d_array[y][x];
+    }
+
+    const T& Ask(int y,int x) const
+    {
+      x+= d_xbase;
+      y+= d_ybase;
+
+      assert(IsInitialized());
+      assert(x>=0); assert(x<d_width);
+      assert(y>=0); assert(y<d_height);
+      return d_array[y][x];
+    }
+
+    T* operator[](int y)       { return &d_array[y+d_ybase][x+d_xbase]; }
+    const T* operator[](int y) const { return &d_array[y+d_ybase][x+d_xbase]; }
+
+  private:
+    int   d_width,d_height;
+    int   d_xbase,d_ybase;
+    T**   d_array;
+  };
 
 #include "libvideogfx/containers/array2.icc"
+}
 
 #endif

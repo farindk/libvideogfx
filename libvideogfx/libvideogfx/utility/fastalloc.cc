@@ -24,106 +24,108 @@
 
 #include <stdlib.h>
 
+namespace videogfx {
 
-MemoryAllocator::MemoryAllocator(int minmemsize,int poolsize)
-  : d_nAreasInPool(0),
-    d_PoolSize(poolsize),
-    d_MinMemSize(minmemsize)
-{
-  d_Pool = new int*[d_PoolSize];
-}
-
-
-MemoryAllocator::~MemoryAllocator()
-{
-  ResetPool();
-
-  delete[] d_Pool;
-}
+  MemoryAllocator::MemoryAllocator(int minmemsize,int poolsize)
+    : d_nAreasInPool(0),
+      d_PoolSize(poolsize),
+      d_MinMemSize(minmemsize)
+  {
+    d_Pool = new int*[d_PoolSize];
+  }
 
 
-void MemoryAllocator::ResetPool()
-{
-  for (int i=0;i<d_nAreasInPool;i++)
-    {
-      Assert(d_Pool[i]);
-      free(d_Pool[i]);
-    }
+  MemoryAllocator::~MemoryAllocator()
+  {
+    ResetPool();
 
-  d_nAreasInPool = 0;
-}
+    delete[] d_Pool;
+  }
 
 
-void* MemoryAllocator::Alloc(int size,int* realsize)
-{
-  // Find memory block that is at least as large as the requested size.
-
-  int minidx = -1;
-  int minsize;
-  int i;
-  for (i=0;i<d_nAreasInPool;i++)
-    if (d_Pool[i][0] >= size)
+  void MemoryAllocator::ResetPool()
+  {
+    for (int i=0;i<d_nAreasInPool;i++)
       {
-	minidx=i;
-	minsize=d_Pool[minidx][0];
-	break;
+	Assert(d_Pool[i]);
+	free(d_Pool[i]);
       }
 
+    d_nAreasInPool = 0;
+  }
 
-  // Now look if there is a memory block that is smaller but still large enought.
 
-  for (;i<d_nAreasInPool;i++)
-    if (d_Pool[i][0] >= size && d_Pool[i][0]<minsize)
+  void* MemoryAllocator::Alloc(int size,int* realsize)
+  {
+    // Find memory block that is at least as large as the requested size.
+
+    int minidx = -1;
+    int minsize;
+    int i;
+    for (i=0;i<d_nAreasInPool;i++)
+      if (d_Pool[i][0] >= size)
+	{
+	  minidx=i;
+	  minsize=d_Pool[minidx][0];
+	  break;
+	}
+
+
+    // Now look if there is a memory block that is smaller but still large enought.
+
+    for (;i<d_nAreasInPool;i++)
+      if (d_Pool[i][0] >= size && d_Pool[i][0]<minsize)
+	{
+	  minidx=i;
+	  minsize=d_Pool[i][0];
+	}
+
+
+    // If an appropriate memory block is found, remove this block from the pool
+    // and return it.
+
+    if (minidx>=0)
       {
-	minidx=i;
-	minsize=d_Pool[i][0];
+	int* mem = d_Pool[minidx];
+	d_Pool[minidx] = d_Pool[--d_nAreasInPool];
+
+	if (realsize) *realsize=mem[0];
+
+	return &mem[1];
       }
+    else
+      {
+	// Otherwise we have to allocate a new memory block.
+
+	int* mem = (int*)malloc(size + sizeof(int));
+	mem[0] = size;
+
+	if (realsize) *realsize=size;
+
+	return &mem[1];
+      }
+  }
 
 
-  // If an appropriate memory block is found, remove this block from the pool
-  // and return it.
+  void MemoryAllocator::Free(void* memptr)
+  {
+    int* mem = (int*)memptr;
+    mem = &mem[-1];
 
-  if (minidx>=0)
-    {
-      int* mem = d_Pool[minidx];
-      d_Pool[minidx] = d_Pool[--d_nAreasInPool];
+    if (d_nAreasInPool<d_PoolSize)
+      {
+	d_Pool[d_nAreasInPool++]=mem;
+      }
+    else
+      {
+	// If returned memory block does not fit into the pool anymore,
+	// delete it. This is perhaps better than deleting the smallest
+	// memory area as otherwise the total allocated memory for
+	// grow forever. This way every memory block will eventually
+	// be deleted independent of its size.
 
-      if (realsize) *realsize=mem[0];
+	free(mem);
+      }
+  }
 
-      return &mem[1];
-    }
-  else
-    {
-      // Otherwise we have to allocate a new memory block.
-
-      int* mem = (int*)malloc(size + sizeof(int));
-      mem[0] = size;
-
-      if (realsize) *realsize=size;
-
-      return &mem[1];
-    }
 }
-
-
-void MemoryAllocator::Free(void* memptr)
-{
-  int* mem = (int*)memptr;
-  mem = &mem[-1];
-
-  if (d_nAreasInPool<d_PoolSize)
-    {
-      d_Pool[d_nAreasInPool++]=mem;
-    }
-  else
-    {
-      // If returned memory block does not fit into the pool anymore,
-      // delete it. This is perhaps better than deleting the smallest
-      // memory area as otherwise the total allocated memory for
-      // grow forever. This way every memory block will eventually
-      // be deleted independent of its size.
-
-      free(mem);
-    }
-}
-

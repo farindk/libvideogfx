@@ -4,6 +4,7 @@
 #include "libvideogfx/graphics/draw/blit.hh"
 #include "libvideogfx/graphics/draw/format.hh"
 #include "libvideogfx/graphics/draw/scale.hh"
+using namespace videogfx;
 
 #include <unistd.h>
 #include <time.h>

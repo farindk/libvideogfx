@@ -26,31 +26,34 @@ using namespace std;
 
 #include "libvideogfx/graphics/datatypes/image.hh"
 
+namespace videogfx {
 
-class FileReader_YUV_VQEG
-{
-public:
-   FileReader_YUV_VQEG();
-  ~FileReader_YUV_VQEG() { }
+  class FileReader_YUV_VQEG
+  {
+  public:
+    FileReader_YUV_VQEG();
+    ~FileReader_YUV_VQEG() { }
 
-  // initialization
+    // initialization
 
-  void SetYUVStream  (istream& yuvstream)   { d_yuvstr = &yuvstream; }
-  void SelectResolution625(bool flag) { d_mode625=flag; }
+    void SetYUVStream  (istream& yuvstream)   { d_yuvstr = &yuvstream; }
+    void SelectResolution625(bool flag) { d_mode625=flag; }
 
-  // usage
+    // usage
 
-  int  AskNFrames() const { return d_mode625 ? 220 : 260; }
-  bool IsEOF() const { return d_nextframe>=AskNFrames(); }
+    int  AskNFrames() const { return d_mode625 ? 220 : 260; }
+    bool IsEOF() const { return d_nextframe>=AskNFrames(); }
 
-  void SkipToImage(int nr);
-  void ReadImage(Image<Pixel>&);
+    void SkipToImage(int nr);
+    void ReadImage(Image<Pixel>&);
 
-private:
-  istream* d_yuvstr;
+  private:
+    istream* d_yuvstr;
 
-  bool  d_mode625;
-  int   d_nextframe;
-};
+    bool  d_mode625;
+    int   d_nextframe;
+  };
+
+}
 
 #endif

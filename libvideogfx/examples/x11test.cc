@@ -2,6 +2,7 @@
 
 #include "libvideogfx/x11/imgwin.hh"
 #include "libvideogfx/x11/draw_x11.hh"
+using namespace videogfx;
 
 #include <unistd.h>
 

@@ -41,22 +41,26 @@
 #include <libvideogfx/types.hh>
 
 
-class TimedPresentationSink
-{
-public:
-  virtual ~TimedPresentationSink() { }
+namespace videogfx {
 
-  // Wether more input data can be fed into the object.
-  virtual bool  CanAcceptMorePresentationData() const { return true; }
+  class TimedPresentationSink
+  {
+  public:
+    virtual ~TimedPresentationSink() { }
 
-  // Wether object holds data which is not presented yet.
-  virtual bool  PresentationDataPending() const { return false; }
+    // Wether more input data can be fed into the object.
+    virtual bool  CanAcceptMorePresentationData() const { return true; }
 
-  // Absolute time (msecs) when next available data should be presented.
-  virtual int64 DataPresentationTime() const { return 0; }
+    // Wether object holds data which is not presented yet.
+    virtual bool  PresentationDataPending() const { return false; }
 
-  // Present data which is already available in the object.
-  virtual void  PresentData() { }
-};
+    // Absolute time (msecs) when next available data should be presented.
+    virtual int64 DataPresentationTime() const { return 0; }
+
+    // Present data which is already available in the object.
+    virtual void  PresentData() { }
+  };
+
+}
 
 #endif

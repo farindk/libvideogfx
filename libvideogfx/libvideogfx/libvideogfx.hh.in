@@ -61,11 +61,10 @@
 #include <libvideogfx/utility/bitstream/bitreader.hh>
 #include <libvideogfx/utility/bitstream/bitreader_fast.hh>
 
-#ifdef HAVE_X11
-#include <libvideogfx/x11/dispimg.hh>
-#include <libvideogfx/x11/imgwin.hh>
-#include <libvideogfx/x11/server.hh>
-#include <libvideogfx/x11/draw_x11.hh>
-#endif
+@X11_COMMENT@#include <libvideogfx/x11/dispimg.hh>
+@X11_COMMENT@#include <libvideogfx/x11/imgwin.hh>
+@X11_COMMENT@#include <libvideogfx/x11/server.hh>
+@X11_COMMENT@#include <libvideogfx/x11/draw_x11.hh>
+
 
 #endif

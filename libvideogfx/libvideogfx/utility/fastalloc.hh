@@ -44,23 +44,25 @@
 
 #include <libvideogfx/types.hh>
 
+namespace videogfx {
 
-class MemoryAllocator
-{
-public:
-  MemoryAllocator(int MinimumMemorySize=1000,int PoolSize=10);
-  ~MemoryAllocator();
+  class MemoryAllocator
+  {
+  public:
+    MemoryAllocator(int MinimumMemorySize=1000,int PoolSize=10);
+    ~MemoryAllocator();
 
-  void* Alloc(int size,int* realsize=NULL);
-  void  Free(void*);
+    void* Alloc(int size,int* realsize=NULL);
+    void  Free(void*);
 
-  void  ResetPool(); // delete all the memory in the pool
+    void  ResetPool(); // delete all the memory in the pool
 
-private:
-  int** d_Pool;
-  int     d_nAreasInPool;
-  int     d_PoolSize;
-  int     d_MinMemSize;
-};
+  private:
+    int** d_Pool;
+    int     d_nAreasInPool;
+    int     d_PoolSize;
+    int     d_MinMemSize;
+  };
+}
 
 #endif

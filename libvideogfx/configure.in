@@ -16,9 +16,9 @@ AC_DIVERT_PUSH(AC_DIVERSION_NOTICE)dnl
 # if backwards compatibility has been broken,
 # set LIBVIDEOGFX_BINARY_AGE and LIBVIDEOGFX_INTERFACE_AGE to 0.
 #
-LIBVIDEOGFX_MAJOR_VERSION=0
-LIBVIDEOGFX_MINOR_VERSION=0
-LIBVIDEOGFX_MICRO_VERSION=1
+LIBVIDEOGFX_MAJOR_VERSION=1
+LIBVIDEOGFX_MINOR_VERSION=2
+LIBVIDEOGFX_MICRO_VERSION=3
 LIBVIDEOGFX_INTERFACE_AGE=0
 LIBVIDEOGFX_BINARY_AGE=0
 LIBVIDEOGFX_VERSION=$LIBVIDEOGFX_MAJOR_VERSION.$LIBVIDEOGFX_MINOR_VERSION.$LIBVIDEOGFX_MICRO_VERSION
@@ -121,8 +121,15 @@ case ${target_os} in
 	   ;;
 esac
 
+
+dnl Check for X11
+
 saved_cflags="$CFLAGS"
 saved_ldflags="$LDFLAGS"
+
+FEATURE_X11="no"
+FEATURE_XV="no"
+X11_COMMENT="//"
 
 AC_PATH_XTRA
 if test "x$no_x" = "xyes"; then 
@@ -156,7 +163,7 @@ dnl  AC_PATH_X
 # Check for Xv library
   AC_CHECK_LIB(Xv, XvShmCreateImage,
 	x_libs="$x_libs -lXv"
-	AC_DEFINE(HAVE_XV),,[-lX11 -lXext])
+	AC_DEFINE(HAVE_XV) FEATURE_XV="yes",,[-lX11 -lXext])
 
   X_LIBS="$X_LIBS $x_libs"
 
@@ -165,8 +172,12 @@ dnl  AC_PATH_X
 
   AC_DEFINE(HAVE_X11)
   AM_CONDITIONAL(HAVE_X11, true)
+  FEATURE_X11="yes"
+  X11_COMMENT=""
 fi
-
+AC_SUBST(FEATURE_X11)
+AC_SUBST(FEATURE_XV)
+AC_SUBST(X11_COMMENT)
 
 # Check for the JPEG library
 AC_CHECK_LIB(jpeg,
@@ -179,9 +190,12 @@ AC_SUBST(jpeg_libs)
 if test "x$jpeg_available" = "xtrue" ; then
   AC_DEFINE(HAVE_LIBJPEG)
   AM_CONDITIONAL(HAVE_LIBJPEG, true)
+  FEATURE_JPEG="yes"
 else
   AM_CONDITIONAL(HAVE_LIBJPEG, false)
+  FEATURE_JPEG="no"
 fi
+AC_SUBST(FEATURE_JPEG)
   
 CFLAGS="$saved_cflags"
 LDFLAGS="$saved_ldflags"
@@ -207,6 +221,7 @@ AC_OUTPUT([
 libvideogfx-config
 Makefile
 examples/Makefile
+libvideogfx/libvideogfx.hh
 libvideogfx/Makefile
 libvideogfx/arch/Makefile
 libvideogfx/containers/Makefile

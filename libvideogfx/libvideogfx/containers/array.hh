@@ -42,39 +42,41 @@
 
 #include "libvideogfx/types.hh"
 
+namespace videogfx {
 
-template <class T> class Array
-{
-public:
-  Array();
-  Array(const Array<T>&);
-  Array(int size,int base=0);
-  ~Array();
+  template <class T> class Array
+  {
+  public:
+    Array();
+    Array(const Array<T>&);
+    Array(int size,int base=0);
+    ~Array();
 
-  void Create(int size,int base=0);
-  void CreateRange(int first,int last) { Create(last-first+1,first); }
-  void Release();
+    void Create(int size,int base=0);
+    void CreateRange(int first,int last) { Create(last-first+1,first); }
+    void Release();
 
-  bool IsInitialized() const { return d_array != NULL; }
+    bool IsInitialized() const { return d_array != NULL; }
 
-        T* AskData()       { return &d_array[d_baseoffset]; }
-  const T* AskData() const { return &d_array[d_baseoffset]; }
+    T* AskData()       { return &d_array[d_baseoffset]; }
+    const T* AskData() const { return &d_array[d_baseoffset]; }
 
-        T& operator[](int n)       { return d_array[d_baseoffset+n]; }
-  const T& operator[](int n) const { return d_array[d_baseoffset+n]; }
+    T& operator[](int n)       { return d_array[d_baseoffset+n]; }
+    const T& operator[](int n) const { return d_array[d_baseoffset+n]; }
 
-  int AskBase() const { return -d_baseoffset;  }
-  int AskSize() const { return d_size; }
-  int AskStartIdx() const { return AskBase(); }
-  int AskEndIdx() const { return AskSize()+AskBase()-1; }
+    int AskBase() const { return -d_baseoffset;  }
+    int AskSize() const { return d_size; }
+    int AskStartIdx() const { return AskBase(); }
+    int AskEndIdx() const { return AskSize()+AskBase()-1; }
 
-  const Array& operator=(const Array<T>&);
+    const Array& operator=(const Array<T>&);
 
-private:
-  int   d_baseoffset,d_size;
-  T*    d_array;
-};
+  private:
+    int   d_baseoffset,d_size;
+    T*    d_array;
+  };
 
 #include "libvideogfx/containers/array.icc"
+}
 
 #endif

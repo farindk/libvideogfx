@@ -2,6 +2,7 @@
 #include "libvideogfx/utility/bitmanip.hh"
 #include <assert.h>
 
+namespace videogfx {
 
 void CalcBitsShift(uint32 mask,int& bits,int& shift)
 {
@@ -16,3 +17,6 @@ void CalcBitsShift(uint32 mask,int& bits,int& shift)
   assert(mask==0); /* This may fail if there are more than one continuous
 		      sequences of ones (like 000111000011100). */
 }
+
+}
+

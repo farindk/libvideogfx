@@ -40,8 +40,9 @@
 
 #include <libvideogfx/error.hh>
 
+namespace videogfx {
 
-enum CPU_Architecture
+  enum CPU_Architecture
   {
     CPUArch_X86, CPUArch_68k, CPUArch_PowerPC, CPUArch_ARM, CPUArch_Sparc,
     CPUArch_HPPA,
@@ -49,42 +50,43 @@ enum CPU_Architecture
   };
 
 
-class CPU_Capabilities
-{
-public:
-  static CPU_Capabilities* AskCapabilities(); // get capabilities of CPU
+  class CPU_Capabilities
+  {
+  public:
+    static CPU_Capabilities* AskCapabilities(); // get capabilities of CPU
 
 
-  virtual ~CPU_Capabilities() { }
+    virtual ~CPU_Capabilities() { }
 
-  virtual void GetCPUInfo(char* buf,int maxChars,bool long_description=false);
-  virtual CPU_Architecture GetArchitecture() const { return CPUArch_Unknown; }
-  const char* GetArchitectureName() const { return ArchName(GetArchitecture()); }
-  static const char* ArchName(CPU_Architecture arch);
-
-
-  // x86 architecture
-
-  virtual bool HasMMX()   const { AssertDescr(0,wrong_cpu_err); }
-  virtual bool HasMMX2()  const { AssertDescr(0,wrong_cpu_err); }
-  virtual bool Has3dNow() const { AssertDescr(0,wrong_cpu_err); }
-  virtual bool HasMTRR()  const { AssertDescr(0,wrong_cpu_err); }
-  virtual bool HasCMOV()  const { AssertDescr(0,wrong_cpu_err); }
-  virtual bool HasFPU()   const { AssertDescr(0,wrong_cpu_err); }
+    virtual void GetCPUInfo(char* buf,int maxChars,bool long_description=false);
+    virtual CPU_Architecture GetArchitecture() const { return CPUArch_Unknown; }
+    const char* GetArchitectureName() const { return ArchName(GetArchitecture()); }
+    static const char* ArchName(CPU_Architecture arch);
 
 
-  // ARM architecture
+    // x86 architecture
 
-  virtual bool HasXScale()  const { AssertDescr(0,wrong_cpu_err); }
+    virtual bool HasMMX()   const { AssertDescr(0,wrong_cpu_err); }
+    virtual bool HasMMX2()  const { AssertDescr(0,wrong_cpu_err); }
+    virtual bool Has3dNow() const { AssertDescr(0,wrong_cpu_err); }
+    virtual bool HasMTRR()  const { AssertDescr(0,wrong_cpu_err); }
+    virtual bool HasCMOV()  const { AssertDescr(0,wrong_cpu_err); }
+    virtual bool HasFPU()   const { AssertDescr(0,wrong_cpu_err); }
 
 
-  // SPARC architecture
+    // ARM architecture
 
-  virtual bool HasVIS()  const { AssertDescr(0,wrong_cpu_err); }
+    virtual bool HasXScale()  const { AssertDescr(0,wrong_cpu_err); }
 
-private:
-  static CPU_Capabilities* d_cpu;
-  static const char* wrong_cpu_err;
-};
+
+    // SPARC architecture
+
+    virtual bool HasVIS()  const { AssertDescr(0,wrong_cpu_err); }
+
+  private:
+    static CPU_Capabilities* d_cpu;
+    static const char* wrong_cpu_err;
+  };
+}
 
 #endif

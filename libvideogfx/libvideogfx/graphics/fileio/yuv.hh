@@ -47,71 +47,74 @@ using namespace std;
 
 #include <libvideogfx/graphics/datatypes/image.hh>
 
+namespace videogfx {
 
-class FileReader_YUV1
-{
-public:
-   FileReader_YUV1();
-  ~FileReader_YUV1() { }
+  class FileReader_YUV1
+  {
+  public:
+    FileReader_YUV1();
+    ~FileReader_YUV1() { }
 
-  // initialization
+    // initialization
 
-  void SetYUVStream  (istream& yuvstream)   { d_yuvstr = &yuvstream; d_initialized=false; }
-  void SetAlphaStream(istream& alphastream) { d_alphastr = &alphastream; d_initialized=false; }
+    void SetYUVStream  (istream& yuvstream)   { d_yuvstr = &yuvstream; d_initialized=false; }
+    void SetAlphaStream(istream& alphastream) { d_alphastr = &alphastream; d_initialized=false; }
 
-  void SetImageParam(const ImageParam& spec) { d_spec = spec; d_initialized=false; }
-  void SetInterleavedUV(bool flag=true)    { d_interleavedUV = flag; d_initialized=false; }
-  void SetInputIsGreyscale(bool flag=true) { d_greyscale_input = flag; d_initialized=false; }
+    void SetImageParam(const ImageParam& spec) { d_spec = spec; d_initialized=false; }
+    void SetInterleavedUV(bool flag=true)    { d_interleavedUV = flag; d_initialized=false; }
+    void SetInputIsGreyscale(bool flag=true) { d_greyscale_input = flag; d_initialized=false; }
 
-  // usage
+    // usage
 
-  int  AskNFrames() const;
-  bool IsEOF() const;
+    int  AskNFrames() const;
+    bool IsEOF() const;
 
-  void SkipToImage(int nr);
-  void ReadImage(Image<Pixel>&);
+    void SkipToImage(int nr);
+    void ReadImage(Image<Pixel>&);
 
-private:
-  istream* d_yuvstr;
-  istream* d_alphastr;
+  private:
+    istream* d_yuvstr;
+    istream* d_alphastr;
 
-  ImageParam d_spec;
+    ImageParam d_spec;
 
-  bool  d_interleavedUV;
-  bool  d_greyscale_input;
+    bool  d_interleavedUV;
+    bool  d_greyscale_input;
 
-  int   d_nFrames;
-  int   d_Framesize;
-  int   d_nextFrame;
+    int   d_nFrames;
+    int   d_Framesize;
+    int   d_nextFrame;
 
-  void Init();
-  bool d_initialized;
-};
+    void Init();
+    bool d_initialized;
+  };
 
 
 
-class FileWriter_YUV1
-{
-public:
-   FileWriter_YUV1();
-  ~FileWriter_YUV1() { }
+  class FileWriter_YUV1
+  {
+  public:
+    FileWriter_YUV1();
+    ~FileWriter_YUV1() { }
 
-  void SetYUVStream(ostream& str)   { d_yuvstr   = &str; }
-  void SetAlphaStream(ostream& str) { d_alphastr = &str; }
+    void SetYUVStream(ostream& str)   { d_yuvstr   = &str; }
+    void SetAlphaStream(ostream& str) { d_alphastr = &str; }
 
-  void SetWriteGreyscaleAsColor(bool flag=true) { d_write_greyscale_as_color=flag; }
-  void SetWriteColorAsGreyscale(bool flag=true) { d_write_color_as_greyscale=flag; }
-  void SetWriteInterleaved(bool flag=true)      { d_write_interleaved=flag; }
+    void SetWriteGreyscaleAsColor(bool flag=true) { d_write_greyscale_as_color=flag; }
+    void SetWriteColorAsGreyscale(bool flag=true) { d_write_color_as_greyscale=flag; }
+    void SetWriteInterleaved(bool flag=true)      { d_write_interleaved=flag; }
 
-  void WriteImage(const Image<Pixel>&);
+    void WriteImage(const Image<Pixel>&);
 
-private:
-  ostream* d_yuvstr;
-  ostream* d_alphastr;
+  private:
+    ostream* d_yuvstr;
+    ostream* d_alphastr;
 
-  bool d_write_greyscale_as_color;
-  bool d_write_color_as_greyscale;
-  bool d_write_interleaved;
-};
+    bool d_write_greyscale_as_color;
+    bool d_write_color_as_greyscale;
+    bool d_write_interleaved;
+  };
+
+}
 
 #endif

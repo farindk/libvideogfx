@@ -1,7 +1,7 @@
 ## Makefile.am for libvideogfx/libvideogfx
 
 if HAVE_X11
-SUBDIRS = arch containers graphics utility x11 # postscript
+SUBDIRS = arch utility graphics containers x11 # postscript
 else
 SUBDIRS = arch containers graphics utility # postscript
 endif
@@ -44,7 +44,7 @@ libvideogfx_la_LIBADD = \
 	graphics/filters/libvideogfx-graphics-filters.la	\
 	graphics/visualize/libvideogfx-graphics-visualize.la	\
 	utility/bitstream/libvideogfx-utility-bitstream.la	\
-	utility/libvideogfx-utility.la	\
+	utility/libvideogfx-utility.la				\
 	$(x11_sources)
 
 #	graphics/fileio/avi/libvideogfx-graphics-fileio-avi.la	\
@@ -58,15 +58,19 @@ libvideogfx_la_LIBADD = \
 libvideogfx_public_h_sources = \
 	init.hh		\
 	types.hh	\
-	error.hh	\
-	libvideogfx.hh
+	error.hh
 
 # Header files that don't get installed
 libvideogfx_private_h_sources = macros.hh
 
+include_HEADERS = libvideogfx.hh
+
+BUILT_SOURCES = libvideogfx.hh
+CLEANFILES = libvideogfx.hh
+
 # C sources to build the library from
 libvideogfx_c_sources = \
-	init.cc	\
+	init.cc		\
 	error.cc
 
 #
@@ -75,5 +79,5 @@ libvideogfx_c_sources = \
 libvideogfx_include_HEADERS = $(libvideogfx_public_h_sources)
 libvideogfx_la_SOURCES = $(libvideogfx_c_sources)
 EXTRA_HEADERS +=
-EXTRA_DIST += $(libvideogfx_private_h_sources)
+EXTRA_DIST += $(libvideogfx_private_h_sources) libvideogfx.hh.in
 

@@ -3,9 +3,11 @@
  */
 
 #include "config.h"
+#include "libvideogfx/libvideogfx.hh"
 
 #include <iostream>
 using namespace std;
+using namespace videogfx;
 
 
 int

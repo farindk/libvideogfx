@@ -34,36 +34,39 @@
 
 #include <libvideogfx/types.hh>
 
+namespace videogfx {
 
-class BitBuffer
-{
-public:
-   BitBuffer();
-  ~BitBuffer();
+  class BitBuffer
+  {
+  public:
+    BitBuffer();
+    ~BitBuffer();
 
-  void Reset();
+    void Reset();
 
-  void WriteBits(uint32 bits,int nBits);       // input has to be right aligned
-  void WriteBool(bool b) { WriteBits(b ? 1 : 0 , 1); }
-  void WriteBitsMasked(uint32 bits,int nBits);
-  void AlignToByte0(); // Fill 0-bits until a byte boundary is reached. 0-7 bits are inserted.
+    void WriteBits(uint32 bits,int nBits);       // input has to be right aligned
+    void WriteBool(bool b) { WriteBits(b ? 1 : 0 , 1); }
+    void WriteBitsMasked(uint32 bits,int nBits);
+    void AlignToByte0(); // Fill 0-bits until a byte boundary is reached. 0-7 bits are inserted.
 
-  void Flush(); // Fill 0-bits to next byte boundary and make all data available at the output buffer.
-  uint8* AskBuffer() const { return d_buffer; }
-  int    AskBufferSize() const { return d_bufferidx; }
-  uint32 BitsInBuffer() const { return d_bufferidx*8 + (32-d_freebits); }
+    void Flush(); // Fill 0-bits to next byte boundary and make all data available at the output buffer.
+    uint8* AskBuffer() const { return d_buffer; }
+    int    AskBufferSize() const { return d_bufferidx; }
+    uint32 BitsInBuffer() const { return d_bufferidx*8 + (32-d_freebits); }
 
-private:
-  uint8* d_buffer;
-  int    d_bufferidx;
+  private:
+    uint8* d_buffer;
+    int    d_bufferidx;
 
-  int    d_buffersize;
+    int    d_buffersize;
 
-  uint32 d_tmpbuf;
-  int    d_freebits;
+    uint32 d_tmpbuf;
+    int    d_freebits;
 
-  void TmpToBuffer();
-  void EnlargeIfFull();
-};
+    void TmpToBuffer();
+    void EnlargeIfFull();
+  };
+
+}
 
 #endif

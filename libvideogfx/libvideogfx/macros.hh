@@ -38,17 +38,20 @@
 #include "config.h"
 #include "libvideogfx/types.hh"
 
+namespace videogfx {
+
 #ifdef WORDS_BIGENDIAN
-inline uint16 ToLittleEndian(uint16 v) { return ChangeEndian(v); }
-inline uint32 ToLittleEndian(uint32 v) { return ChangeEndian(v); }
-inline uint16 ToBigEndian(uint16 v)    { return v; }
-inline uint32 ToBigEndian(uint32 v)    { return v; }
+  inline uint16 ToLittleEndian(uint16 v) { return ChangeEndian(v); }
+  inline uint32 ToLittleEndian(uint32 v) { return ChangeEndian(v); }
+  inline uint16 ToBigEndian(uint16 v)    { return v; }
+  inline uint32 ToBigEndian(uint32 v)    { return v; }
 #else
-inline uint16 ToLittleEndian(uint16 v) { return v; }
-inline uint32 ToLittleEndian(uint32 v) { return v; }
-inline uint16 ToBigEndian(uint16 v)    { return ChangeEndian(v); }
-inline uint32 ToBigEndian(uint32 v)    { return ChangeEndian(v); }
+  inline uint16 ToLittleEndian(uint16 v) { return v; }
+  inline uint32 ToLittleEndian(uint32 v) { return v; }
+  inline uint16 ToBigEndian(uint16 v)    { return ChangeEndian(v); }
+  inline uint32 ToBigEndian(uint32 v)    { return ChangeEndian(v); }
 #endif
 
+}
 
 #endif

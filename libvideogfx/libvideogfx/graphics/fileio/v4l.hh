@@ -21,37 +21,41 @@
 #include <libvideogfx/graphics/datatypes/image.hh>
 
 
-class V4L_Grabber
-{
-public:
-   V4L_Grabber();
-  ~V4L_Grabber();
+namespace videogfx {
 
-  // initialization
+  class V4L_Grabber
+  {
+  public:
+    V4L_Grabber();
+    ~V4L_Grabber();
 
-  void SetDevice(const char* device);
-  void SetGreyscaleMode(bool greyscale=true) { d_greyscale=greyscale; }
-  void SetChroma(ChromaFormat chroma) { d_chroma=chroma; }
-  void DoChromaAvgOn422To420(bool flag=true) { d_avg_422_to_420=flag; }
-  void SetResolution(int w,int h);
-  void AskResolution(int& w,int& h) { w = d_width; h = d_height; }
+    // initialization
 
-  void StartGrabbing();
+    void SetDevice(const char* device);
+    void SetGreyscaleMode(bool greyscale=true) { d_greyscale=greyscale; }
+    void SetChroma(ChromaFormat chroma) { d_chroma=chroma; }
+    void DoChromaAvgOn422To420(bool flag=true) { d_avg_422_to_420=flag; }
+    void SetResolution(int w,int h);
+    void AskResolution(int& w,int& h) { w = d_width; h = d_height; }
 
-  void Grab(Image<Pixel>&);
+    void StartGrabbing();
 
-private:
-  char* d_device;
-  int  d_fd;
+    void Grab(Image<Pixel>&);
 
-  int d_width,d_height;
-  bool d_greyscale;
-  ChromaFormat d_chroma;
-  bool d_avg_422_to_420;
+  private:
+    char* d_device;
+    int  d_fd;
 
-  struct GrabData* d_grabdata;
+    int d_width,d_height;
+    bool d_greyscale;
+    ChromaFormat d_chroma;
+    bool d_avg_422_to_420;
 
-  int d_nextbuf;
-};
+    struct GrabData* d_grabdata;
+
+    int d_nextbuf;
+  };
+
+}
 
 #endif

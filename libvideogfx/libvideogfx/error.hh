@@ -51,82 +51,91 @@
 // We need: __ASSERT_FUNCTION
 #  include <assert.h>
 
+namespace videogfx {
 
-/* Severity of a message or an exception. Not all severity levels are allowed
-   in exceptions. "ErrSev_Note" must not be used in exceptions as the normal
-   program flow should not be interrupted in this case.
-*/
+  /* Severity of a message or an exception. Not all severity levels are allowed
+     in exceptions. "ErrSev_Note" must not be used in exceptions as the normal
+     program flow should not be interrupted in this case.
+  */
 
-enum ErrorSeverity {
-  ErrSev_Note,    // Things that are worth noting but that do not have any implications for execution.
-  ErrSev_Warning, // Explains why some things may not be as expected and warn about things that may go wrong.
-  ErrSev_Error,   // The usual stuff like "file not found".
-  ErrSev_Critical,// Several unexpected errors occurred so something is going seriously wrong.
-  ErrSev_Assertion,// This should never never never go wrong. Even if the input is completely damaged.
-};
-
-
-
-/* A MessageDisplay is the place where warnings and errors will be displayed on.
- */
-
-class MessageDisplay
-{
-public:
-  virtual ~MessageDisplay() { }
-
-  virtual void ShowMessage(ErrorSeverity,const char* text) = 0;
-  virtual void ShowMessage(const class Excpt_Base&) = 0;
-
-
-  // Message output on the standard display.
-
-  static void Show(ErrorSeverity,const char* text);
-  static void Show(const class Excpt_Base&);
-  static void SetStandardDisplay(MessageDisplay*);
-
-private:
-  static MessageDisplay* std_msgdisplay;
-};
+  enum ErrorSeverity {
+    ErrSev_Note,    // Things that are worth noting but that do not have any implications for execution.
+    ErrSev_Warning, // Explains why some things may not be as expected and warn about things that may go wrong.
+    ErrSev_Error,   // The usual stuff like "file not found".
+    ErrSev_Critical,// Several unexpected errors occurred so something is going seriously wrong.
+    ErrSev_Assertion,// This should never never never go wrong. Even if the input is completely damaged.
+  };
 
 
 
+  /* A MessageDisplay is the place where warnings and errors will be displayed on.
+   */
+
+  class MessageDisplay
+  {
+  public:
+    virtual ~MessageDisplay() { }
+
+    virtual void ShowMessage(ErrorSeverity,const char* text) = 0;
+    virtual void ShowMessage(const class Excpt_Base&) = 0;
+
+
+    // Message output on the standard display.
+
+    static void Show(ErrorSeverity,const char* text);
+    static void Show(const class Excpt_Base&);
+    static void SetStandardDisplay(MessageDisplay*);
+
+  private:
+    static MessageDisplay* std_msgdisplay;
+  };
 
 
 
-class Excpt_Base
-{
-public:
-  Excpt_Base(ErrorSeverity);
-  virtual ~Excpt_Base() { }
-
-  virtual int GetText(char*,int maxChars) const = 0;
-
-  enum ErrorSeverity m_severity;
-};
 
 
-class Excpt_Text : public Excpt_Base
-{
-public:
-  Excpt_Text(ErrorSeverity sev);  // create with empty text
-  Excpt_Text(ErrorSeverity sev,const char* text);
 
-  void SetText(const char*);
-  void AppendText(const char*);
-  int GetText(char*,int maxChars) const;
+  class Excpt_Base
+  {
+  public:
+    Excpt_Base(ErrorSeverity);
+    virtual ~Excpt_Base() { }
 
-private:
-  const static unsigned int c_MaxTextLen = 500;
-  char d_text[c_MaxTextLen+1];
-};
+    virtual int GetText(char*,int maxChars) const = 0;
+
+    enum ErrorSeverity m_severity;
+  };
 
 
-class Excpt_Assertion : public Excpt_Text
-{
-public:
-  Excpt_Assertion(const char* expr,const char* file, const char* function,int line);
-};
+  class Excpt_Text : public Excpt_Base
+  {
+  public:
+    Excpt_Text(ErrorSeverity sev);  // create with empty text
+    Excpt_Text(ErrorSeverity sev,const char* text);
+
+    void SetText(const char*);
+    void AppendText(const char*);
+    int GetText(char*,int maxChars) const;
+
+  private:
+    const static unsigned int c_MaxTextLen = 500;
+    char d_text[c_MaxTextLen+1];
+  };
+
+
+  class Excpt_Assertion : public Excpt_Text
+  {
+  public:
+    Excpt_Assertion(const char* expr,const char* file, const char* function,int line);
+  };
+
+  class Excpt_NotImplemented : public Excpt_Text
+  {
+  public:
+    Excpt_NotImplemented(const char* file, int line);
+  };
+
+}
 
 #ifdef NDEBUG
 #  define Assert(expr)
@@ -145,13 +154,6 @@ public:
  (void)(expr ? 0 : (throw Excpt_Assertion(descr,__FILE__,"no function information",__LINE__),1) );
 #  endif
 #endif
-
-
-class Excpt_NotImplemented : public Excpt_Text
-{
-public:
-  Excpt_NotImplemented(const char* file, int line);
-};
 
 #define NotImplemented throw Excpt_NotImplemented(__FILE__,__LINE__);
 

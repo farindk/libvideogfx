@@ -24,52 +24,54 @@
 #include <iostream>
 
 #include "libvideogfx/types.hh"
-
 #include "bitreader.hh"
 
+namespace videogfx {
 
-BitReader::BitReader(const uint8* buffer,uint32 len)
-  : d_buffer(0),
-    d_bitsleft(0),
-    d_start(buffer),
-    d_ptr(buffer),
-    d_endptr(buffer+len)
-{
-}
+  BitReader::BitReader(const uint8* buffer,uint32 len)
+    : d_buffer(0),
+      d_bitsleft(0),
+      d_start(buffer),
+      d_ptr(buffer),
+      d_endptr(buffer+len)
+  {
+  }
 
-void BitReader::Refill()
-{
+  void BitReader::Refill()
+  {
 #if WORDS_BIGENDIAN
-  uint32 val = *((uint32*)d_ptr)++;
+    uint32 val = *((uint32*)d_ptr)++;
 
-  uint64 val64 = val;
-  val64 <<= 64-32-d_bitsleft;
-  d_buffer |= val64;
-  d_bitsleft += 32;
+    uint64 val64 = val;
+    val64 <<= 64-32-d_bitsleft;
+    d_buffer |= val64;
+    d_bitsleft += 32;
 #else
 
 #if CPU_x86
-  uint32 val = *((uint32*)d_ptr);
-  d_ptr+=4;
+    uint32 val = *((uint32*)d_ptr);
+    d_ptr+=4;
 
-  __asm__("bswap %0" : "=r" (val) : "0" (val));
+    __asm__("bswap %0" : "=r" (val) : "0" (val));
 
-  uint64 val64 = val;
-  val64 <<= 64-32-d_bitsleft;
-  d_buffer |= val64;
-  d_bitsleft += 32;
+    uint64 val64 = val;
+    val64 <<= 64-32-d_bitsleft;
+    d_buffer |= val64;
+    d_bitsleft += 32;
 #else
-  int shiftval = 64-8-d_bitsleft;
+    int shiftval = 64-8-d_bitsleft;
 
-  while (shiftval>=0)
-    {
-      uint64 newval = *d_ptr++;
-      newval <<= shiftval;
-      d_buffer |= newval;
-      shiftval  -=8;
-   }
+    while (shiftval>=0)
+      {
+	uint64 newval = *d_ptr++;
+	newval <<= shiftval;
+	d_buffer |= newval;
+	shiftval  -=8;
+      }
 
-  d_bitsleft = 64-8 -shiftval;
+    d_bitsleft = 64-8 -shiftval;
 #endif
 #endif
+  }
+
 }

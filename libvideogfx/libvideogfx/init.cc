@@ -4,12 +4,14 @@
 
 #include "init.hh"
 
+namespace videogfx {
 
-char** glob_argv;
-int    glob_argc;
+  char** glob_argv;
+  int    glob_argc;
 
-void InitLibVideoGfx(int argc,char** argv)
-{
-  glob_argc = argc;
-  glob_argv = argv;
+  void InitLibVideoGfx(int argc,char** argv)
+  {
+    glob_argc = argc;
+    glob_argv = argv;
+  }
 }

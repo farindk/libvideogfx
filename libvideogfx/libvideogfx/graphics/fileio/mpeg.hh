@@ -24,32 +24,35 @@
 #include <stdio.h>
 #include <libvideogfx/graphics/datatypes/image.hh>
 
+namespace videogfx {
 
-class FileReader_MPEG
-{
-public:
-   FileReader_MPEG();
-  ~FileReader_MPEG();
+  class FileReader_MPEG
+  {
+  public:
+    FileReader_MPEG();
+    ~FileReader_MPEG();
 
-  // initialization
+    // initialization
 
-  void Open(const char* filename);
+    void Open(const char* filename);
 
-  // usage
+    // usage
 
-  bool IsEOF() const;
-  void SkipToImage(int nr);
-  bool ReadImage(Image<Pixel>&);
+    bool IsEOF() const;
+    void SkipToImage(int nr);
+    bool ReadImage(Image<Pixel>&);
 
-private:
-  FILE* d_fh;
+  private:
+    FILE* d_fh;
 
-  int  d_next_framenr;  // number of next frame to be returned by ReadImage()
+    int  d_next_framenr;  // number of next frame to be returned by ReadImage()
 
-  mutable bool d_image_cache_full;
-  mutable Image<Pixel> d_next_image_cache;
+    mutable bool d_image_cache_full;
+    mutable Image<Pixel> d_next_image_cache;
 
-  bool Preload(Image<Pixel>& dest) const;
-};
+    bool Preload(Image<Pixel>& dest) const;
+  };
+
+}
 
 #endif

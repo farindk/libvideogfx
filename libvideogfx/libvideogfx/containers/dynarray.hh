@@ -40,117 +40,121 @@
 
 #include "libvideogfx/types.hh"
 
-template <class T> class DynArray
-{
-public:
-  DynArray(int initial_size=100);
-  DynArray(const DynArray<T>&);
-  ~DynArray();
+namespace videogfx {
 
-  void Append(const T& t);
+  template <class T> class DynArray
+  {
+  public:
+    DynArray(int initial_size=100);
+    DynArray(const DynArray<T>&);
+    ~DynArray();
 
-  /* Append a new, empty element and return a reference to it. */
-  T&   AppendNewEntry() { T t; Append(t); return d_array[d_nentries-1]; }
+    void Append(const T& t);
 
-  /* Insert the element at the specified position. */
-  void Insert(int pos,const T& t);
-  T    RemoveEntry(int n);
-  int  Size() const { return d_nentries; }
+    /* Append a new, empty element and return a reference to it. */
+    T&   AppendNewEntry() { T t; Append(t); return d_array[d_nentries-1]; }
 
-        T& operator[](int n)       { return d_array[n]; }
-  const T& operator[](int n) const { return d_array[n]; }
+    /* Insert the element at the specified position. */
+    void Insert(int pos,const T& t);
+    T    RemoveEntry(int n);
+    int  Size() const { return d_nentries; }
 
-  const DynArray<T> operator=(const DynArray<T>&);
+    T& operator[](int n)       { return d_array[n]; }
+    const T& operator[](int n) const { return d_array[n]; }
 
-private:
-  T*   d_array;
-  int  d_nentries;
-  int  d_size;
+    const DynArray<T> operator=(const DynArray<T>&);
 
-  void EnlargeIfFull();
-};
+  private:
+    T*   d_array;
+    int  d_nentries;
+    int  d_size;
 
-
-template <class T> DynArray<T>::DynArray(int initial_size)
-{
-  d_array = new T[initial_size];
-  d_nentries=0;
-  d_size=initial_size;
-}
-
-template <class T> DynArray<T>::DynArray(const DynArray<T>& t)
-{
-  d_array = new T[t.d_size];
-  d_size = t.d_size;
-  for (int i=0;i<t.d_nentries;i++)
-    d_array[i] = t.d_array[i];
-  d_nentries=t.d_nentries;
-}
-
-template <class T> DynArray<T>::~DynArray()
-{
-  delete[] d_array;
-}
-
-template <class T> void DynArray<T>::Append(const T& t)
-{
-  EnlargeIfFull();
-
-  d_array[d_nentries] = t;
-  d_nentries++;
-}
-
-template <class T> void DynArray<T>::Insert(int pos,const T& t)
-{
-  EnlargeIfFull();
-
-  for (int i=d_nentries;i>pos;i--)
-    d_array[i]=d_array[i-1];
-
-  d_array[pos] = t;
-  d_nentries++;
-}
-
-template <class T> void DynArray<T>::EnlargeIfFull()
-{
-  if (d_nentries==d_size)
-    {
-      T* newlist = new T[d_size*2];
-      for (int i=0;i<d_size;i++)
-	newlist[i] = d_array[i];
-
-      delete[] d_array;
-
-      d_array = newlist;
-      d_size *= 2;
-    }
-}
+    void EnlargeIfFull();
+  };
 
 
-template <class T> T DynArray<T>::RemoveEntry(int n)
-{
-  T e = d_array[n];
+  template <class T> DynArray<T>::DynArray(int initial_size)
+  {
+    d_array = new T[initial_size];
+    d_nentries=0;
+    d_size=initial_size;
+  }
 
-  d_nentries--;
-  for (int i=n;i<d_nentries;i++)
-    d_array[i]=d_array[i+1];
+  template <class T> DynArray<T>::DynArray(const DynArray<T>& t)
+  {
+    d_array = new T[t.d_size];
+    d_size = t.d_size;
+    for (int i=0;i<t.d_nentries;i++)
+      d_array[i] = t.d_array[i];
+    d_nentries=t.d_nentries;
+  }
 
-  return e;
-}
+  template <class T> DynArray<T>::~DynArray()
+  {
+    delete[] d_array;
+  }
 
-template <class T> const DynArray<T> DynArray<T>::operator=(const DynArray<T>& t)
-{
-  if (&t==this)
+  template <class T> void DynArray<T>::Append(const T& t)
+  {
+    EnlargeIfFull();
+
+    d_array[d_nentries] = t;
+    d_nentries++;
+  }
+
+  template <class T> void DynArray<T>::Insert(int pos,const T& t)
+  {
+    EnlargeIfFull();
+
+    for (int i=d_nentries;i>pos;i--)
+      d_array[i]=d_array[i-1];
+
+    d_array[pos] = t;
+    d_nentries++;
+  }
+
+  template <class T> void DynArray<T>::EnlargeIfFull()
+  {
+    if (d_nentries==d_size)
+      {
+	T* newlist = new T[d_size*2];
+	for (int i=0;i<d_size;i++)
+	  newlist[i] = d_array[i];
+
+	delete[] d_array;
+
+	d_array = newlist;
+	d_size *= 2;
+      }
+  }
+
+
+  template <class T> T DynArray<T>::RemoveEntry(int n)
+  {
+    T e = d_array[n];
+
+    d_nentries--;
+    for (int i=n;i<d_nentries;i++)
+      d_array[i]=d_array[i+1];
+
+    return e;
+  }
+
+  template <class T> const DynArray<T> DynArray<T>::operator=(const DynArray<T>& t)
+  {
+    if (&t==this)
+      return *this;
+
+    delete[] d_array;
+    d_array = new T[t.d_size];
+    d_size = t.d_size;
+    for (int i=0;i<t.d_nentries;i++)
+      d_array[i] = t.d_array[i];
+    d_nentries=t.d_nentries;
+
     return *this;
+  }
 
-  delete[] d_array;
-  d_array = new T[t.d_size];
-  d_size = t.d_size;
-  for (int i=0;i<t.d_nentries;i++)
-    d_array[i] = t.d_array[i];
-  d_nentries=t.d_nentries;
-
-  return *this;
 }
 
 #endif

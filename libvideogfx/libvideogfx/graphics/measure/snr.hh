@@ -19,20 +19,24 @@
 
 #include <libvideogfx/graphics/datatypes/image.hh>
 
-double CalcMSE(const Bitmap<Pixel>& img1,
-	       const Bitmap<Pixel>& img2,
-	       int x0= 0,int y0=0,      // rectangle to consider for the calculation
-	       int x1=-1,int y1=-1);
+namespace videogfx {
 
-double CalcSNR(const Bitmap<Pixel>& img1,
-	       const Bitmap<Pixel>& img2,
-	       int x0= 0,int y0=0,      // rectangle to consider for the calculation
-	       int x1=-1,int y1=-1);
+  double CalcMSE(const Bitmap<Pixel>& img1,
+		 const Bitmap<Pixel>& img2,
+		 int x0= 0,int y0=0,      // rectangle to consider for the calculation
+		 int x1=-1,int y1=-1);
 
-double CalcPSNR(const Bitmap<Pixel>& img1,
-		const Bitmap<Pixel>& img2,
-		int x0= 0,int y0=0,     // rectangle to consider for the calculation
-		int x1=-1,int y1=-1);
+  double CalcSNR(const Bitmap<Pixel>& img1,
+		 const Bitmap<Pixel>& img2,
+		 int x0= 0,int y0=0,      // rectangle to consider for the calculation
+		 int x1=-1,int y1=-1);
+
+  double CalcPSNR(const Bitmap<Pixel>& img1,
+		  const Bitmap<Pixel>& img2,
+		  int x0= 0,int y0=0,     // rectangle to consider for the calculation
+		  int x1=-1,int y1=-1);
+
+}
 
 
 #endif

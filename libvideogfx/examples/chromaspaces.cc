@@ -4,6 +4,7 @@
 #include "libvideogfx/graphics/color/colorspace.hh"
 #include "libvideogfx/graphics/draw/draw.hh"
 #include <unistd.h>
+using namespace videogfx;
 
 
 void FillGradient(Bitmap<Pixel>& bmx,Bitmap<Pixel>& bmy)

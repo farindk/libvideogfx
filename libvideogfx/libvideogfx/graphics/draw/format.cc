@@ -1,6 +1,8 @@
 
 #include "libvideogfx/graphics/draw/format.hh"
 
+namespace videogfx {
+
 void PixelDifferenceToPixel(Bitmap<Pixel>& dst,const Bitmap<int16>& src)
 {
   int w=src.AskWidth();
@@ -16,3 +18,4 @@ void PixelDifferenceToPixel(Bitmap<Pixel>& dst,const Bitmap<int16>& src)
       bp[y][x] = (Pixel)(ap[y][x]/2+128);
 }
 
+}

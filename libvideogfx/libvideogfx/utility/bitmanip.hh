@@ -20,6 +20,9 @@
 
 #include "libvideogfx/types.hh"
 
-void CalcBitsShift(uint32 mask,int& bits,int& shift);   /* mask=000011111000 -> bits=5; shift=3 */
+namespace videogfx {
+
+  void CalcBitsShift(uint32 mask,int& bits,int& shift);   /* mask=000011111000 -> bits=5; shift=3 */
+}
 
 #endif

@@ -30,73 +30,76 @@
 #include <libvideogfx/graphics/datatypes/image.hh>
 #include <libvideogfx/graphics/color/img2raw.hh>
 
+namespace videogfx {
 
-/* Wrapper class for creating one X11 window with the highest color depth possible.
- */
-class ImageWindow_X11
-{
-public:
-  ImageWindow_X11();
-  ~ImageWindow_X11(); // Window will be closed in destructor.
+  /* Wrapper class for creating one X11 window with the highest color depth possible.
+   */
+  class ImageWindow_X11
+  {
+  public:
+    ImageWindow_X11();
+    ~ImageWindow_X11(); // Window will be closed in destructor.
 
-  void SetPosition(int x,int y) { d_xpos=x; d_ypos=y; }
+    void SetPosition(int x,int y) { d_xpos=x; d_ypos=y; }
 
-  void Create(int w,int h,const char* title,X11Server* server=NULL,Window parent=0);
-  void Close();
+    void Create(int w,int h,const char* title,X11Server* server=NULL,Window parent=0);
+    void Close();
 
-  Window   AskWindow();
-  Display* AskDisplay();
+    Window   AskWindow();
+    Display* AskDisplay();
 
-private:
-  bool        d_initialized;
+  private:
+    bool        d_initialized;
 
-  struct X11SpecificData* d_x11data; // This hides X11 datatypes from global namespace.
-  X11ServerConnection* d_server;
+    struct X11SpecificData* d_x11data; // This hides X11 datatypes from global namespace.
+    X11ServerConnection* d_server;
 
-  int d_xpos,d_ypos;
-};
-
-
-/* Enhanced ImageWindow_X11-class that can accept an image and that watches
-   X11 events to automatically redraw itself.
-   To get fully automatic redrawing you have to create a new thread that
-   calls RedrawForever() which will never return.
-*/
-class ImageWindow_Autorefresh_X11 : public ImageWindow_X11
-{
-public:
-   ImageWindow_Autorefresh_X11(bool useXv=false);
-  ~ImageWindow_Autorefresh_X11();
-
-  void Create(int w,int h,const char* title,X11Server* server=NULL,Window parent=0);
-  void Close();
-
-  void Display(const Image<Pixel>&);  // Input image contents may be destroyed
+    int d_xpos,d_ypos;
+  };
 
 
-  // --- user interaction ---
+  /* Enhanced ImageWindow_X11-class that can accept an image and that watches
+     X11 events to automatically redraw itself.
+     To get fully automatic redrawing you have to create a new thread that
+     calls RedrawForever() which will never return.
+  */
+  class ImageWindow_Autorefresh_X11 : public ImageWindow_X11
+  {
+  public:
+    ImageWindow_Autorefresh_X11(bool useXv=false);
+    ~ImageWindow_Autorefresh_X11();
 
-  char CheckForKeypress();
-  char WaitForKeypress();    // Image will be refreshed while waiting for the keypress.
+    void Create(int w,int h,const char* title,X11Server* server=NULL,Window parent=0);
+    void Close();
 
-  void CheckForRedraw();
-  void RedrawForever();
+    void Display(const Image<Pixel>&);  // Input image contents may be destroyed
 
-private:
-  bool d_lastimg_was_RGB;
-  bool d_lastimg_was_YUV;
 
-  DisplayImage_X11* d_dispimg;      // the image to be displayed
-  Image2RawRGB*     d_rgbtransform; // the transformation for image representation convertion
+    // --- user interaction ---
 
-  void Redraw(XExposeEvent& ev);
+    char CheckForKeypress();
+    char WaitForKeypress();    // Image will be refreshed while waiting for the keypress.
 
-  friend int MultiWindowRefresh(ImageWindow_Autorefresh_X11*const*,int nWindows);
-};
+    void CheckForRedraw();
+    void RedrawForever();
 
-/* MultiWindowRefresh also checks for keypresses. The window index of the window,
-   in which the keypress has occured, is returned. Otherwise -1 is returned.
- */
-int MultiWindowRefresh(ImageWindow_Autorefresh_X11*const*,int nWindows);
+  private:
+    bool d_lastimg_was_RGB;
+    bool d_lastimg_was_YUV;
+
+    DisplayImage_X11* d_dispimg;      // the image to be displayed
+    Image2RawRGB*     d_rgbtransform; // the transformation for image representation convertion
+
+    void Redraw(XExposeEvent& ev);
+
+    friend int MultiWindowRefresh(ImageWindow_Autorefresh_X11*const*,int nWindows);
+  };
+
+  /* MultiWindowRefresh also checks for keypresses. The window index of the window,
+     in which the keypress has occured, is returned. Otherwise -1 is returned.
+  */
+  int MultiWindowRefresh(ImageWindow_Autorefresh_X11*const*,int nWindows);
+
+}
 
 #endif

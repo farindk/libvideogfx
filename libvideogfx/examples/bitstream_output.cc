@@ -2,6 +2,7 @@
 #include "libvideogfx/utility/bitstream/bitbuffer.hh"
 #include <iostream>
 using namespace std;
+using namespace videogfx;
 
 void ShowBuffer(const uint8* b,int len)
 {

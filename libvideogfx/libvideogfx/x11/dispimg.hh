@@ -37,28 +37,31 @@
 
 #include <X11/Xlib.h>
 
+namespace videogfx {
 
-class DisplayImage_X11
-{
-public:
-  DisplayImage_X11();
-  ~DisplayImage_X11();
+  class DisplayImage_X11
+  {
+  public:
+    DisplayImage_X11();
+    ~DisplayImage_X11();
 
-  void UseMITSHM(bool flag=true);
-  void UseXv(bool flag=true);
+    void UseMITSHM(bool flag=true);
+    void UseXv(bool flag=true);
 
-  void Create(int w,int h,Window win,X11Server* server=NULL);
+    void Create(int w,int h,Window win,X11Server* server=NULL);
 
-  bool UsesXv() const;
+    bool UsesXv() const;
 
-  XImage&  AskXImage();
-  void*    AskXvImage();  /* hack: returns pointer to XvImage. We have to do this the dirty way
-				  as we cannot be sure to have access to the Xv lib. */
+    XImage&  AskXImage();
+    void*    AskXvImage();  /* hack: returns pointer to XvImage. We have to do this the dirty way
+			       as we cannot be sure to have access to the Xv lib. */
 
-  void PutImage(int srcx0=0,int srcy0=0,int w=0,int h=0, int dstx0=0,int dsty0=0);
+    void PutImage(int srcx0=0,int srcy0=0,int w=0,int h=0, int dstx0=0,int dsty0=0);
 
-private:
-  struct DisplayImage_Data* d_data;
-};
+  private:
+    struct DisplayImage_Data* d_data;
+  };
+
+}
 
 #endif

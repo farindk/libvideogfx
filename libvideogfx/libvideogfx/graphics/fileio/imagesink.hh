@@ -21,43 +21,45 @@
 
 #include <fstream>
 #include <iostream>
-using namespace std;
 
 #include <libvideogfx/graphics/datatypes/image.hh>
 
+namespace videogfx {
 
-class ImageSink
-{
-public:
-  virtual ~ImageSink() { }
+  class ImageSink
+  {
+  public:
+    virtual ~ImageSink() { }
 
-  virtual void SendImage(const Image<Pixel>&) = 0;
-};
+    virtual void SendImage(const Image<Pixel>&) = 0;
+  };
 
 
 
-enum ImageFileFormat
+  enum ImageFileFormat
   {
     Format_JPEG, Format_PPM, Format_PGM // , Format_PlanarYUV420
   };
 
-class ImageSink_Save : public ImageSink
-{
-public:
-  ImageSink_Save(ImageFileFormat fmt = Format_JPEG);
-  ~ImageSink_Save();
+  class ImageSink_Save : public ImageSink
+  {
+  public:
+    ImageSink_Save(ImageFileFormat fmt = Format_JPEG);
+    ~ImageSink_Save();
 
-  void SetFileFormat(ImageFileFormat fmt) { d_format = fmt; }
-  void SetFilename(const char*,bool autosuffix=false);
-  void SetCurrentImageNr(int n) { d_curr_nr = n; }
+    void SetFileFormat(ImageFileFormat fmt) { d_format = fmt; }
+    void SetFilename(const char*,bool autosuffix=false);
+    void SetCurrentImageNr(int n) { d_curr_nr = n; }
 
-  void SendImage(const Image<Pixel>&);
+    void SendImage(const Image<Pixel>&);
 
-private:
-  ImageFileFormat d_format;
-  char* d_filename_template;
-  bool  d_autosuffix;
-  int   d_curr_nr;
-};
+  private:
+    ImageFileFormat d_format;
+    char* d_filename_template;
+    bool  d_autosuffix;
+    int   d_curr_nr;
+  };
+
+}
 
 #endif

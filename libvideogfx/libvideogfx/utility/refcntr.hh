@@ -19,19 +19,22 @@
 
 #include <assert.h>
 
+namespace videogfx {
 
-class ReferenceCntr
-{
-public:
-  ReferenceCntr() : d_refcnt(0) { }
-  virtual ~ReferenceCntr() { }
+  class ReferenceCntr
+  {
+  public:
+    ReferenceCntr() : d_refcnt(0) { }
+    virtual ~ReferenceCntr() { }
 
-  void IncrRef() { d_refcnt++; }
-  void DecrRef() { d_refcnt--; assert(d_refcnt>=0); }
-  int  RefCntr() const { return d_refcnt; }
+    void IncrRef() { d_refcnt++; }
+    void DecrRef() { d_refcnt--; assert(d_refcnt>=0); }
+    int  RefCntr() const { return d_refcnt; }
 
-private:
-  int d_refcnt;
-};
+  private:
+    int d_refcnt;
+  };
+
+}
 
 #endif

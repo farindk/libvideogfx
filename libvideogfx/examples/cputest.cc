@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <iostream>
 using namespace std;
+using namespace videogfx;
 
 
 main(int argc,char** argv)

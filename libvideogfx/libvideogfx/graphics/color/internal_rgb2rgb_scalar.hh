@@ -25,38 +25,41 @@
 
 #include <libvideogfx/graphics/color/img2raw.hh>
 
-/* Place RGB components in 32bit entities in arbitrary order.
-   For the special cases that can be handled by the classes i2r_xrgb and i2r_xbgr you
-   should use them as they are a bit faster.
- */
-class i2r_32bit : public Image2RawRGB_Transform
-{
-public:
-  virtual ~i2r_32bit() { }
-  virtual void Transform(const Image<Pixel>&,uint8* mem,int firstline,int lastline);
+namespace videogfx {
 
-  static bool s_CanConvert(const Image<Pixel>&,const RawRGBImageSpec&);
-  virtual bool CanConvert(const Image<Pixel>& i,const RawRGBImageSpec& s) { return s_CanConvert(i,s); }
+  /* Place RGB components in 32bit entities in arbitrary order.
+     For the special cases that can be handled by the classes i2r_xrgb and i2r_xbgr you
+     should use them as they are a bit faster.
+  */
+  class i2r_32bit : public Image2RawRGB_Transform
+  {
+  public:
+    virtual ~i2r_32bit() { }
+    virtual void Transform(const Image<Pixel>&,uint8* mem,int firstline,int lastline);
 
-  virtual const char* TransformationName() { return "scalar 32bit RGB"; }
-};
+    static bool s_CanConvert(const Image<Pixel>&,const RawRGBImageSpec&);
+    virtual bool CanConvert(const Image<Pixel>& i,const RawRGBImageSpec& s) { return s_CanConvert(i,s); }
+
+    virtual const char* TransformationName() { return "scalar 32bit RGB"; }
+  };
 
 
-/* Place RGB components in 16bit entities in arbitrary order.
-   For the special cases that can be handled by the classes i2r_xrgb and i2r_xbgr you
-   should use them as they are a bit faster.
- */
-class i2r_16bit : public Image2RawRGB_Transform
-{
-public:
-  virtual ~i2r_16bit() { }
-  virtual void Transform(const Image<Pixel>&,uint8* mem,int firstline,int lastline);
+  /* Place RGB components in 16bit entities in arbitrary order.
+     For the special cases that can be handled by the classes i2r_xrgb and i2r_xbgr you
+     should use them as they are a bit faster.
+  */
+  class i2r_16bit : public Image2RawRGB_Transform
+  {
+  public:
+    virtual ~i2r_16bit() { }
+    virtual void Transform(const Image<Pixel>&,uint8* mem,int firstline,int lastline);
 
-  static bool s_CanConvert(const Image<Pixel>&,const RawRGBImageSpec&);
-  virtual bool CanConvert(const Image<Pixel>& i,const RawRGBImageSpec& s) { return s_CanConvert(i,s); }
+    static bool s_CanConvert(const Image<Pixel>&,const RawRGBImageSpec&);
+    virtual bool CanConvert(const Image<Pixel>& i,const RawRGBImageSpec& s) { return s_CanConvert(i,s); }
 
-  virtual const char* TransformationName() { return "scalar 16bit RGB"; }
-};
+    virtual const char* TransformationName() { return "scalar 16bit RGB"; }
+  };
 
+}
 
 #endif

@@ -42,41 +42,43 @@
 
 #include "libvideogfx/types.hh"
 
+namespace videogfx {
 
-class HeapElement
-{
-public:
-  virtual ~HeapElement() { }
+  class HeapElement
+  {
+  public:
+    virtual ~HeapElement() { }
 
-  /* The value is used as the head ordering criterion. The smallest value
-     will be at the top of the head. */
-  virtual int AskValue() const = 0;
-};
+    /* The value is used as the head ordering criterion. The smallest value
+       will be at the top of the head. */
+    virtual int AskValue() const = 0;
+  };
 
 
-template <class T> class Heap
-{
-public:
-   Heap();
-  ~Heap();
+  template <class T> class Heap
+  {
+  public:
+    Heap();
+    ~Heap();
 
-  void Insert(const T&);
-  T&   AskTop() const { assert(d_entries>0); return d_heap[1]; }
-  void RemoveTop(); // Remove minimum element.
+    void Insert(const T&);
+    T&   AskTop() const { assert(d_entries>0); return d_heap[1]; }
+    void RemoveTop(); // Remove minimum element.
 
-  bool   IsEmpty() const { return d_entries==0; }
-  uint32 AskSize() const { return d_entries;    }
+    bool   IsEmpty() const { return d_entries==0; }
+    uint32 AskSize() const { return d_entries;    }
 
-private:
-  T*  d_heap;
-  int d_size; // Size of heap excluding the first (dummy) element
+  private:
+    T*  d_heap;
+    int d_size; // Size of heap excluding the first (dummy) element
 
-  int d_entries;
+    int d_entries;
 
-  void UpHeap(int i);
-  void DownHeap(int i);
-};
+    void UpHeap(int i);
+    void DownHeap(int i);
+  };
 
 #include "libvideogfx/containers/heap.icc"
+}
 
 #endif

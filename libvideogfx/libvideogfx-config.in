@@ -14,6 +14,7 @@ Options:
 	[--version]
 	[--libs]
 	[--cflags]
+	[--feature]
 Libraries:
 	libvideogfx
 EOF
@@ -60,6 +61,16 @@ while test $# -gt 0; do
       ;;
     libvideogfx)
       libvideogfx=yes
+      ;;
+    --feature=*)
+      case $optarg in
+        jpeg) echo @FEATURE_JPEG@
+        ;;
+        x11) echo @FEATURE_X11@
+        ;;
+        xv)  echo @FEATURE_XV@
+        ;;
+      esac
       ;;
     *)
       usage 1 1>&2

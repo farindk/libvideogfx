@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <algorithm>
 using namespace std;
+using namespace videogfx;
 
 
 void Show(const Bitmap<Pixel>& pm)
