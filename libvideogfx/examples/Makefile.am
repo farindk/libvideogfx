@@ -1,0 +1,103 @@
+## Makefile.am for libvideogfx/examples
+
+#
+# test programs, not to be installed
+#
+
+if HAVE_X11
+x11progs = x11test chromaspaces drawingtest
+else
+x11progs =
+endif
+
+if LINUX
+linuxprogs = v4ltest v4ledges
+else
+linuxprogs =
+endif
+
+noinst_PROGRAMS = test-libvideogfx bitstream_output cputest pixmaptest filtertest \
+	ppmflip chromatest \
+	$(linuxprogs) $(x11progs) # ppm2avi
+
+test_libvideogfx_DEPENDENCIES = ../libvideogfx/libvideogfx.la
+test_libvideogfx_CFLAGS = $(X_CFLAGS)
+test_libvideogfx_LDFLAGS = -g $(X_LDFLAGS)
+test_libvideogfx_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs)
+test_libvideogfx_SOURCES = test-libvideogfx.cc
+
+bitstream_output_DEPENDENCIES = ../libvideogfx/libvideogfx.la
+bitstream_output_CFLAGS = $(X_CFLAGS)
+bitstream_output_LDFLAGS = -g $(X_LDFLAGS)
+bitstream_output_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs)
+bitstream_output_SOURCES = bitstream_output.cc
+
+#ppm2avi_DEPENDENCIES = ../libvideogfx/libvideogfx.la
+#ppm2avi_CFLAGS = $(X_CFLAGS)
+#ppm2avi_LDFLAGS = -g $(X_LDFLAGS)
+#ppm2avi_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs)
+#ppm2avi_SOURCES = ppm2avi.cc
+
+cputest_DEPENDENCIES = ../libvideogfx/libvideogfx.la
+cputest_CFLAGS = $(X_CFLAGS)
+cputest_LDFLAGS = -g $(X_LDFLAGS)
+cputest_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs)
+cputest_SOURCES = cputest.cc
+
+pixmaptest_DEPENDENCIES = ../libvideogfx/libvideogfx.la
+pixmaptest_CFLAGS = $(X_CFLAGS)
+pixmaptest_LDFLAGS = -g $(X_LDFLAGS)
+pixmaptest_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs)
+pixmaptest_SOURCES = pixmaptest.cc
+
+filtertest_DEPENDENCIES = ../libvideogfx/libvideogfx.la
+filtertest_CFLAGS = $(X_CFLAGS)
+filtertest_LDFLAGS = -g $(X_LDFLAGS)
+filtertest_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs)
+filtertest_SOURCES = filtertest.cc
+
+ppmflip_DEPENDENCIES = ../libvideogfx/libvideogfx.la
+ppmflip_CFLAGS = $(X_CFLAGS)
+ppmflip_LDFLAGS = -g $(X_LDFLAGS)
+ppmflip_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs)
+ppmflip_SOURCES = ppmflip.cc
+
+chromatest_DEPENDENCIES = ../libvideogfx/libvideogfx.la
+chromatest_CFLAGS = $(X_CFLAGS)
+chromatest_LDFLAGS = -g $(X_LDFLAGS)
+chromatest_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs)
+chromatest_SOURCES = chromatest.cc
+
+if HAVE_X11
+x11test_DEPENDENCIES = ../libvideogfx/libvideogfx.la
+x11test_CFLAGS = $(X_CFLAGS)
+x11test_LDFLAGS = -g $(X_LDFLAGS)
+x11test_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs)
+x11test_SOURCES = x11test.cc
+
+chromaspaces_DEPENDENCIES = ../libvideogfx/libvideogfx.la
+chromaspaces_CFLAGS = $(X_CFLAGS)
+chromaspaces_LDFLAGS = -g $(X_LDFLAGS)
+chromaspaces_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs)
+chromaspaces_SOURCES = chromaspaces.cc
+
+drawingtest_DEPENDENCIES = ../libvideogfx/libvideogfx.la
+drawingtest_CFLAGS = $(X_CFLAGS)
+drawingtest_LDFLAGS = -g $(X_LDFLAGS)
+drawingtest_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs)
+drawingtest_SOURCES = drawingtest.cc
+endif
+
+if LINUX
+v4ltest_DEPENDENCIES = ../libvideogfx/libvideogfx.la
+v4ltest_CFLAGS = $(X_CFLAGS)
+v4ltest_LDFLAGS = -g $(X_LDFLAGS)
+v4ltest_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs)
+v4ltest_SOURCES = v4ltest.cc
+
+v4ledges_DEPENDENCIES = ../libvideogfx/libvideogfx.la
+v4ledges_CFLAGS = $(X_CFLAGS)
+v4ledges_LDFLAGS = -g $(X_LDFLAGS)
+v4ledges_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs)
+v4ledges_SOURCES = v4ledges.cc
+endif

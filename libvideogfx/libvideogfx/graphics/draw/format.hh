@@ -1,0 +1,52 @@
+#/*********************************************************************
+  libvideogfx/graphics/draw/format.hh
+
+  purpose:
+    Functions for extending borders, change format of bitmaps...
+
+  notes:
+
+  to do:
+
+  author(s):
+   - Dirk Farin, farin@ti.uni-mannheim.de
+     University Mannheim, Dept. Circuitry and Simulation
+     B 6,26 EG, room 0.10 / D-68131 Mannheim / Germany
+
+  modifications:
+    04/Jul/2000 - Dirk Farin - bitmap format conversion and helpers
+ *********************************************************************/
+
+#ifndef LIBVIDEOGFX_GRAPHICS_DRAW_BMFORMAT_HH
+#define LIBVIDEOGFX_GRAPHICS_DRAW_BMFORMAT_HH
+
+#include "libvideogfx/graphics/basic/bitmap.hh"
+#include "libvideogfx/graphics/basic/image.hh"
+
+
+// --------- bitmap type conversion ----------
+
+template <class A,class B> void ConvertBitmap(Bitmap<B>& dst,const Bitmap<A>& src);
+void PixelDifferenceToPixel(Bitmap<Pixel>& dst,const Bitmap<int16>& src);
+
+
+// -----------------------------------------------------------------------------------------
+// --------------------------------- implementation ----------------------------------------
+// -----------------------------------------------------------------------------------------
+
+template <class A,class B> void ConvertBitmap(Bitmap<B>& dst,const Bitmap<A>& src)
+{
+  int w=src.AskWidth();
+  int h=src.AskHeight();
+
+  dst.Create(w,h);
+
+  const A*const* ap = src.AskFrame();
+        B*const* bp = dst.AskFrame();
+
+  for (int y=0;y<h;y++)
+    for (int x=0;x<w;x++)
+      bp[y][x] = static_cast<B>(ap[y][x]);
+}
+
+#endif

@@ -1,0 +1,8 @@
+Makefile
+Makefile.in
+*.lo
+_libs
+.libs
+.deps
+libvideogfx-graphics-filters.la
+libvideogfx-graphics-filters-mmx.la

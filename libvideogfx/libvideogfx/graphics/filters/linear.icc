@@ -1,0 +1,51 @@
+/*
+ *  linear.icc
+ */
+
+
+
+template <class Pel> void ConvolveV(const Bitmap<Pel>& src,Bitmap<Pel>& dst,
+				    const Array<double>& filter,bool useborder)
+{
+  int top   = -filter.AskBase();
+  int bottom=  filter.AskSize()-top-1;
+
+  int border=0;
+  if (useborder) border=src.AskBorderWidth();
+
+  int ys = -border+top; if (ys<0) ys=0;
+  int ye = src.AskHeight()-1+border-bottom; if (ye>src.AskHeight()-1) ye=src.AskHeight()-1;
+
+  // cout << "V-Filtering from " << ys << " to " << ye << endl;
+
+  int w = src.AskWidth();
+  int borderw = src.AskBorderWidth();
+
+  dst.Create(w,ye-ys+1,1,1,borderw);
+
+  const double* f = filter.Data_const();
+
+  const Pel*const* sp = src.AskFrame_const();
+        Pel*const* dp = dst.AskFrame();
+
+  for (int y=ys;y<=ye;y++)
+    for (int x=-borderw;x<w+borderw;x++)
+      {
+	double sum=0.0;
+	for (int yy=-top;yy<=bottom;yy++)
+	  sum += f[yy]*sp[y+yy][x];
+    
+	dp[y-ys][x] = (Pel)sum;
+      }
+}
+
+
+template <class Pel> void ConvolveHV(const Bitmap<Pel>& src,Bitmap<Pel>& dst,
+				     const Array<double>& filter,bool useborder)
+{
+  Bitmap<Pel> tmpbm;
+  ConvolveH(src,tmpbm,filter,useborder);
+  ConvolveV(tmpbm,dst,filter,useborder);
+}
+
+

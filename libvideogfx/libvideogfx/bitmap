@@ -1,0 +1,46 @@
+
+
+
+class PixmapView
+{
+  Pel*const*  AskData() = 0;
+
+  PixmapSubView     CreateSubView(int x0,int y0,int w,int h);  // Bildausschnitt extrahieren
+  PixmapSubView     CreateSubView(bool top_field);  // Halbbild extrahieren
+  PixmapSubView     ShiftZero(int x0,int y0);  // Nullpunkt verschieben (?)
+
+protected:
+  Pixmap* p_parent;
+};
+
+
+class PixmapSubView : public PixmapView
+{
+  ~PixmapSubView();
+
+  const Pel*const*  AskData() = 0;
+};
+
+
+class Pixmap : public PixmapView
+{
+  const Pel*const*  AskData() = 0;
+
+  void Decouple();
+  void SetAlignment(...);  // nur an der Pixmap selber kann das Alignment geaendert werden.
+
+private:
+  int         d_subViews;
+  PixmapData* d_letter;
+};
+
+
+// -------------- von aussen nicht sichtbar -----------
+
+struct PixmapData
+{
+  int d_ref;
+  //int d_subviews;
+
+  Pel*const* d_data;
+};
