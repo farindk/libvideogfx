@@ -63,6 +63,17 @@ namespace videogfx {
 
     T& Ask(int y,int x)
     {
+      /* Memory layout:
+	 0123      0123
+	 .456 ---> 456.
+	 ..78      78..
+	 ...9      9...
+
+	 -> 0 1 2 3|4 5 6|7 8|9
+
+	 Number of dots to skip before row 'i': i*(i-1)/2
+      */
+
       if (x<y) return Ask(x,y);
       return d_array[y*d_size - y*(y-1)/2 + x];
     }
