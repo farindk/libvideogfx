@@ -104,6 +104,10 @@ namespace videogfx {
     operator T*()    { AssertDescr(counter,"smart pointer is NULL"); return pointer; }
     T& operator()()  { AssertDescr(counter,"smart pointer is NULL"); return *pointer; }
 
+    const T* operator->() const { AssertDescr(counter,"smart pointer is NULL"); return pointer; }
+    operator const T*()   const { AssertDescr(counter,"smart pointer is NULL"); return pointer; }
+    const T& operator()() const { AssertDescr(counter,"smart pointer is NULL"); return *pointer; }
+
     void Decouple()
     {
       if (counter)
