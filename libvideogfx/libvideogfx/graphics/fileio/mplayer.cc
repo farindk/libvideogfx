@@ -32,7 +32,7 @@ namespace videogfx
 	//chdir("/tmp");
 	//printf("----------------------------------- starting mplayer...\n");
 	char buf[1000];
-	sprintf(buf,"mplayer -fps 99999 -really-quiet -vo yuv4mpeg %s",filedescr);
+	sprintf(buf,"mplayer -fps 99999 -really-quiet -ao none -vo yuv4mpeg %s",filedescr);
 	//cout << buf << endl;
 	
 	system(buf);
