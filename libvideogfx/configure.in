@@ -110,16 +110,19 @@ esac
 
 
 dnl Check for LINUX specific code
+LINUX_COMMENT="//"
 AC_MSG_CHECKING([for Linux])
 case ${target_os} in
   *linux*) AC_MSG_RESULT([found, enabling Linux specific code])
 	   AC_DEFINE(LINUX)
 	   AM_CONDITIONAL(LINUX, true)
+           LINUX_COMMENT=""
 	   ;;
   *)       AC_MSG_RESULT(no)
 	   AM_CONDITIONAL(LINUX, false)
 	   ;;
 esac
+AC_SUBST(LINUX_COMMENT)
 
 
 dnl Check for X11
