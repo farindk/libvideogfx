@@ -59,7 +59,7 @@ while test $# -gt 0; do
       echo_libs=yes
       ;;
     libvideogfx)
-      libviedogfx=yes
+      libvideogfx=yes
       ;;
     *)
       usage 1 1>&2
