@@ -2,3 +2,5 @@
   growing ring buffer. This will reduce the time needed to
   shift the data to the front of the buffer after some data
   is removed.
+- open streams with (ios::binary | ios::out) so that it works
+  correctly on Win32 systems
