@@ -10,29 +10,47 @@ using namespace videogfx;
 
 int main()
 {
-  int16 sine[44100];
-
-  for (int i=0;i<44100;i++)
+  try
     {
-      sine[i] = (int)(20000*sin(2*M_PI*i*1000/44100));
-      //cout << i << " " << sine[i] << endl;
-    }
+      int16 sine [44100];
+      int16 sine2[44100];
 
-  AudioSink_LinuxSndCard snd;
-
-  for (int i=0;i<10;i++)
-    {
-      int total=44100;
-      while (total)
+      for (int i=0;i<44100;i++)
 	{
-	  int n=snd.SendSamples(&sine[44100-total],&sine[44100-total],total);
-	  if (n)
-	    {
-	      cout << total << " " << n << endl;
-	      total -= n;
-	    }
-	  usleep(100000);
+	  sine [i] = (int)(20000*sin(2*M_PI*i* 500/44100));
+	  sine2[i] = (int)(20000*sin(2*M_PI*i* 750/44100));
 	}
+
+      AudioSink_LinuxSndCard snd;
+      AudioParam param;
+      param.n_channels = 2;
+      param.rate = 44100;
+      snd.SetParam(param);
+      param = snd.AskParam();
+
+      int16 buf[2*44100];
+      for (int i=0;i<44100;i++)
+	{
+	  buf[2*i  ]=sine [i];
+	  buf[2*i+1]=sine2[i];
+	}
+
+      for (int i=0;i<5;i++)
+	{
+	  snd.SendSamples(buf,2*44100,0);
+	}
+
+      while (snd.PresentationDataPending())
+	{
+	  int64 next = snd.NextDataPresentationTime(0);
+	  usleep(next*1000);
+
+	  snd.PresentData(0);
+	}
+    }
+  catch (const Excpt_Base& e)
+    {
+      MessageDisplay::Show(e);
     }
 
   return 0;
