@@ -93,9 +93,9 @@ changequote([,])dnl
 ACLOCAL="$ACLOCAL $ACLOCAL_FLAGS"
 
 dnl Check for MMX
-AC_MSG_CHECKING([for MMX support])
+AC_MSG_CHECKING([for X86 architecture])
 case ${target_cpu} in
-  i?86) AC_MSG_RESULT([found, using MMX optimized code])
+  i?86) AC_MSG_RESULT([found, compiling MMX optimized code])
 	AC_DEFINE(ENABLE_MMX)
 	AC_DEFINE(CPU_x86)
 	AM_CONDITIONAL(ENABLE_MMX, true)
