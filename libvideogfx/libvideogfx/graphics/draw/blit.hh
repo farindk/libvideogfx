@@ -40,6 +40,21 @@ template <class Pel> void CopyToNew(Image<Pel>& dst,const Image<Pel>& src);
 /* Copy bitmap to destination. Destination bitmap must exist and will not
    be decoupled if it is shared. */
 template <class Pel> void Copy(Bitmap<Pel>& dst,const Bitmap<Pel>& src);
+template <class Pel> void Copy(Image<Pel>& dst,const Image<Pel>& src);
+
+/* Copy a region of one bitmap into another bitmap.
+ */
+template <class Pel> void Copy(Bitmap<Pel>& dst,       int dstx0,int dsty0,
+			       const Bitmap<Pel>& src, int srcx0,int srcy0, int w,int h);
+template <class Pel> void Copy(Image<Pel>& dst,       int dstx0,int dsty0,
+			       const Image<Pel>& src, int srcx0,int srcy0, int w,int h);
+
+/* Copy scaled version of region into another bitmap.
+ */
+template <class Pel> void CopyScaled(Bitmap<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
+				     const Bitmap<Pel>& src, int srcx0,int srcy0, int sw,int sh);
+template <class Pel> void CopyScaled(Image<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
+				     const Image<Pel>& src, int srcx0,int srcy0, int sw,int sh);
 
 /* Copy the image content at the border lines into the border area.
  */
@@ -95,6 +110,78 @@ template <class Pel> void Copy(Bitmap<Pel>& dst,const Bitmap<Pel>& src)
   for (int y=0;y<h;y++)
     memcpy(dp[y],sp[y],w*sizeof(Pel));
 }
+
+template <class Pel> void Copy(Image<Pel>& dst,const Image<Pel>& src)
+{
+  for (int i=0;i<4;i++)
+    Copy(dst.AskBitmap((BitmapChannel)i), src.AskBitmap((BitmapChannel)i));
+
+  dst.SetParam(src.AskParam());
+}
+
+template <class Pel> void Copy(Bitmap<Pel>& dst,       int dstx0,int dsty0,
+			       const Bitmap<Pel>& src, int srcx0,int srcy0, int w,int h)
+{
+  if (src.IsEmpty()) return;
+
+  const Pel*const* sp = src.AskFrame();
+  Pel*const* dp = dst.AskFrame();
+
+  for (int y=0;y<h;y++)
+    memcpy(&dp[y+dsty0][dstx0],&sp[srcy0+y][srcx0],w*sizeof(Pel));
+}
+
+template <class Pel> void Copy(Image<Pel>& dst,       int dstx0,int dsty0,
+			       const Image<Pel>& src, int srcx0,int srcy0, int w,int h)
+{
+  ImageParam param = src.AskParam();
+
+  for (int i=0;i<4;i++)
+    {
+      BitmapChannel b = (BitmapChannel)i;
+      Copy(dst.AskBitmap(b),  param.ChromaScaleH(b,dstx0),param.ChromaScaleV(b,dsty0),
+	   src.AskBitmap(b),  param.ChromaScaleH(b,srcx0),param.ChromaScaleV(b,srcy0),
+	   param.ChromaScaleH(b,w), param.ChromaScaleV(b,h));
+    }
+}
+
+template <class Pel> void CopyScaled(Bitmap<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
+				     const Bitmap<Pel>& src, int srcx0,int srcy0, int sw,int sh)
+{
+  if (src.IsEmpty()) return;
+
+  const Pel*const* sp = src.AskFrame();
+  Pel*const* dp = dst.AskFrame();
+
+  Assert(dst.AskWidth()  >= dstx0+dw);
+  Assert(dst.AskHeight() >= dsty0+dh);
+  Assert(src.AskWidth()  >= srcx0+sw);
+  Assert(src.AskHeight() >= srcy0+sh);
+
+  for (int y=0;y<dh;y++)
+    for (int x=0;x<dw;x++)
+      dp[dsty0+y][dstx0+x] = sp[srcy0+y*sh/dh][srcx0+x*sw/dw];
+}
+
+
+template <class Pel> void CopyScaled(Image<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
+				     const Image<Pel>& src, int srcx0,int srcy0, int sw,int sh)
+{
+  ImageParam param = src.AskParam();
+
+  for (int i=0;i<4;i++)
+    {
+      BitmapChannel b = (BitmapChannel)i;
+      CopyScaled(dst.AskBitmap(b),
+		 param.ChromaScaleH(b,dstx0),param.ChromaScaleV(b,dsty0),
+		 param.ChromaScaleH(b,dw), param.ChromaScaleV(b,dh),
+
+		 src.AskBitmap(b),
+		 param.ChromaScaleH(b,srcx0),param.ChromaScaleV(b,srcy0),
+		 param.ChromaScaleH(b,sw), param.ChromaScaleV(b,sh));
+    }
+}
+
 
 template <class Pel> void ExtrudeIntoBorder(Bitmap<Pel>& bm)
 {
