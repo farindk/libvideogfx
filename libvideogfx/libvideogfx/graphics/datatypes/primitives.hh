@@ -35,6 +35,8 @@
 #ifndef LIBVIDEOGFX_GRAPHICS_DATATYPES_PRIMITIVES_HH
 #define LIBVIDEOGFX_GRAPHICS_DATATYPES_PRIMITIVES_HH
 
+#include <math.h>
+
 namespace videogfx {
 
   template <class T> struct Point2D
@@ -52,7 +54,7 @@ namespace videogfx {
 
     T x,y;
 
-    T Length() const { return (T)sqrt((double)(x*x+y*y)); }
+    T Length() const { return (T)hypot((double)x,(double)y); }
   };
 
   template <class T> struct Rect2D
