@@ -116,7 +116,7 @@ namespace videogfx {
     int GetText(char*,int maxChars) const;
 
   private:
-    const static unsigned int c_MaxTextLen = 500;
+    static const unsigned int c_MaxTextLen = 500;
     char d_text[c_MaxTextLen+1];
   };
 
