@@ -115,23 +115,14 @@ namespace videogfx {
 
     if (src_colorspace==Colorspace_YUV)   // YUV -> *
       {
-	Image<Pixel> mysrc;  /* Input image for chroma conversion. If it is in YUV colorspace,
-				chroma conversion to Chroma_444 is applied. */
-
-	if (src.AskParam().chroma == Chroma_444)
-	  mysrc=src;
-	else
-	  ChangeChroma(mysrc,src, Chroma_444);
-
-
 	if (colorspace==Colorspace_RGB)
 	  {
-	    YUV2RGB(dst, mysrc);
+	    YUV2RGB(dst, src);
 	    did_convert=true;
 	  }
 	else if (colorspace==Colorspace_Greyscale)
 	  {
-	    YUV2Greyscale(dst, mysrc);
+	    YUV2Greyscale(dst, src);
 	    did_convert=true;
 	  }
       }
@@ -295,13 +286,13 @@ namespace videogfx {
       case Chroma_422:
 	for (int y=0;y<param.height;y++)
 	  for (int x=0;x<param.width;x++)
-	    YUV2RGB(rd[y][x],gd[y][x],bd[y][x], ys[y][x>>1],us[y][x>>1],vs[y][x>>1]);
+	    YUV2RGB(rd[y][x],gd[y][x],bd[y][x], ys[y][x],us[y][x>>1],vs[y][x>>1]);
 	break;
 
       case Chroma_420:
 	for (int y=0;y<param.height;y++)
 	  for (int x=0;x<param.width;x++)
-	    YUV2RGB(rd[y][x],gd[y][x],bd[y][x], ys[y>>1][x>>1],us[y>>1][x>>1],vs[y>>1][x>>1]);
+	    YUV2RGB(rd[y][x],gd[y][x],bd[y][x], ys[y][x],us[y>>1][x>>1],vs[y>>1][x>>1]);
 	break;
       }
   }
