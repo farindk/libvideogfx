@@ -11,7 +11,11 @@ x11progs =
 endif
 
 if LINUX
+if HAVE_X11
 linuxprogs = v4ltest v4ledges
+else
+linuxprogs =
+endif
 else
 linuxprogs =
 endif
