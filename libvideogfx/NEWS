@@ -1,4 +1,15 @@
 
+(version 1.0.3)
+
+- redesigned audio output interface
+- greyscale to 24 bit raw conversion
+- occasional crash because of EINTR at V4L calls eliminated
+- various bugfixes:
+  - solved incompatibility with ncurses library
+    because of namespace clash
+  - several errors in image drawing functions
+
+
 version 1.0.2
 
 - audio-sink for linux OSS drivers
