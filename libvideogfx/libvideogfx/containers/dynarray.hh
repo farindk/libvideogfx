@@ -201,7 +201,7 @@ namespace videogfx {
       return *this;
 
     delete[] d_array;
-    d_array = new T[t.d_nentires];
+    d_array = new T[t.d_nentries];
     d_size = t.d_nentries;
     for (int i=0;i<t.d_nentries;i++)
       d_array[i] = t.d_array[i];
