@@ -55,6 +55,7 @@ namespace videogfx {
 
       d_array = new T[ size*(size+1)/2 ];
       d_size  = size;
+      d_c = 2*d_size-1;
     }
 
     bool IsInitialized() const { return d_array != NULL; }
@@ -72,16 +73,22 @@ namespace videogfx {
 	 -> 0 1 2 3|4 5 6|7 8|9
 
 	 Number of dots to skip before row 'i': i*(i-1)/2
+
+	 Calculation of array index:
+	 Idx = y*d_size - y*(y-1)/2 + x
+	 .   = y*(c-y)/2 + x     with c = 2*d_size-1
+
+	 Last equation should be a bit faster since c is constant.
       */
 
       if (x<y) return Ask(x,y);
-      return d_array[y*d_size - y*(y-1)/2 + x];
+      return d_array[y*(d_c-y)/2 + x];
     }
 
     const T& Ask(int y,int x) const
     {
       if (x<y) return Ask(x,y);
-      return d_array[y*d_size - y*(y-1)/2 + x];
+      return d_array[y*(d_c-y)/2 + x];
     }
 
     const SymMatrix& operator=(const SymMatrix& a)
@@ -100,6 +107,7 @@ namespace videogfx {
   private:
     int  d_size;
     T*   d_array;
+    int  d_c;  // constant for faster array index computation
   };
 }
 
