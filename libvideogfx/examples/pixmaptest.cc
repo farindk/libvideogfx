@@ -38,12 +38,15 @@ int main(int argc,char** argv)
       Bitmap<Pixel> bot = pm.CreateFieldView(false);
       Bitmap<Pixel> sml = top.CreateSubView(2,1,5,2);
 
+      cout << "sub-view tests:\n";
+
       Show(pm);  cout << pm.AskBorder() << endl;
       Show(sub); cout << sub.AskBorder() << endl;
       Show(top); cout << top.AskBorder() << endl;
       Show(sml); cout << sml.AskBorder() << endl;
       Show(bot); cout << bot.AskBorder() << endl;
 
+      cout << "clone tests:\n";
 
       Bitmap<Pixel> copy = pm.Clone(5,16,16);
       Show(copy); cout << copy.AskBorder() << endl;

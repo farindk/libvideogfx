@@ -32,8 +32,8 @@ namespace videogfx {
     const Pixel*const* p1 = img1.AskFrame();
     const Pixel*const* p2 = img2.AskFrame();
 
-    if (x1<0) x1 = img1.AskLogicalWidth()-1;
-    if (y1<0) y1 = img1.AskLogicalHeight()-1;
+    if (x1<0) x1 = img1.AskWidth()-1;
+    if (y1<0) y1 = img1.AskHeight()-1;
 
     const int w = x1-x0+1;
     const int h = y1-y0+1;
@@ -59,8 +59,8 @@ namespace videogfx {
     const Pixel*const* p1 = img1.AskFrame();
     const Pixel*const* p2 = img2.AskFrame();
 
-    if (x1<0) x1 = img1.AskLogicalWidth()-1;
-    if (y1<0) y1 = img1.AskLogicalHeight()-1;
+    if (x1<0) x1 = img1.AskWidth()-1;
+    if (y1<0) y1 = img1.AskHeight()-1;
 
     const int w = x1-x0+1;
     const int h = y1-y0+1;

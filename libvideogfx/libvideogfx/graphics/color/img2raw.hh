@@ -67,7 +67,7 @@ namespace videogfx {
   };
 
 
-  /** RGB-output data format specification
+  /* RGB-output data format specification
    */
   struct RawRGBImageSpec : public RawImageOperator
   {
@@ -87,7 +87,7 @@ namespace videogfx {
   };
 
 
-  /** Image to raw-format converter class.
+  /* Image to raw-format converter class.
    */
   class Image2RawRGB
   {
