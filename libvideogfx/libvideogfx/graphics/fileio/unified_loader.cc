@@ -42,14 +42,24 @@ namespace videogfx {
   int UnifiedImageLoader::s_nplugins;
 
 
+  static char* ExtractNextMacroOption(const char* spec,char& nextc);
+  static void RemoveMacroOption(char* spec);
+
   static char* ExpandMacros(char* spec)
   {
+    cout << "----------- start (" << spec << ") -------------\n";
+
     char* result = NULL;
 
     while (*spec)
       {
-	char* option = ExtractNextOption(spec);
-	RemoveOption(spec);
+	char  nextc;
+	char* option = ExtractNextMacroOption(spec, nextc);
+	RemoveMacroOption(spec);
+
+	cerr << "macro-option: " << option << endl;
+	cerr << "remains: " << spec << endl;
+	cerr << "delimiter: " << (nextc ? nextc : '0') << endl;
 
 	if (option[0]=='=') // is a macro
 	  {
@@ -58,7 +68,10 @@ namespace videogfx {
 
 	    FILE* fh = fopen(buf,"r");
 	    if (!fh)
-	      return NULL;
+	      {
+		AssertDescr(0,"no macro definition file found in user home directory");
+		return NULL;
+	      }
 
 	    char* macro = option;
 	    char* line=NULL;
@@ -89,25 +102,50 @@ namespace videogfx {
 
 	    // recursive expansion
 
+	    cout << "expands to : " << option << endl;
+
 	    char* recurs = ExpandMacros(option);
+	    cout << "del\n";
 	    delete[] option;
+	    cout << "=\n";
 	    option = recurs;
 	  }
 
 
 	// Last or expanded option is now in "option". Append to "result"
 
-	if (result==0) result=option;
+	cout << "COMBINE ->\n";
+
+	cout << "result |" << (result ? result : "NULL") << endl;
+	cout << "option |" << option << endl;
+	cout << "spec   |" << spec << endl;
+	cout << "nextc  |" << nextc << endl;
+
+	if (!result)
+	  {
+	    result = new char[1+strlen(option)+1];
+	    if (*spec) { sprintf(result,"%s%c",option,nextc); cout << "opt1\n"; }
+	    else sprintf(result,"%s",option);
+	    delete[] option;
+	  }
 	else
 	  {
 	    char* newresult = new char[strlen(result)+1+strlen(option)+1];
-	    sprintf(newresult,"%s:%s",result,option);
+	    if (*spec) sprintf(newresult,"%s%s%c",result,option,nextc);
+	    else sprintf(newresult,"%s%s",result,option);
 	    delete[] option;
 	    delete[] result;
 	    result = newresult;
 	  }
+
+	cout << ">>>>>> |" << (result ? result : "NULL") << endl;
+
+	cout << "END COMBINE\n";
+
+	cout << "result: " << result << endl;
       }
 
+    cout << "----------- quit (" << result << ") -------------\n";
     return result;
   }
 
@@ -257,6 +295,27 @@ namespace videogfx {
     return opt;
   }
 
+  static char* ExtractNextMacroOption(const char* spec,char& nextc)
+  {
+    if (*spec != '=')
+      { nextc=':'; return ExtractNextOption(spec); }
+
+    const char* p = spec;
+
+    while (*p && *p!='/' && *p != ':') p++;
+    nextc = *p;
+    if (!*p) p=0;
+
+    if (!p) p=spec+strlen(spec);
+    int len = (p-spec);
+
+    char* opt = new char[len+1];
+    strncpy(opt,spec,len);
+    opt[len]=0;
+
+    return opt;
+  }
+
   int  ExtractNextNumber(const char* spec)
   {
     char* o = ExtractNextOption(spec);
@@ -300,6 +359,18 @@ namespace videogfx {
     int len = (p-spec);
 
     memmove(spec,spec+len+1,strlen(spec)-len+1);
+  }
+
+  static void RemoveMacroOption(char* spec)
+  {
+    if (*spec!='=')
+      { RemoveOption(spec); return; }
+
+    while (*spec != '/' && *spec && *spec !=':')
+      memmove(spec,spec+1,strlen(spec));
+
+    if (*spec == '/' || *spec == ':')
+      memmove(spec,spec+1,strlen(spec));
   }
 
   bool ExtractSize(char* spec,int& w,int& h)
