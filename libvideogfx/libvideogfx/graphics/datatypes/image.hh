@@ -79,11 +79,13 @@ namespace videogfx {
 
   struct ImageParam
   {
-    ImageParam() : width(0), height(0), halign(1), valign(1), border(0),
+    ImageParam() : width(0), height(0), halign(1), valign(1),
 		   colorspace(Colorspace_Invalid), has_alpha(false),
 		   chroma(Chroma_444), reduced_chroma_resolution(true),
 		   chroma_border(-1), chroma_halign(-1), chroma_valign(-1)
-    { }
+    {
+      border=0;
+    }
 
     int width,height;
     int halign,valign;
