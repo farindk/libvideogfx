@@ -1,7 +1,7 @@
 
 #include <math.h>
 #include <iostream>
-#include <libvideogfx.hh>
+#include "libvideogfx/libvideogfx.hh"
 #include <unistd.h>
 
 using namespace std;
@@ -14,7 +14,7 @@ int main()
 
   for (int i=0;i<44100;i++)
     {
-      sine[i] = 20000*sin(2*M_PI*i*1000/44100);
+      sine[i] = (int)(20000*sin(2*M_PI*i*1000/44100));
       //cout << i << " " << sine[i] << endl;
     }
 

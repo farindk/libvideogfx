@@ -32,6 +32,8 @@ libvideogfx_graphics_fileio_la_SOURCES = \
 	ppm.hh  \
 	yuv.cc	\
 	yuv.hh	\
+	yuv4mpeg.cc	\
+	yuv4mpeg.hh	\
 	yuv_vqeg.cc	\
 	yuv_vqeg.hh	\
 	imagesink.hh	\
@@ -50,6 +52,7 @@ libvideogfx_graphics_fileio_include_HEADERS = \
 	mpeg.hh	\
 	ppm.hh  \
 	yuv.hh	\
+	yuv4mpeg.hh	\
 	yuv_vqeg.hh	\
 	imagesink.hh	\
 	$(linux_headers)
