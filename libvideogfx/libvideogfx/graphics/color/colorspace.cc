@@ -83,6 +83,52 @@ namespace videogfx {
 
 
 
+  const Image<Pixel> ChangeColorspace_Inplace(const Image<Pixel>& src,
+					       Colorspace colorspace, ChromaFormat chroma)
+  {
+    if (src.AskParam().colorspace == colorspace)
+      {
+	if (colorspace == Colorspace_YUV)
+	  {
+	    if (chroma == src.AskParam().chroma)
+	      return src;
+	    else
+	      {
+		Image<Pixel> dst;
+		ChangeColorspace(dst,src,colorspace,chroma);
+		return dst;
+	      }
+	  }
+	else
+	  {
+	    return src;
+	  }
+      }
+    else
+      {
+	Image<Pixel> dst;
+	ChangeColorspace(dst,src,colorspace,chroma);
+	return dst;
+      }
+  }
+
+
+  const Bitmap<Pixel> AskYPlane(const Image<Pixel>& src)
+  {
+    if (src.AskParam().colorspace == Colorspace_Greyscale || 
+	src.AskParam().colorspace == Colorspace_YUV)
+      return src.AskBitmapY();
+    else
+      {
+	Image<Pixel> grey;
+	ChangeColorspace(grey,src, Colorspace_Greyscale);
+	return grey.AskBitmapY();
+      }
+  }
+
+
+
+
   void ChangeColorspace(Image<Pixel>& dst, const Image<Pixel>& src,
 			Colorspace colorspace, ChromaFormat chroma)
   {
