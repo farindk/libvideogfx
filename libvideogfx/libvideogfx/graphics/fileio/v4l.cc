@@ -30,6 +30,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <linux/videodev.h>
+#include <iostream>
 
 #include "libvideogfx/graphics/fileio/v4l.hh"
 
@@ -172,8 +173,6 @@ namespace videogfx {
 #ifndef ENABLE_MMX
 	for (int y=0;y<d_height;y++)
 	  {
-	    cout << "- " << y << endl;
-
 	    if (do_avg_422_to_420)
 	      {
 		for (int x=0;x<d_width;x++)
