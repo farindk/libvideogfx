@@ -18,6 +18,7 @@
     resize:w:h -- resize image
     crop:l:r:t:b -- crop away image borders
     quarter -- resize to quarter size (especially useful to deinterlace to CIF)
+    cache -- add a temporary disk-based image cache to allow searching
     rgb -- generate alternating R,G,B images
 
   author(s):
@@ -55,7 +56,7 @@ namespace videogfx {
   {
   public:
     LoaderPlugin() : prev(NULL) { }
-    virtual ~LoaderPlugin() { }
+    virtual ~LoaderPlugin() { if (prev) delete prev; }
 
     void SetPrevious(LoaderPlugin* previous);
 
@@ -88,8 +89,9 @@ namespace videogfx {
   class UnifiedImageLoader
   {
   public:
-    UnifiedImageLoader() : d_loader_pipeline(NULL), d_colorspace(Colorspace_Invalid), d_chroma(Chroma_Invalid) { }
-    ~UnifiedImageLoader() { }
+    UnifiedImageLoader() : d_loader_pipeline(NULL), d_colorspace(Colorspace_Invalid), d_chroma(Chroma_Invalid),
+			   d_framenr(0) { width=height=0; }
+    ~UnifiedImageLoader() { if (d_loader_pipeline) delete d_loader_pipeline; }
 
     bool SetInput(const char* input_specification);
     void SetTargetColorspace(Colorspace c = Colorspace_Invalid);   // invalid -> keep input colorspace
@@ -101,20 +103,30 @@ namespace videogfx {
     bool IsEOF() const;
 
     bool SkipToImage(int nr);
-    void ReadImage(Image<Pixel>&);
+    int  AskFrameNr() const { return d_framenr; }
 
+    void ReadImage(Image<Pixel>&);
+    void PeekImage(Image<Pixel>&);
+
+    int  AskWidth() const;
+    int  AskHeight() const;
 
     // plugin handling
 
     static void RegisterPlugin(const FileIOFactory*);
 
   private:
+    Image<Pixel> d_preload;
+    int          d_framenr;
+
     LoaderPlugin* d_loader_pipeline;
     Colorspace    d_colorspace;
     ChromaFormat  d_chroma;
 
     static const FileIOFactory* s_plugins[MAX_LOADER_PLUGINS];
     static int s_nplugins;
+
+    int width,height;
   };
 
 

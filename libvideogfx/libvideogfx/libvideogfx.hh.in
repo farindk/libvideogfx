@@ -54,6 +54,7 @@
 #include <libvideogfx/graphics/fileio/yuv_vqeg.hh>
 #include <libvideogfx/graphics/fileio/mplayer.hh>
 #include <libvideogfx/graphics/fileio/imagesink.hh>
+#include <libvideogfx/graphics/fileio/unified_loader.hh>
 #include <libvideogfx/graphics/filters/linear.hh>
 #include <libvideogfx/graphics/filters/binomial.hh>
 #include <libvideogfx/graphics/measure/snr.hh>

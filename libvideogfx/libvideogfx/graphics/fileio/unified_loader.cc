@@ -22,6 +22,7 @@
 #include "libvideogfx/graphics/fileio/png.hh"
 #include "libvideogfx/graphics/fileio/ppm.hh"
 #include "libvideogfx/graphics/fileio/uyvy.hh"
+#include "libvideogfx/graphics/fileio/yuv.hh"
 #include "libvideogfx/graphics/fileio/jpeg.hh"
 #include "libvideogfx/graphics/color/colorspace.hh"
 #include "libvideogfx/graphics/draw/draw.hh"
@@ -168,11 +169,28 @@ namespace videogfx {
 
   int  UnifiedImageLoader::AskNFrames() const { Assert(d_loader_pipeline); return d_loader_pipeline->AskNFrames(); }
   bool UnifiedImageLoader::IsEOF() const { Assert(d_loader_pipeline); return d_loader_pipeline->IsEOF(); }
-  bool UnifiedImageLoader::SkipToImage(int nr) { Assert(d_loader_pipeline); return d_loader_pipeline->SkipToImage(nr); }
+
+
+  bool UnifiedImageLoader::SkipToImage(int nr)
+  {
+    Assert(d_loader_pipeline);
+    d_framenr = nr;
+    return d_loader_pipeline->SkipToImage(nr);
+  }
+
 
   void UnifiedImageLoader::ReadImage(Image<Pixel>& img)
   {
     AssertDescr(d_loader_pipeline, "no loader specified");
+
+    d_framenr++;
+
+    if (!d_preload.IsEmpty())
+      {
+	img = d_preload;
+	d_preload.Release();
+	return;
+      }
 
     d_loader_pipeline->ReadImage(img);
 
@@ -180,12 +198,46 @@ namespace videogfx {
       {
 	Image<Pixel> tmp;
 	ChangeColorspace(tmp,img, d_colorspace, d_chroma);
-	cerr << "CONVERT\n";
 	img = tmp;
       }
   }
 
 
+  void UnifiedImageLoader::PeekImage(Image<Pixel>& img)
+  {
+    if (d_preload.IsEmpty())
+      ReadImage(d_preload);
+
+    img = d_preload;
+  }
+
+
+  int  UnifiedImageLoader::AskWidth() const
+  {
+    if (width) return width;
+
+    UnifiedImageLoader* ncthis = const_cast<UnifiedImageLoader*>(this);
+
+    if (d_preload.IsEmpty())
+      ncthis->ReadImage(ncthis->d_preload);
+
+    ncthis->width = d_preload.AskWidth();
+    return width;
+  }
+
+
+  int  UnifiedImageLoader::AskHeight() const
+  {
+    if (height) return height;
+
+    UnifiedImageLoader* ncthis = const_cast<UnifiedImageLoader*>(this);
+
+    if (d_preload.IsEmpty())
+      ncthis->ReadImage(ncthis->d_preload);
+
+    ncthis->height = d_preload.AskHeight();
+    return height;
+  }
 
 
 
@@ -366,6 +418,8 @@ namespace videogfx {
     {
       if (CheckSuffix(*spec, "vdr") ||
 	  CheckSuffix(*spec, "avi") ||
+	  CheckSuffix(*spec, "mpg") ||
+	  CheckSuffix(*spec, "mpeg") ||
 	  CheckSuffix(*spec, "wmf"))
 	{
 	  LoaderPlugin_MPlayer* pl = new LoaderPlugin_MPlayer;
@@ -479,6 +533,104 @@ namespace videogfx {
     const char* Name() const { return "loader: picture sequence"; }
 
   } singleton_sglpictures;
+
+
+
+  // ------------------------------------------------------------------------------
+
+
+
+  class LoaderPlugin_YUV1 : public LoaderPlugin
+  {
+  public:
+    LoaderPlugin_YUV1() { }
+
+    void SetYUVParams(const char* filename, const ImageParam& s)
+    {
+      istr.open(filename);
+      reader.SetYUVStream(istr);
+      reader.SetImageParam(s);
+      spec=s;
+    }
+
+    int  AskNFrames() const { return reader.AskNFrames(); }
+    bool IsEOF() const { return reader.IsEOF(); }
+    bool SkipToImage(int nr) { reader.SkipToImage(nr); return true; }
+    void ReadImage(Image<Pixel>& img) { reader.ReadImage(img); }
+
+  private:
+    ifstream istr;
+    FileReader_YUV1 reader;
+    ImageParam spec;
+  };
+
+
+  static void ScanForSize(const char* str, ImageParam& spec)
+  {
+    for (int s=0;str[s];s++)
+      {
+	int w=0,h=0;
+	int i=s;
+	for (;;)
+	  {
+	    if (isdigit(str[i])) { w=w*10 + str[i]-'0'; i++; }
+	    else break;
+	  }
+	if (w==0)
+	  continue;
+
+	if (str[i]=='x' || str[i]=='X')
+	  i++;
+	else
+	  continue;
+
+	for (;;)
+	  {
+	    if (isdigit(str[i])) { h=h*10 + str[i]-'0'; i++; }
+	    else break;
+	  }
+	if (h==0)
+	  continue;
+
+	spec.width = w;
+	spec.height = h;
+
+	//cerr << "found size: " << w << "x" << h << endl;
+	return;
+      }
+  }
+
+  class FileIOFactory_YUV1 : public FileIOFactory
+  {
+  public:
+    LoaderPlugin* ParseSpec(char** spec) const
+    {
+      LoaderPlugin_SglPictures::FileFormat f = LoaderPlugin_SglPictures::Format_Undefined;
+
+      if (CheckSuffix(*spec, "yuv"))
+	{
+	  LoaderPlugin_YUV1* pl = new LoaderPlugin_YUV1;
+	  char* name = ExtractNextOption(*spec);
+	  ImageParam param;
+	  param.colorspace=Colorspace_YUV;
+	  param.chroma=Chroma_420;
+	  param.width=352;
+	  param.height=288;
+	  ScanForSize(name,param);
+	  RemoveOption(*spec);
+
+	  pl->SetYUVParams(name,param);
+	  delete[] name;
+
+	  return pl;
+	}
+      else
+	return NULL;
+    }
+
+    const char* Name() const { return "loader: yuv file"; }
+
+  } singleton_yuv1;
 
 
 
@@ -643,6 +795,112 @@ namespace videogfx {
     const char* Name() const { return "filter: resize image"; }
 
   } singleton_resize;
+
+
+
+  // ------------------------------------------------------------------------------
+
+
+  class LoaderPlugin_SeekCache : public LoaderPlugin
+  {
+  public:
+    LoaderPlugin_SeekCache() : d_initialized(false) { }
+    ~LoaderPlugin_SeekCache() { unlink("cache.yuv"); }
+
+    int  AskNFrames() const
+    {
+      const_cast<LoaderPlugin_SeekCache*>(this)->Initialize();
+      return d_reader.AskNFrames();
+    }
+
+    bool IsEOF() const
+    {
+      const_cast<LoaderPlugin_SeekCache*>(this)->Initialize();
+      return d_reader.IsEOF();
+    }
+
+    bool SkipToImage(int nr)
+    {
+      Initialize();
+      d_reader.SkipToImage(nr);
+      return true;
+    }
+
+    void ReadImage(Image<Pixel>& img)
+    {
+      Initialize();
+      d_reader.ReadImage(img);
+    }
+
+  private:
+    void Initialize()
+    {
+      if (d_initialized)
+	return;
+
+      ImageParam spec;
+
+      {
+	// fill cache
+
+	ofstream ostr("cache.yuv");
+	d_writer.SetYUVStream(ostr);
+
+	Image<Pixel> img;
+
+	while (!prev->IsEOF())
+	  {
+	    prev->ReadImage(img);
+
+	    Image<Pixel> yuvimg;
+	    ChangeColorspace(yuvimg,img, Colorspace_YUV);
+	    d_writer.WriteImage(yuvimg);
+
+	    spec = yuvimg.AskParam();
+	  }
+
+	spec.colorspace= Colorspace_RGB;
+      }
+
+      // prepare reader
+
+      d_istr.open("cache.yuv");
+      d_reader.SetYUVStream(d_istr);
+      d_reader.SetImageParam(spec);
+
+      d_initialized=true;
+    }
+
+    bool d_initialized;
+
+    ImageParam d_spec;
+
+    ifstream d_istr;
+    FileReader_YUV1 d_reader;
+    FileWriter_YUV1 d_writer;
+  };
+
+
+  class FileIOFactory_SeekCache : public FileIOFactory
+  {
+  public:
+    LoaderPlugin* ParseSpec(char** spec) const
+    {
+      if (MatchOption(*spec, "cache"))
+	{
+	  RemoveOption(*spec);
+	  LoaderPlugin_SeekCache* cache = new LoaderPlugin_SeekCache;
+	  //int f = ExtractNextNumber(*spec); RemoveOption(*spec);
+	  //decim->SetFactor(f);
+	  return cache;
+	}
+      else
+	return NULL;
+    }
+
+    const char* Name() const { return "seek cache"; }
+
+  } singleton_cache;
 
 
 

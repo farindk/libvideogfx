@@ -17,12 +17,17 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ********************************************************************************/
 
-#include <libvideogfx.hh>
+#include <libvideogfx/graphics/filters/binomial.hh>
+#include <libvideogfx/arch/cpu.hh>
 #include "config.h"
 
 #if ENABLE_MMX
 #  include "libvideogfx/arch/mmx.h"
 #endif
+
+
+#include <iostream>
+  using namespace std;
 
 
 /*
@@ -638,10 +643,8 @@ namespace videogfx {
     LowPass_Binomial_scalar (dest, img);
   }
 
-#include <iostream>
-  using namespace std;
-
-  void Compare(const Bitmap<short>& d1,const Bitmap<short>& d2)
+#if 0
+  static void Compare(const Bitmap<short>& d1,const Bitmap<short>& d2)
   {
     int w = d1.AskWidth();
     int h = d1.AskHeight();
@@ -655,6 +658,7 @@ namespace videogfx {
 		 << d2.AskFrame()[y][x] << endl;
 	  }
   }
+#endif
 
   void LowPass_Binomial (Bitmap<short>& dest, const Bitmap<short>& img)
   {

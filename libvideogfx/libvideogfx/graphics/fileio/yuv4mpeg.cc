@@ -38,10 +38,11 @@ namespace videogfx {
 
   void FileReader_YUV4MPEG::Init()
   {
-    Assert(d_yuvstr);
-
     if (d_initialized)
       return;
+
+    //cout << "init " << ((void*)this) << endl;
+    Assert(d_yuvstr);
 
 #if 0
     d_yuvstr->seekg(0,ios::end);
@@ -51,6 +52,8 @@ namespace videogfx {
 
     char buf[512];
     d_yuvstr->getline(buf,511);
+
+    //cerr << "READ: " << buf << endl;
 
     /* look for keyword in header */
     if (strncmp(buf, Y4M_MAGIC, strlen(Y4M_MAGIC)))
@@ -134,8 +137,16 @@ namespace videogfx {
 
 
 
+  void FileReader_YUV4MPEG::SetYUVStream  (std::istream& yuvstream)
+  {
+    //cout << "setyuvstream\n";
+    d_yuvstr = &yuvstream;
+    d_initialized=false;
+  }
+
   bool FileReader_YUV4MPEG::IsEOF() const
   {
+    //cout << "iseof\n";
     (const_cast<FileReader_YUV4MPEG*>(this))->Init();
 
     if (d_yuvstr->eof())
@@ -153,8 +164,12 @@ namespace videogfx {
 
   void FileReader_YUV4MPEG::SkipToImage(int nr)
   {
+    //cout << "skip to " << nr << " (" << d_nextFrame << ")\n";
+
     if (nr < d_nextFrame)
       {
+	//cout << "seek backwards\n";
+
 	d_yuvstr->seekg(0,ios::beg);
 	d_initialized=false;
 	Init();
@@ -168,16 +183,29 @@ namespace videogfx {
   }
 
 
+  ImageParam FileReader_YUV4MPEG::AskParam() const
+  {
+    //cout << "askparam\n";
+    (const_cast<FileReader_YUV4MPEG*>(this))->Init();
+    return d_spec;
+  }
+
 
   bool FileReader_YUV4MPEG::ReadImage(Image<Pixel>& img)
   {
+    //cout << "yuv4mpeg: readimage / nextframe=" << d_nextFrame << endl;
+
     if (!d_initialized)
-      Init();
+      {
+	Init();
+      }
 
     Assert(d_yuvstr);
 
     char buf[512];
     d_yuvstr->getline(buf,511);
+
+    //cout << "BUF: " << buf << endl;
 
     if (d_yuvstr->eof())
       return false;

@@ -50,14 +50,15 @@ namespace videogfx {
 
     // initialization
 
-    void SetYUVStream  (std::istream& yuvstream)   { d_yuvstr = &yuvstream; d_initialized=false; }
+    void SetYUVStream  (std::istream& yuvstream);
+    void Reset() { d_initialized=false; d_yuvstr=NULL; }
 
     // usage
 
     bool IsEOF() const;
 
     void SkipToImage(int nr);
-    ImageParam AskParam() { Init(); return d_spec; }
+    ImageParam AskParam() const;
 
     bool ReadImage(Image<Pixel>&);  // returns false if no more images in the file/stream
 

@@ -26,6 +26,8 @@ int main(int argc,char** argv)
       int idx=1;
       while (!reader.IsEOF())
 	{
+	  //sleep(1);
+	  reader.SkipToImage(idx);
 	  reader.ReadImage(img);
 	  win.Display(img);
 

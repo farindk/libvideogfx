@@ -28,13 +28,15 @@
 
 #include "libvideogfx/graphics/fileio/yuv4mpeg.hh"
 #include <fstream>
+#include <sys/types.h>
+#include <signal.h>
 
 namespace videogfx
 {
   class FileReader_MPlayer
   {
   public:
-    FileReader_MPlayer() { }
+    FileReader_MPlayer() : mplayer_pid(0), framenr(0), d_filedescr(NULL) { }
     ~FileReader_MPlayer();
 
     void Open(const char* filedescr);
@@ -48,9 +50,16 @@ namespace videogfx
     int AskHeight() const { return h; }
 
   private:
+    char* d_filedescr;
+
     std::ifstream d_istr;
     FileReader_YUV4MPEG d_reader;
     int w,h;
+
+    pid_t mplayer_pid;
+    int framenr;
+
+    Image<Pixel> d_preload;
   };
 }
 

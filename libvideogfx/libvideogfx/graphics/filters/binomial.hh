@@ -39,7 +39,7 @@
 #ifndef LIBVIDEOGFX_GRAPHICS_FILTERS_BINOMIAL_HH
 #define LIBVIDEOGFX_GRAPHICS_FILTERS_BINOMIAL_HH
 
-#include <libvideogfx/graphics/datatypes/image.hh>
+#include <libvideogfx/graphics/datatypes/bitmap.hh>
 
 namespace videogfx {
 
