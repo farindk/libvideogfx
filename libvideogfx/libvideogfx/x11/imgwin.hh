@@ -94,6 +94,8 @@ namespace videogfx {
 
     // --- user interaction ---
 
+    bool CheckForMouseMove(int& x,int& y);
+
     char CheckForKeypress();
     char WaitForKeypress();    // Image will be refreshed while waiting for the keypress.
 

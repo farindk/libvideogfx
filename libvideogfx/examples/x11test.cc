@@ -2,7 +2,10 @@
 
 #include "libvideogfx/x11/imgwin.hh"
 #include "libvideogfx/x11/draw_x11.hh"
+#include <iostream>
+
 using namespace videogfx;
+using namespace std;
 
 #include <unistd.h>
 
@@ -39,6 +42,21 @@ int main(int argc,char** argv)
 
   win.Create(256,256,"test");
   win.Display(img);
+
+  for (;;)
+    {
+      int x,y;
+      if (win.CheckForMouseMove(x,y))
+	{
+	  cout << "mouse: " << x << ";" << y << endl;
+	}
+
+      char c;
+      if (c=win.CheckForKeypress())
+	{
+	  cout << "key: '" << c << "' " << endl;
+	}
+    }
 
   sleep(10);
 

@@ -213,7 +213,7 @@ namespace videogfx {
     XSetWMProperties(d_x11data->d_display, d_x11data->d_win, &windowName, &iconName,
 		     glob_argv,glob_argc, sizeh, wm_hints, classhint);
   
-    XSelectInput(d_x11data->d_display, d_x11data->d_win, ExposureMask|KeyPressMask);
+    XSelectInput(d_x11data->d_display, d_x11data->d_win, ExposureMask|KeyPressMask|PointerMotionMask);
     XMapWindow(d_x11data->d_display,d_x11data->d_win);
     XFlush(d_x11data->d_display);
 
@@ -343,6 +343,20 @@ namespace videogfx {
 	XWindowEvent(AskDisplay(),AskWindow(),ExposureMask,&event);
 	Redraw(event.xexpose);
       }
+  }
+
+
+  bool ImageWindow_Autorefresh_X11::CheckForMouseMove(int& x,int& y)
+  {
+    XEvent event;
+    if (XCheckWindowEvent(AskDisplay(),AskWindow(),PointerMotionMask,&event))
+      {
+	x = event.xmotion.x;
+	y = event.xmotion.y;
+	return true;
+      }
+    else
+      return false;
   }
 
 

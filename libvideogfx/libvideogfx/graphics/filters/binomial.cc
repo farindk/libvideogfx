@@ -643,7 +643,7 @@ namespace videogfx {
     LowPass_Binomial_scalar (dest, img);
   }
 
-#if 0
+#if 1
   static void Compare(const Bitmap<short>& d1,const Bitmap<short>& d2)
   {
     int w = d1.AskWidth();
@@ -671,7 +671,7 @@ namespace videogfx {
     Compare(dm,ds);
 #endif
 
-#if 0 //ENABLE_MMX
+#if ENABLE_MMX
     if (cpu->HasMMX())
       {
 	LowPass_Binomial_MMX (dest, img);
