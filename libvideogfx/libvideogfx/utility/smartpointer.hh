@@ -89,7 +89,10 @@ namespace videogfx {
 
     SP<T>& operator=(T* p)
     {
-      *this = SP<T>(p);
+      if (p==NULL)
+	Decouple();
+      else
+	*this = SP<T>(p);
 
       return *this;
     }
