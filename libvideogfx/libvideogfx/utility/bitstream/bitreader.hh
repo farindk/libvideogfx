@@ -46,6 +46,7 @@
 #define LIBVIDEOGFX_UTILITY_BITSTREAM_BITREADER_HH
 
 #include "libvideogfx/types.hh"
+#include <assert.h>
 
 namespace videogfx {
 
