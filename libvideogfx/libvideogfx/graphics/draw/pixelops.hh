@@ -43,6 +43,7 @@ namespace videogfx {
   template <class T> void MakeAbsolute(Bitmap<T>&);
   template <class T> void Inverse(const Bitmap<T>&,T maxval);
   template <class T> void AddValues(Bitmap<T>& dest,const Bitmap<T>& a,const Bitmap<T>& b);
+  template <class T> void Add(Bitmap<T>& dest,T val);
   template <class T> void HalfPlusOffset(Bitmap<T>& bm,T offset); // p = p/2+offset
 
   /* dest = a-b */
@@ -78,6 +79,22 @@ namespace videogfx {
     for (int y=0;y<h;y++)
       for (int x=0;x<w;x++)
 	p[y][x] = maxval-p[y][x];
+  }
+
+  template <class T> void Add(Bitmap<T>& dest,T val)
+  {
+    const int w = dest.AskWidth();
+    const int h = dest.AskHeight();
+
+    dest.Create(w,h);
+
+    T*const* pd = dest.AskFrame(); // get this pointer first, in case pd==pa or pd==pb
+
+    for (int y=0;y<h;y++)
+      for (int x=0;x<w;x++)
+	{
+	  pd[y][x] += val;
+	}
   }
 
   template <class T> void AddValues(Bitmap<T>& dest,const Bitmap<T>& a,const Bitmap<T>& b)
