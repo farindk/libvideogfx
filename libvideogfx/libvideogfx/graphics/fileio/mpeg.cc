@@ -119,6 +119,7 @@ namespace videogfx {
     else
       {
 	bool image_read = Preload(img);
+	d_next_framenr++;
 
 	return image_read;
       }
