@@ -123,52 +123,35 @@ namespace videogfx {
     return p;
   }
 
-  void AudioSink_LinuxSndCard::SendSamples(const int16* samples,int len,int64 timestamp)
+  void AudioSink_LinuxSndCard::SendTimestamp(Timestamp timestamp)
   {
-    audio_buf_info info;
+    // put timestamp into queue
 
-    if (!d_initialized)
-      Initialize();
+    struct ptspos p;
+    p.pts = timestamp;
+    p.bytenr = (d_total_bytes_sent_to_dma + d_buffer.AskLength());
+    d_queue.Append(p);
+  }
 
-    if (!d_initialized)
-      return;
 
-    if (d_start_pts<0)
-      d_start_pts = timestamp;
-
-    d_last_pts = timestamp;
+  void AudioSink_LinuxSndCard::SendSamples(const int16* samples,int len)
+  {
+#if 0
+    Assert(d_initialized);
 
     if (d_sample_format != AFMT_S16_NE)
       {
 	AssertDescr(0,"non-native sample formats not supported yet");
       }
-
-
-    // put timestamp into queue
-
-    d_queue_pts.Append(timestamp);
-    d_queue_bytenr.Append(d_total_bytes_sent_to_dma + d_buffer.AskLength());
-
-    // PresentData(0);  // play data in buffer
-
-    int written=0;
-#if 0
-    if (d_has_started && d_buffer.AskLength()==0)
-      {
-	written = write(d_fd, (char*)samples, len*2)/2;
-      }
 #endif
 
-    if (written < len)
-      {
-	uint8* buf = d_buffer.GetPtrToAppendToBuffer((len-written)*2);
+    uint8* buf = d_buffer.GetPtrToAppendToBuffer(len*2);
 
-	for (int i=written;i<len;i++)
-	  {
-	    buf[1] = samples[i]>>8;
-	    buf[0] = samples[i]&0xFF;
-	    buf+= 2;
-	  }
+    for (int i=0;i<len;i++)
+      {
+	buf[1] = samples[i]>>8;
+	buf[0] = samples[i]&0xFF;
+	buf+= 2;
       }
   }
 
@@ -177,13 +160,9 @@ namespace videogfx {
   {
     d_buffer.Clear();
 
-    d_start_pts = -1;
-    d_last_pts = 0;
-    d_has_started = false;
-
     d_total_bytes_sent_to_dma = 0;
-    d_queue_pts.Clear();
-    d_queue_bytenr.Clear();
+
+    d_queue.Clear();
   }
 
   bool  AudioSink_LinuxSndCard::PresentationDataPending() const
@@ -191,29 +170,52 @@ namespace videogfx {
     return d_buffer.AskLength() > 0;
   }
 
-  int64 AudioSink_LinuxSndCard::NextDataPresentationTime()
+  Timestamp AudioSink_LinuxSndCard::NextDataPresentationTime() const
   {
-    if (d_initialized)
+    Assert(d_initialized);
+
+    if (d_queue.IsEmpty())
       {
-	if (d_queue_pts.IsEmpty())
-	  return d_last_pts;
+	// unknown timestamps
 
-	int64 nextpts = d_queue_pts.AskHead() + (d_total_bytes_sent_to_dma-d_queue_bytenr.AskHead())*1000 / d_bytes_per_sec;
-
-	return nextpts; // - 1000;
+	Timestamp ts;
+	ts.timestamp=0;
+	ts.timerID=-1;
+	return ts;
       }
-    else
-      return 0; //d_start_pts;
+
+    Timestamp nextpts;
+    nextpts = d_queue.AskHead().pts;
+    nextpts.timestamp += (d_total_bytes_sent_to_dma-d_queue.AskHead().bytenr)*1000 / d_bytes_per_sec;
+
+    nextpts.timestamp -= 100; // send data 1 second earlier to prevent short pauses in the audio
+
+    return nextpts;
   }
 
-  int64 AudioSink_LinuxSndCard::LastDataPresentationTime()
+  Timestamp AudioSink_LinuxSndCard::LastDataPresentationTime() const
   {
-    return d_last_pts;
+    Timestamp lastpts;
+    lastpts = d_queue.AskTail().pts;
+    lastpts.timestamp += (d_buffer.AskLength()+d_total_bytes_sent_to_dma - d_queue.AskTail().bytenr)*1000 / d_bytes_per_sec;
+
+    return lastpts;
   }
 
-  void  AudioSink_LinuxSndCard::PresentData(int64 now)
+  void  AudioSink_LinuxSndCard::PresentData(Timestamp now)
   {
-    d_has_started=true;
+    if (now.timestamp > NextDataPresentationTime().timestamp+500)
+      {
+	// We are late. Skip audio data to get on sync again.
+
+	int truncatelength = (now.timestamp - NextDataPresentationTime().timestamp)*d_bytes_per_sec/1000;
+	if (truncatelength>d_buffer.AskLength()) truncatelength = d_buffer.AskLength();
+	truncatelength &= ~3;
+
+	cout << "truncate: " << truncatelength << endl;
+	d_total_bytes_sent_to_dma += truncatelength;
+	d_buffer.TruncateBufferAtFront(truncatelength);
+      }
 
     if (d_buffer.AskLength()>0)
       {
@@ -226,38 +228,53 @@ namespace videogfx {
 	  {
 	    d_total_bytes_sent_to_dma += written;
 	    d_buffer.TruncateBufferAtFront(written);
-
-	    if (!d_queue_bytenr.IsEmpty() && d_total_bytes_sent_to_dma >= d_queue_bytenr.AskHead())
-	      {
-		d_queue_bytenr.RemoveHead();
-		d_queue_pts.RemoveHead();
-
-
-		// If there is more data in our user buffer, but no PTS, generate a dummy PTS.
-
-		if (d_queue_pts.IsEmpty())
-		  {
-		    d_queue_bytenr.Append(d_total_bytes_sent_to_dma);
-		    d_queue_pts.Append(d_start_pts + d_total_bytes_sent_to_dma*1000 / d_bytes_per_sec);
-		  }
-	      }
 	  }
+      }
+
+    while (!d_queue.IsEmpty() && d_total_bytes_sent_to_dma > d_queue.AskHead().bytenr)
+      {
+	// If there is more data in our user buffer, but no PTS, generate a dummy PTS.
+
+	if (d_queue.AskSize()==1)
+	  {
+	    struct ptspos p;
+	    p.bytenr = d_total_bytes_sent_to_dma + d_buffer.AskLength();
+	    p.pts    = LastDataPresentationTime();
+	    d_queue.Append(p);
+	  }
+
+	d_queue.RemoveHead();
       }
   }
 
-  int64 AudioSink_LinuxSndCard::GetCurrentTime() const
+  bool AudioSink_LinuxSndCard::EnoughSpaceForMoreData() const
   {
+    if (LastDataPresentationTime().timestamp - NextDataPresentationTime().timestamp > 5000)
+      return false;
+    else
+      return true;
+  }
+
+  Timestamp AudioSink_LinuxSndCard::GetCurrentTime() const
+  {
+    Timestamp ts;
+
     if (!d_initialized)
-      return 0;
+      {
+	ts.timerID = -1;
+	ts.timestamp = -1;
+	return ts;
+      }
 
     audio_buf_info info;
     if ( ioctl(d_fd, SNDCTL_DSP_GETOSPACE, &info) == -1 ) perror("SNDCTL_DSP_GETOSPACE");
 
     int bytes_in_buffer = info.fragstotal*info.fragsize - info.bytes;
 
-    int64 pts = d_start_pts + (d_total_bytes_sent_to_dma-bytes_in_buffer)*1000 / d_bytes_per_sec;
+    ts.timestamp = (d_total_bytes_sent_to_dma-bytes_in_buffer)*1000 / d_bytes_per_sec;
+    ts.timerID = 0;
 
-    return pts;
+    return ts;
   }
 
 }

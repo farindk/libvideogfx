@@ -53,7 +53,7 @@ namespace videogfx {
   };
 
 
-  class AudioSink : public TimedPresentationSink
+  class AudioSink
   {
   public:
     virtual ~AudioSink() { }
@@ -61,10 +61,23 @@ namespace videogfx {
     virtual void       SetParam(const AudioParam& p) { }
     virtual AudioParam AskParam() const { return AudioParam(); }
 
-    virtual void SendSamples(const int8*  samples,int len,int64 timestamp);
-    virtual void SendSamples(const int16* samples,int len,int64 timestamp);
-    virtual void SendSamples(const int32* samples,int len,int64 timestamp);
+    virtual void SendSamples(const int8*  samples,int len);
+    virtual void SendSamples(const int16* samples,int len);
+    virtual void SendSamples(const int32* samples,int len);
     virtual int  AskBufferingDelay() const { return 0; } // buffering delay in msecs
+  };
+
+
+  class TimedAudioSink : public AudioSink,
+			 public TimedPresentationSink
+  {
+  public:
+    /* The this method the insert timestamps between audio samples.
+       The specified timestamp relates to the first sample of the
+       next SendSamples() call.
+    */
+
+    virtual void SendTimestamp(Timestamp) { }
   };
 
 

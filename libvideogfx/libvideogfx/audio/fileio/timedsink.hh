@@ -41,26 +41,35 @@
 
 namespace videogfx {
 
+  struct Timestamp
+  {
+    int64 timestamp;
+    int   timerID;   /* ID of the reference timer this timestamp relates to.
+			This is application dependent.
+			A timerID<0 denotes an unknown timestamp. */
+  };
+
   class TimedPresentationSink
   {
   public:
     virtual ~TimedPresentationSink() { }
 
     // Begin new sequential output with new time-base.
-    virtual void  Reset() { }
+    //virtual void  Reset() { }
 
     // If "true", there is plenty of space for data to be buffered. This is only a hint!
     virtual bool  EnoughSpaceForMoreData() const { return true; }
 
-    // Wether object holds data which is not presented yet.
+    // Whether object holds data which is not presented yet.
     virtual bool  PresentationDataPending() const { return false; }
 
     // Absolute time when next available data should be presented.
-    virtual int64 NextDataPresentationTime() const { return 0; }
-    virtual int64 LastDataPresentationTime() const { return 0; }
+    virtual Timestamp NextDataPresentationTime() const = 0;
+    virtual Timestamp LastDataPresentationTime() const = 0;
 
-    // Present a data-unit which is already available in the object.
-    virtual void  PresentData(int64 now) { }
+    /* Present a data-unit which is already available in the object.
+       The reference timer has to be the same as that returned by NextDataPresentationTime(). */
+    virtual void  PresentData(Timestamp now) { }
 
     // Wether the sink presents the data at real-time. Savers are non-realtime for example.
     virtual bool  IsRealtimeSink() const { return false; }

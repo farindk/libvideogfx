@@ -32,7 +32,7 @@
 
 namespace videogfx {
 
-  class AudioSink_LinuxSndCard : public AudioSink
+  class AudioSink_LinuxSndCard : public TimedAudioSink
   {
   public:
     AudioSink_LinuxSndCard();
@@ -41,17 +41,20 @@ namespace videogfx {
     void       SetParam(const AudioParam& p);
     AudioParam AskParam() const;
 
-    void SendSamples(const int16* samples,int len,int64 timestamp);
+    void SendTimestamp(Timestamp timestamp);
+    void SendSamples(const int16* samples,int len);
 
 
     void  Reset();
     bool  PresentationDataPending() const;
-    int64 NextDataPresentationTime();
-    int64 LastDataPresentationTime();
-    void  PresentData(int64 now);
+    Timestamp NextDataPresentationTime() const;
+    Timestamp LastDataPresentationTime() const;
+    void  PresentData(Timestamp now);
     bool  IsRealtimeSink() const { return true; }
 
-    int64 GetCurrentTime() const;
+    bool  EnoughSpaceForMoreData() const;
+
+    Timestamp GetCurrentTime() const;   // the timerID is not specified
 
   private:
     void Initialize();
@@ -59,7 +62,6 @@ namespace videogfx {
     bool d_initialized;
     int  d_fd;
     int  d_blksize;
-    bool d_has_started;
 
     int  d_channels;
     int  d_rate;
@@ -68,12 +70,15 @@ namespace videogfx {
     int  d_bytes_per_sec;
 
     ByteBuffer d_buffer; // more data to be played
-    int64  d_start_pts;  // pts of very first sample
-    int64  d_last_pts;   // pts of very last sample so far
     int64  d_total_bytes_sent_to_dma;
 
-    Queue<int64> d_queue_pts;
-    Queue<int64> d_queue_bytenr;
+    struct ptspos
+    {
+      Timestamp pts;
+      int64     bytenr;
+    };
+
+    Queue<ptspos> d_queue;
   };
 
 }
