@@ -97,7 +97,7 @@ namespace videogfx {
 
   private:
     unsigned char* d_buf;
-    int d_len;  // Amount of data in the buffer.
+    unsigned int d_len;  // Amount of data in the buffer.
     int d_size; // Total size of allocated buffer memory.
     bool d_buf_from_pool;
 

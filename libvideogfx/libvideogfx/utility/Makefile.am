@@ -18,7 +18,8 @@ libvideogfx_utility_include_HEADERS = \
 	math.hh	\
 	bitmanip.hh	\
 	refcntr.hh	\
-	fastalloc.hh
+	fastalloc.hh	\
+	smartpointer.hh
 
 INCLUDES = \
 	-I$(top_srcdir)

@@ -62,7 +62,6 @@ namespace videogfx {
 
     const Pixel*const* pix_y  = img.AskFrameY();
 
-    const int h = param.height;
     const int w = param.width;
 
     uint8* dp;
@@ -153,7 +152,6 @@ namespace videogfx {
 
     const Pixel*const* pix_y  = img.AskFrameY();
 
-    const int h = param.height;
     const int w = param.width;
 
     uint8* dp;

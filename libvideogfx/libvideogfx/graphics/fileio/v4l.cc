@@ -46,9 +46,9 @@ namespace videogfx {
   V4L_Grabber::V4L_Grabber()
     : d_device(NULL),
       d_fd(-1),
-      d_avg_422_to_420(false),
       d_greyscale(false),
-      d_chroma(Chroma_420)
+      d_chroma(Chroma_420),
+      d_avg_422_to_420(false)
   {
     SetDevice("/dev/video0");
 

@@ -55,8 +55,8 @@ namespace videogfx {
 
   ImageWindow_X11::ImageWindow_X11()
     : d_initialized(false),
-      d_xpos(-1),d_ypos(-1),
-      d_server(NULL)
+      d_server(NULL),
+      d_xpos(-1),d_ypos(-1)
   {
     d_x11data = new X11SpecificData;
   }

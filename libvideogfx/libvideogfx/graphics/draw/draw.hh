@@ -42,6 +42,7 @@
 #define LIBVIDEOGFX_GRAPHICS_DRAW_DRAW_HH
 
 #include <math.h>
+#include <algorithm>
 
 #include <libvideogfx/graphics/datatypes/bitmap.hh>
 #include <libvideogfx/graphics/datatypes/image.hh>
@@ -211,7 +212,7 @@ namespace videogfx {
 
     if (abs(y1-y0)>abs(x1-x0))
       {
-	if (y1<y0) {  swap(x0,x1); swap(y0,y1); }
+	if (y1<y0) {  std::swap(x0,x1); std::swap(y0,y1); }
 
 	int xinc;
 	int dy = y1 - y0;
@@ -250,7 +251,7 @@ namespace videogfx {
       }
     else
       {
-	if (x1<x0) {  swap(x0,x1); swap(y0,y1); }
+	if (x1<x0) {  std::swap(x0,x1); std::swap(y0,y1); }
 
 	int yinc;
 	int dx = x1 - x0;
@@ -328,22 +329,8 @@ namespace videogfx {
   {
     T*const* p = bm.AskFrame();
 
-    static int xMax= bm.AskWidth();
-    static int yMax= bm.AskHeight();
-
-    int y0dy1=y0-dy;
-    int y0dy2=y0+dy;
-    int x0dx1=x0-dx;
-    int x0dx2=x0+dx;
-
-    int y0dx1=y0-dx;
-    int y0dx2=y0+dx;
-    int x0dy1=x0-dy;
-    int x0dy2=x0+dy;
-
-  
-    p[y0dy1][x0dx1]=color;
-    p[y0dy1][x0dx2]=color;
+    p[y0-dy][x0-dx]=color;
+    p[y0-dy][x0+dx]=color;
     p[y0+dy][x0-dx]=color;
     p[y0+dy][x0+dx]=color;
 
@@ -394,8 +381,6 @@ namespace videogfx {
 
   template <class T> static void CirclePoints_Fill(Bitmap<T>& bm,int x0,int y0,int dx,int dy, T color)
   {
-    T*const* p = bm.AskFrame();
-
     int y0dy1=y0-dy;
     int y0dy2=y0+dy;
     int x0dx1=x0-dx;

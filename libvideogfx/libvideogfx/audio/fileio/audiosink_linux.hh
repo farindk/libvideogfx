@@ -1,20 +1,7 @@
-/*********************************************************************
-  yuv_vqeg.hh
+/********************************************************************************
+  $Header$
 
-  purpose:
-    Read YUV-files in the format of the "Video Quality
-    Expert Group" (www.vqeg.org).
-
-  notes:
-
-  to do:
-    writer
-
-  author(s):
-   - Dirk Farin, dirk.farin@gmx.de
-
-  modifications:
-   12/Nov/2001 - Dirk Farin - first implementation
+    MPEG-2 audio decoder
  ********************************************************************************
     LibVideoGfx - video processing library
     Copyright (C) 2002  Dirk Farin
@@ -34,40 +21,25 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ********************************************************************************/
 
-#ifndef LIBVIDEOGFX_GRAPHICS_FILEIO_YUV_VQEG_HH
-#define LIBVIDEOGFX_GRAPHICS_FILEIO_YUV_VQEG_HH
+#ifndef LIBVIDEOGFX_AUDIO_FILEIO_AUDIOSINK_LINUX_HH
+#define LIBVIDEOGFX_AUDIO_FILEIO_AUDIOSINK_LINUX_HH
 
-#include <fstream>
-#include <iostream>
-
-#include <libvideogfx/graphics/datatypes/image.hh>
+#include <libvideogfx/audio/fileio/audiosink.hh>
+#include <libvideogfx/audio/fileio/timedsink.hh>
 
 namespace videogfx {
 
-  class FileReader_YUV_VQEG
+  class AudioSink_LinuxSndCard : public AudioSink
   {
   public:
-    FileReader_YUV_VQEG();
-    ~FileReader_YUV_VQEG() { }
+    AudioSink_LinuxSndCard();
+    ~AudioSink_LinuxSndCard();
 
-    // initialization
-
-    void SetYUVStream(std::istream& yuvstream)   { d_yuvstr = &yuvstream; }
-    void SelectResolution625(bool flag) { d_mode625=flag; }
-
-    // usage
-
-    int  AskNFrames() const { return d_mode625 ? 220 : 260; }
-    bool IsEOF() const { return d_nextframe>=AskNFrames(); }
-
-    void SkipToImage(int nr);
-    void ReadImage(Image<Pixel>&);
+    void SendSamples(int16* left,int16* right,int len);
 
   private:
-    std::istream* d_yuvstr;
-
-    bool  d_mode625;
-    int   d_nextframe;
+    bool d_initialized;
+    int  d_fd;
   };
 
 }

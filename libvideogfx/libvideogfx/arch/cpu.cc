@@ -91,7 +91,7 @@ namespace videogfx {
 
     void GetCPUInfo(char* buf,int maxChars,bool long_descr=false)
     {
-      Assert(strlen(d_typename) < maxChars);
+      Assert((int)strlen(d_typename) < maxChars);
       strcpy(buf,d_typename);
 
       if (long_descr)
@@ -148,7 +148,7 @@ namespace videogfx {
   {
     const char* unknown_arch = "unknown CPU";
 
-    Assert(strlen(unknown_arch) < maxChars);
+    Assert((int)strlen(unknown_arch) < maxChars);
     strcpy(buf,unknown_arch);
   }
 

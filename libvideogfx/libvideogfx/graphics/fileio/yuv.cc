@@ -25,8 +25,8 @@ namespace videogfx {
 
   FileReader_YUV1::FileReader_YUV1()
     : d_yuvstr(NULL), d_alphastr(NULL),
-      d_greyscale_input(false),
       d_interleavedUV(false),
+      d_greyscale_input(false),
       d_initialized(false)
   {
   }

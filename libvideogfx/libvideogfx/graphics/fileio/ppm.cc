@@ -40,7 +40,7 @@ namespace videogfx {
     const Pixel*const* Y = pm.AskFrame();
 
     for (int y=0;y<h;y++)
-      ostr.write(Y[y],w);
+      ostr.write((char*)Y[y],w);
   }
 
 

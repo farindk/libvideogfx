@@ -125,7 +125,6 @@ namespace videogfx {
 
     param.AskChromaSizes(chr_w,chr_h);
 
-    const int h = param.height;
     const int w = param.width;
 
     int yskip = 2*(pix_y [1]-pix_y [0]) - w;
@@ -355,7 +354,6 @@ namespace videogfx {
     const Pixel*const* pix_cb = img.AskFrameU();
     const Pixel*const* pix_cr = img.AskFrameV();
 
-    const int h = param.height;
     const int w = param.width;
 
     for (int y=firstline;y<=lastline;y+=2)

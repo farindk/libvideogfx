@@ -71,7 +71,7 @@ namespace videogfx {
 
   private:
     uint64 d_buffer;
-    uint32 d_bitsleft;
+    int    d_bitsleft;
 
     const uint8* d_start;
     const uint8* d_ptr;

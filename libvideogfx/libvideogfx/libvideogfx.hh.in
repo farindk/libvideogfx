@@ -57,6 +57,7 @@
 #include <libvideogfx/audio/fileio/audiosink.hh>
 #include <libvideogfx/audio/fileio/timedsink.hh>
 #include <libvideogfx/utility/bitmanip.hh>
+#include <libvideogfx/utility/smartpointer.hh>
 #include <libvideogfx/utility/math.hh>
 #include <libvideogfx/utility/refcntr.hh>
 #include <libvideogfx/utility/bitstream/bitbuffer.hh>
@@ -67,6 +68,6 @@
 @X11_COMMENT@#include <libvideogfx/x11/imgwin.hh>
 @X11_COMMENT@#include <libvideogfx/x11/server.hh>
 @X11_COMMENT@#include <libvideogfx/x11/draw_x11.hh>
-
+@LINUX_COMMENT@#include <libvideogfx/audio/fileio/audiosink_linux.hh>
 
 #endif

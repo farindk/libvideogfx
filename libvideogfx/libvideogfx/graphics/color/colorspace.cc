@@ -445,8 +445,8 @@ namespace videogfx {
       for (int x=0;x<param.width;x++)
 	{
 	  double r = ((double)rp[y][x])/255.0;
-	  double g = ((double)rp[y][x])/255.0;
-	  double b = ((double)rp[y][x])/255.0;
+	  double g = ((double)gp[y][x])/255.0;
+	  double b = ((double)bp[y][x])/255.0;
 
 	  RGB2HSV(hp[y][x],sp[y][x],vp[y][x], r,g,b);
 	}

@@ -13,7 +13,7 @@
 
   modifications:
    11/Jul/2000 - Dirk Farin - first implementation
-/********************************************************************************
+ ********************************************************************************
     LibVideoGfx - video processing library
     Copyright (C) 2002  Dirk Farin
 

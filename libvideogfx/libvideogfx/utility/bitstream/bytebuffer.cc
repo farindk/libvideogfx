@@ -98,8 +98,7 @@ namespace videogfx {
 
 	if (d_param->initialsize_hint!=0)
 	  {
-	    int s;
-	    d_buf  = (unsigned char*)(d_param->memalloc.Alloc(d_param->initialsize_hint, &d_size));
+	    d_buf  = (unsigned char*)(d_param->memalloc.Alloc((int)d_param->initialsize_hint, &d_size));
 	    Assert(d_buf);
 	    d_len  = 0;
 	    d_buf_from_pool = true;
@@ -162,7 +161,7 @@ namespace videogfx {
     Assert(len>0);
 
     // If contents will not fit into the buffer, enlarge buffer.
-    if (d_len+len > d_size)
+    if (d_len+len > (uint32)d_size)
       {
 	unsigned int newsize=d_size;
 
@@ -217,7 +216,7 @@ namespace videogfx {
       }
 
     // There has to be enough memory left now.
-    Assert(d_len+len <= d_size);
+    Assert(d_len+len <= (uint32)d_size);
 
     // Return pointer, pointing behind the last already filled byte in the buffer and
     // enlarge the buffer contents size variable.

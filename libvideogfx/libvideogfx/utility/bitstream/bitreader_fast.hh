@@ -14,7 +14,7 @@
   modifications:
    27/Sep/2000 - Dirk Farin
      - first implementation, based on ideas seen in "mpeg2dec"
-/********************************************************************************
+ ********************************************************************************
     LibVideoGfx - video processing library
     Copyright (C) 2002  Dirk Farin
 
@@ -89,8 +89,8 @@ do {                                    \
   {
   public:
     BitReader_Fast(const uint8* buffer,uint32 len)
-      : d_ptr(buffer), d_endptr(buffer+len), d_start(buffer),
-	d_buffer(0), d_freebits(16)
+      : d_buffer(0), d_freebits(16),
+	d_ptr(buffer), d_endptr(buffer+len), d_start(buffer)
     {
       Fill16Bits();
     }

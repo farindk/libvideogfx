@@ -63,11 +63,11 @@ namespace videogfx {
     DisplayImage_Data()
       : mayUseMITSHM(true),
 	mayUseXv(true),
-	d_grabbed_port(false),
 	d_initialized(false),
-	d_data(NULL),
 	d_display(NULL),
-	d_server(NULL)
+	d_server(NULL),
+	d_grabbed_port(false),
+	d_data(NULL)
     {
     }
 
@@ -208,9 +208,9 @@ namespace videogfx {
     XvAdaptorInfo* adaptorInfo;
     XvQueryAdaptors(d_display, d_win, &nAdaptors, &adaptorInfo);
 
-    for (int i = 0; i < nAdaptors; i++)
+    for (unsigned int i = 0; i < nAdaptors; i++)
       if (adaptorInfo[i].type & XvImageMask)
-	for (int j = 0; j < adaptorInfo[i].num_ports; j++)
+	for (unsigned int j = 0; j < adaptorInfo[i].num_ports; j++)
 	  if (XvSupportsFormat_YV12(adaptorInfo[i].base_id + j) &&
 	      (XvGrabPort (d_display, adaptorInfo[i].base_id + j, 0) == Success))
 	    {
@@ -250,8 +250,6 @@ namespace videogfx {
       d_data->d_server = new X11ServerConnection;
 
     d_data->d_display = d_data->d_server->AskDisplay();
-
-    int screen = DefaultScreen(d_data->d_display);
     d_data->d_win = win;
 
 

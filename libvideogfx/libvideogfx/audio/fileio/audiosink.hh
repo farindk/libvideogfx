@@ -37,6 +37,7 @@
 #define LIBVIDEOGFX_AUDIO_FILEIO_AUDIOSINK_HH
 
 #include <libvideogfx/types.hh>
+#include <iostream>
 
 namespace videogfx {
 
@@ -61,6 +62,20 @@ namespace videogfx {
 
     virtual void  SendSamples(int16* left,int16* right,int len) = 0;
     virtual int   AskBufferingDelay() const { return 0; } // buffering delay in msecs
+  };
+
+
+  class AudioSink_cout : public AudioSink
+  {
+  public:
+    void SendSamples(int16* left,int16* right,int len)
+    {
+      for (int i=0;i<len;i++)
+	{
+	  std::cout.write((char*)&left[i],2);
+	  std::cout.write((char*)&right[i],2);
+	}
+    }
   };
 
 }

@@ -193,7 +193,7 @@ namespace videogfx {
       uint8** row_pointers = new png_bytep[height];
       Assert(row_pointers != NULL);
 
-      for (int y = 0; y < height; y++) {
+      for (uint32 y = 0; y < height; y++) {
           row_pointers[y] = (png_bytep)malloc(png_get_rowbytes(png_ptr, info_ptr));
           Assert(row_pointers[y] != NULL);
       } // for
@@ -237,12 +237,12 @@ namespace videogfx {
           Pixel*const* Y = img.AskFrameY();
           Pixel*const* A = img.AskFrameA();
 
-          for (int y = 0; y < height; y++) {
+          for (uint32 y = 0; y < height; y++) {
               uint8* p = row_pointers[y];
 
 	      if (param.has_alpha)
 		{
-		  for (int x = 0; x < width; x++) {
+		  for (uint32 x = 0; x < width; x++) {
 		    Y[y][x] = *p++;
 		    A[y][x] = *p++;
 		  }
@@ -260,12 +260,12 @@ namespace videogfx {
           Pixel*const* B = img.AskFrameB();
           Pixel*const* A = img.AskFrameA();
 
-          for (int y = 0; y < height; y++) {
+          for (uint32 y = 0; y < height; y++) {
               uint8* p = row_pointers[y];
 
 	      if (param.has_alpha)
 		{
-		  for (int x = 0;x < width; x++) {
+		  for (uint32 x = 0;x < width; x++) {
 		    R[y][x] = *p++;
 		    G[y][x] = *p++;
 		    B[y][x] = *p++;
@@ -274,7 +274,7 @@ namespace videogfx {
 		}
 	      else
 		{
-		  for (int x = 0;x < width; x++) {
+		  for (uint32 x = 0;x < width; x++) {
 		    R[y][x] = *p++;
 		    G[y][x] = *p++;
 		    B[y][x] = *p++;
