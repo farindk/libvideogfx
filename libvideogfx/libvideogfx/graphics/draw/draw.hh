@@ -525,13 +525,13 @@ namespace videogfx {
     // top line
     if (y1>= bm.AskMinY() && y1<=bm.AskMaxY())
       {
-	for (int x=xmin;x<xmax;x++)  p[y1][x] = color;
+	for (int x=xmin;x<=xmax;x++)  p[y1][x] = color;
       }
 
     // bottom line
     if (y2>= bm.AskMinY() && y2<=bm.AskMaxY())
       {
-	for (int x=xmin;x<xmax;x++)  p[y2][x] = color;
+	for (int x=xmin;x<=xmax;x++)  p[y2][x] = color;
       }
 
     // left line
