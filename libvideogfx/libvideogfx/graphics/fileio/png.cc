@@ -375,7 +375,7 @@ namespace videogfx {
 
       if (bands == 1 || bands == 2) {
           const Pixel*const* Y = img.AskFrameY();
-          const Pixel*const* A = img.AskFrameA();
+          const Pixel*const* A = ( param.has_alpha ? img.AskFrameA() : NULL );
 
           for (int y = 0; y < h; y++) {
               uint8* p = row_pointers[y];
@@ -399,7 +399,7 @@ namespace videogfx {
           const Pixel*const* R = img.AskFrameR();
           const Pixel*const* G = img.AskFrameG();
           const Pixel*const* B = img.AskFrameB();
-          const Pixel*const* A = img.AskFrameA();
+          const Pixel*const* A = ( param.has_alpha ? img.AskFrameA() : NULL );
 
           for (int y = 0; y < h; y++) {
               uint8* p = row_pointers[y];
