@@ -2,6 +2,9 @@
 #include "libvideogfx/utility/math.hh"
 #include <assert.h>
 #include <iostream.h>
+using namespace std;
+
+
 int AlignUp(int val,int align)
 {
   assert(align>0);
