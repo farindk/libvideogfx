@@ -135,15 +135,21 @@ namespace videogfx {
     Bitmap<Pel> operator=(const Bitmap<Pel>&);
 
     /** Create a bitmap that shares only part of the current bitmap.
-	The created bitmap will have no border and no alignment. */
+	The created bitmap will have no border and no alignment.
+	If the bitmap is empty, an empty bitmap will be returned.
+    */
     Bitmap<Pel> CreateSubView  (int x0,int y0,int w,int h) const;
 
     /** Create a bitmap that shares only a single field from the
 	current (frame based) bitmap. In the created bitmap, the
 	field lines are accessed using consecutive lines, instead of
 	offsets of two. The border sizes an alignment sizes are
-	adapted correspondingly. */
+	adapted correspondingly.
+	If the bitmap is empty, an empty bitmap will be returned.
+    */
     Bitmap<Pel> CreateFieldView(bool top) const;
+
+    void MoveZero(int x0,int y0);
 
     /** Copy the bitmap into a new, independent memory area. Alignments can be changed
 	on the fly. If border<0, the old border size is used for the new bitmap. */
@@ -162,6 +168,9 @@ namespace videogfx {
 	FieldView bitmap has additional data between its lines.
     */
     int AskStride() const { return AskFrame()[1]-AskFrame()[0]; }
+
+    int AskXOffset() const { return d_xoffset; }
+    int AskYOffset() const { return d_yoffset; }
 
     /// Check if bitmap has any data associated with it.
     bool IsEmpty() const { return d_parent==NULL; }
@@ -213,6 +222,8 @@ namespace videogfx {
     int d_aligned_height;
     int d_total_width;
     int d_total_height;
+
+    int d_xoffset,d_yoffset;
 
     /* d_data is the line-pointer array to the actual bitmap data. This pointer
        can come in two variations. If the Bitmap is simply the whole bitmap data
@@ -416,6 +427,7 @@ namespace videogfx {
 
   template <class Pel> Bitmap<Pel>::Bitmap()
     : d_parent(NULL),
+      d_xoffset(0), d_yoffset(0),
       d_data(NULL),
       d_dataptr_reused(true)  // could be any of both
   {
@@ -423,6 +435,7 @@ namespace videogfx {
 
   template <class Pel> Bitmap<Pel>::Bitmap(int w,int h,int border,int halign,int valign)
     : d_parent(NULL),
+      d_xoffset(0), d_yoffset(0),
       d_data(NULL),
       d_dataptr_reused(true)  // could be any of both
   {
@@ -431,6 +444,7 @@ namespace videogfx {
 
   template <class Pel> Bitmap<Pel>::Bitmap(BitmapProvider<Pel>* p)
     : d_parent(NULL),
+      d_xoffset(0), d_yoffset(0),
       d_data(NULL),
       d_dataptr_reused(true)  // could be any of both
   {
@@ -456,6 +470,8 @@ namespace videogfx {
 	d_aligned_border = pm.d_aligned_border;
 	d_total_width  = pm.d_total_width;
 	d_total_height = pm.d_total_height;
+	d_xoffset= pm.d_xoffset;
+	d_yoffset= pm.d_yoffset;
 
 
 	if (pm.d_dataptr_reused)
@@ -482,6 +498,7 @@ namespace videogfx {
 
 	d_data=NULL;
 	d_dataptr_reused=true;
+	d_xoffset=d_yoffset=0;
       }
   }
 
@@ -542,6 +559,8 @@ namespace videogfx {
 	d_aligned_border = intb;
 	d_total_width  = d_aligned_width  + 2*d_aligned_border;
 	d_total_height = d_aligned_height + 2*d_border;
+	d_xoffset = 0;
+	d_yoffset = 0;
       }
     else
       {
@@ -604,6 +623,8 @@ namespace videogfx {
 	d_aligned_border = p->AskAlignedBorder();
 	d_total_width  = p->AskTotalWidth();
 	d_total_height = p->AskTotalHeight();
+	d_xoffset = 0;
+	d_yoffset = 0;
       }
   }
 
@@ -639,6 +660,8 @@ namespace videogfx {
 	d_aligned_border = pm.AskAlignedBorder();
 	d_total_width  = pm.d_total_width;
 	d_total_height = pm.d_total_height;
+	d_xoffset = pm.d_xoffset;
+	d_yoffset = pm.d_yoffset;
 
 	if (pm.d_dataptr_reused)
 	  {
@@ -663,10 +686,10 @@ namespace videogfx {
     if (d_parent==NULL)
       return Bitmap<Pel>();
 
-    AssertDescr(!(x0<0 ||
-		  y0<0 ||
-		  x0+w > d_aligned_width ||
-		  y0+h > d_aligned_height),
+    AssertDescr(!(x0+d_xoffset<0 ||
+		  y0+d_yoffset<0 ||
+		  x0+d_xoffset+w > d_aligned_width ||
+		  y0+d_yoffset+h > d_aligned_height),
 		"sub-view range not within bitmap");
 
     Bitmap<Pel> pm;
@@ -689,7 +712,7 @@ namespace videogfx {
     pm.d_data = new Pel* [h];
 
     for (int y=0;y<h;y++)
-      pm.d_data[y] = &d_data[y+y0+d_border][x0];
+      pm.d_data[y] = &d_data[y+y0+d_border+d_yoffset][x0];
 
     d_parent->IncrRef();
 
@@ -748,6 +771,41 @@ namespace videogfx {
     return pm;
   }
 
+  template <class Pel> void Bitmap<Pel>::MoveZero(int x0,int y0)
+  {
+    if (d_parent==NULL)
+      return;
+
+    int dx = x0-d_xoffset;
+    int dy = y0-d_yoffset;
+
+    if (dx != 0)
+      {
+	// if line-ptr array is reused, we have to make a local copy
+
+	if (d_dataptr_reused)
+	  {
+	    d_dataptr_reused = false;
+	    Pel** newdata = new Pel* [d_total_height];
+
+	    for (int y=0;y<d_total_height;y++)
+	      newdata[y] = d_data[y];
+
+	    d_data=newdata;
+	  }
+
+	// shift pointers horizontally
+
+	for (int y=0;y<d_total_height;y++)
+	  {
+	    d_data[y] += dx;
+	  }
+      }
+
+    d_xoffset = x0;
+    d_yoffset = y0;
+  }
+
   template <class Pel> Bitmap<Pel> Bitmap<Pel>::Clone(int border,int halign,int valign) const
   {
     assert(halign>=1);
@@ -778,10 +836,12 @@ namespace videogfx {
 
     for (int y=0;y<minheight +2*minvborder;y++)
       {
-	memcpy(&dst[y-minvborder][-minhborder],
-	       &src[y-minvborder][-minhborder],
+	memcpy(&dst[y-minvborder          ][-minhborder          ],
+	       &src[y-minvborder-d_yoffset][-minhborder-d_xoffset],
 	       (minwidth+2*minhborder)*sizeof(Pel));
       }
+
+    pm.MoveZero( AskXOffset(), AskYOffset() );
 
     return pm;
   }
@@ -837,13 +897,13 @@ namespace videogfx {
   template <class Pel> inline Pel*const* Bitmap<Pel>::AskFrame()
   {
     AssertDescr(d_parent,"no bitmap-provider attached to bitmap");
-    return &d_data[d_border];
+    return &d_data[d_border+d_yoffset];
   }
 
   template <class Pel> inline const Pel*const* Bitmap<Pel>::AskFrame() const
   {
     AssertDescr(d_parent,"no bitmap-provider attached to bitmap");
-    return &d_data[d_border];
+    return &d_data[d_border+d_yoffset];
   }
 
   template <class Pel> int Bitmap<Pel>::default_align_border=0;

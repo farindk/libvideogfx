@@ -9,13 +9,13 @@ using namespace std;
 using namespace videogfx;
 
 
-void Show(Bitmap<Pixel> pm)
+void Show(Bitmap<Pixel> pm, int x0=0,int y0=0)
 {
   const Pixel*const* p = pm.AskFrame();
 
   for (int y=0;y<pm.AskHeight();y++,cout << endl)
     for (int x=0;x<pm.AskWidth();x++)
-      cout << setw(2) << ((int)p[y][x]) << " ";
+      cout << setw(2) << ((int)p[y-y0][x-x0]) << " ";
 }
 
 
@@ -56,6 +56,14 @@ int main(int argc,char** argv)
 
       copy = pm.Clone();
       Show(copy); cout << copy.AskBorder() << endl;
+
+      cout << "zero shift:\n";
+      pm.MoveZero(8,3);
+      Show(pm, 8,3);
+
+      cout << "copy of zero shifted:\n";
+      copy = pm.Clone();
+      Show(copy, 8,3);
     }
   catch (Excpt_Base& e)
     {

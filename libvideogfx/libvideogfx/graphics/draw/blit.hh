@@ -167,19 +167,21 @@ namespace videogfx {
     int w = bm.AskWidth();
     int h = bm.AskHeight();
     int border = bm.AskBorder();
+    int xo = bm.AskXOffset();
+    int yo = bm.AskYOffset();
 
     for (int b=1;b<=border;b++)
-      for (int x=0;x<w;x++)
+      for (int x=-xo;x<w-xo;x++)
 	{
-	  p[-b][x] = p[0][x];
-	  p[h+b-1][x] = p[h-1][x];
+	  p[-b-yo][x] = p[-yo][x];
+	  p[h+b-1-yo][x] = p[h-1-yo][x];
 	}
 
-    for (int y=-border;y<h+border;y++)
+    for (int y=-border-yo;y<h+border-yo;y++)
       for (int b=1;b<=border;b++)
 	{
-	  p[y][-b] = p[y][0];
-	  p[y][w+b-1] = p[y][w-1];
+	  p[y][-b-xo] = p[y][-xo];
+	  p[y][w+b-1-xo] = p[y][w-1-xo];
 	}
   }
 
@@ -189,17 +191,19 @@ namespace videogfx {
     int w = bm.AskWidth();
     int h = bm.AskHeight();
     int border = bm.AskBorder();
+    int xo = bm.AskXOffset();
+    int yo = bm.AskYOffset();
 
     for (int b=1;b<=border;b++)
-      for (int x=0;x<w;x++)
+      for (int x=-xo;x<w-xo;x++)
 	{
-	  p[-b][x] = p[h+b-1][x] = value;
+	  p[-b-yo][x] = p[h+b-1-yo][x] = value;
 	}
 
-    for (int y=-border;y<h+border;y++)
+    for (int y=-border-yo;y<h+border-yo;y++)
       for (int b=1;b<=border;b++)
 	{
-	  p[y][-b] = p[y][w+b-1] = value;
+	  p[y][-b-xo] = p[y][w+b-1-xo] = value;
 	}
   }
 

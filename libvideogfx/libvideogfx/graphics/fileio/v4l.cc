@@ -104,7 +104,7 @@ namespace videogfx {
 
 
 
-    // Grabbing starten
+    // start grabbing
 
     d_grabdata->d_vidmmap.width =d_width;
     d_grabdata->d_vidmmap.height=d_height;

@@ -73,6 +73,8 @@ namespace videogfx {
 
   void ImageSink_Save::SendImage(const Image<Pixel>& img)
   {
+    Assert(IsFormatSupported(d_format));
+
     // construct output filename
 
     bool  number = false;

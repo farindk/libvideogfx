@@ -260,13 +260,15 @@ namespace videogfx {
   template <class Pel> void CopyScaled(Bitmap<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
 				       const Bitmap<Pel>& src)
   {
-    CopyScaled(dst,dstx0,dsty0,dw,dh, src,0,0,src.AskWidth(),src.AskHeight());
-	       }
+    CopyScaled(dst,dstx0,dsty0,dw,dh, src,
+	       -src.AskXOffset(),-src.AskYOffset(),src.AskWidth()-src.AskXOffset(),src.AskHeight()-src.AskYOffset());
+  }
 
   template <class Pel> void CopyScaled(Image<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
 				       const Image<Pel>& src)
   {
-    CopyScaled(dst,dstx0,dsty0,dw,dh, src,0,0,src.AskWidth(),src.AskHeight());
+    CopyScaled(dst,dstx0,dsty0,dw,dh, src,
+	       -src.AskXOffset(),-src.AskYOffset(),src.AskWidth()-src.AskXOffset(),src.AskHeight()-src.AskYOffset());
   }
 }
 

@@ -131,8 +131,8 @@ namespace videogfx {
 
   template <class T> void DrawPoint(Bitmap<T>& bm,int x,int y,T color)
   {
-    if (x<0 || y<0) return;
-    if (x>=bm.AskWidth() || y>=bm.AskHeight()) return;
+    if (x<-bm.AskXOffset() || y<-bm.AskYOffset()) return;
+    if (x>=bm.AskWidth()-bm.AskXOffset() || y>=bm.AskHeight()-bm.AskYOffset()) return;
 
     bm.AskFrame()[y][x]=color;
   }
@@ -155,12 +155,14 @@ namespace videogfx {
   
     if (sizeof(T)==1)
       {
-	for (int y=0;y<bm.AskHeight();y++)
-	  memset(p[y],color,bm.AskWidth());
+	for (int y=-bm.AskYOffset();y<bm.AskHeight()-bm.AskYOffset();y++)
+	  memset(&p[y][-bm.AskXOffset()],color,bm.AskWidth());
       }
     else
       {
-	FillRectangle(bm,0,0,bm.AskWidth()-1,bm.AskHeight()-1,color);
+	FillRectangle(bm,
+		      -bm.AskXOffset(),-bm.AskYOffset(),
+		      bm.AskWidth()-1-bm.AskXOffset(),bm.AskHeight()-1-bm.AskYOffset(),color);
       }
   }
 
@@ -207,7 +209,9 @@ namespace videogfx {
   {
     T*const* p = bm.AskFrame();
 
-    if (!ClipLine(x0,y0,x1,y1, 0,0,bm.AskWidth()-1,bm.AskHeight()-1))
+    if (!ClipLine(x0,y0,x1,y1,
+		  -bm.AskXOffset(),-bm.AskYOffset(),
+		  bm.AskWidth()-1-bm.AskXOffset(),bm.AskHeight()-1-bm.AskYOffset()))
       return;
 
     if (abs(y1-y0)>abs(x1-x0))
@@ -345,8 +349,10 @@ namespace videogfx {
   {
     T*const* p = bm.AskFrame();
 
-    static int xMax= bm.AskWidth();
-    static int yMax= bm.AskHeight();
+    const int xMax= bm.AskWidth() -bm.AskXOffset();
+    const int yMax= bm.AskHeight()-bm.AskYOffset();
+    const int xMin= -bm.AskXOffset();
+    const int yMin= -bm.AskYOffset();
 
     int y0dy1=y0-dy;
     int y0dy2=y0+dy;
@@ -359,23 +365,23 @@ namespace videogfx {
     int x0dy2=x0+dy;
 
   
-    if ((y0dy1)>=0 && (x0dx1)>=0 && (y0dy1)<yMax && (x0dx1)<xMax)
+    if ((y0dy1)>=yMin && (x0dx1)>=xMin && (y0dy1)<yMax && (x0dx1)<xMax)
       p[y0dy1][x0dx1]=color;
-    if ((y0dy1)>=0 && (x0dx2)>=0 && (y0dy1)<yMax && (x0dx2)<xMax)
+    if ((y0dy1)>=yMin && (x0dx2)>=xMin && (y0dy1)<yMax && (x0dx2)<xMax)
       p[y0dy1][x0dx2]=color;
-    if ((y0dy2)>=0 && (x0dx1)>=0 && (y0dy2)<yMax && (x0dx1)<xMax)
+    if ((y0dy2)>=yMin && (x0dx1)>=xMin && (y0dy2)<yMax && (x0dx1)<xMax)
       p[y0+dy][x0-dx]=color;
-    if ((y0dy2)>=0 && (x0dx2)>=0 && (y0dy2)<yMax && (x0dx2)<xMax)
+    if ((y0dy2)>=yMin && (x0dx2)>=xMin && (y0dy2)<yMax && (x0dx2)<xMax)
       p[y0+dy][x0+dx]=color;
 
 
-    if ((y0dx1)>=0 && (x0dy1)>=0 && (y0dx1)<yMax && (x0dy1)<xMax)
+    if ((y0dx1)>=yMin && (x0dy1)>=xMin && (y0dx1)<yMax && (x0dy1)<xMax)
       p[y0-dx][x0-dy]=color;
-    if ((y0dx1)>=0 && (x0dy2)>=0 && (y0dx1)<yMax && (x0dy2)<xMax)
+    if ((y0dx1)>=yMin && (x0dy2)>=xMin && (y0dx1)<yMax && (x0dy2)<xMax)
       p[y0-dx][x0+dy]=color;
-    if ((y0dx2)>=0 && (x0dy1)>=0 && (y0dx2)<yMax && (x0dy1)<xMax)
+    if ((y0dx2)>=yMin && (x0dy1)>=xMin && (y0dx2)<yMax && (x0dy1)<xMax)
       p[y0+dx][x0-dy]=color;
-    if ((y0dx2)>=0 && (x0dy2)>=0 && (y0dx2)<yMax && (x0dy2)<xMax)
+    if ((y0dx2)>=yMin && (x0dy2)>=xMin && (y0dx2)<yMax && (x0dy2)<xMax)
       p[y0+dx][x0+dy]=color;
   }
 
@@ -410,8 +416,8 @@ namespace videogfx {
 
     if (fill)
       { drawpoints = CirclePoints_Fill; }
-    else if (x0-radius>=0 && x0+radius<bm.AskWidth() &&
-	     y0-radius>=0 && y0+radius<bm.AskHeight())
+    else if (x0-radius>=-bm.AskXOffset() && x0+radius<bm.AskWidth() -bm.AskXOffset() &&
+	     y0-radius>=-bm.AskYOffset() && y0+radius<bm.AskHeight()-bm.AskYOffset())
       { drawpoints = CirclePoints_Direct; }
     else
       { drawpoints = CirclePoints_Save; }
