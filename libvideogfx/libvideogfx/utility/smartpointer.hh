@@ -94,6 +94,7 @@ namespace videogfx {
       return *this;
     }
 
+    bool IsNULL() const { return counter==NULL; }
     operator T*()   { AssertDescr(counter,"smart pointer is NULL"); return pointer; }
     T& operator()() { AssertDescr(counter,"smart pointer is NULL"); return *pointer; }
 
@@ -159,6 +160,7 @@ namespace videogfx {
       return *this;
     }
 
+    bool IsNULL() const { return pointer==NULL; }
     operator T*()   { AssertDescr(counter,"smart pointer is NULL"); return pointer; }
     T& operator()() { AssertDescr(counter,"smart pointer is NULL"); return *pointer; }
 
