@@ -21,7 +21,7 @@ audioprogs = audioout
 endif
 
 noinst_PROGRAMS = test-libvideogfx bitstream_output cputest pixmaptest filtertest \
-	ppmflip chromatest smartpointer dynarray \
+	ppmflip chromatest smartpointer dynarray symmatrix \
 	$(linuxprogs) $(audioprogs) $(x11progs) # ppm2avi
 
 test_libvideogfx_DEPENDENCIES = ../libvideogfx/libvideogfx.la
@@ -35,6 +35,12 @@ dynarray_CFLAGS = $(X_CFLAGS)
 dynarray_LDFLAGS = -g $(X_LDFLAGS)
 dynarray_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs) $(png_libs)
 dynarray_SOURCES = dynarray.cc
+
+symmatrix_DEPENDENCIES = ../libvideogfx/libvideogfx.la
+symmatrix_CFLAGS = $(X_CFLAGS)
+symmatrix_LDFLAGS = -g $(X_LDFLAGS)
+symmatrix_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs) $(png_libs)
+symmatrix_SOURCES = symmatrix.cc
 
 bitstream_output_DEPENDENCIES = ../libvideogfx/libvideogfx.la
 bitstream_output_CFLAGS = $(X_CFLAGS)

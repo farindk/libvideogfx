@@ -13,6 +13,7 @@ libvideogfx_containers_include_HEADERS = \
 	array.icc	\
 	array2.hh	\
 	array2.icc	\
+	symmatrix.hh	\
 	queue.hh	\
 	queue.icc
 

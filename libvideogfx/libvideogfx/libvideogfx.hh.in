@@ -30,6 +30,7 @@
 #include <libvideogfx/arch/cpu.hh>
 #include <libvideogfx/containers/array.hh>
 #include <libvideogfx/containers/array2.hh>
+#include <libvideogfx/containers/symmatrix.hh>
 #include <libvideogfx/containers/dynarray.hh>
 #include <libvideogfx/containers/heap.hh>
 #include <libvideogfx/containers/queue.hh>
