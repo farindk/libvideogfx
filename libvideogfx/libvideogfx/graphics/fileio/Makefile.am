@@ -34,6 +34,8 @@ libvideogfx_graphics_fileio_la_SOURCES = \
 	yuv_vqeg.hh	\
 	imagesink.hh	\
 	imagesink.cc	\
+	audiosink.hh	\
+	timedsink.hh	\
 	$(linux_sources)
 
 #	read_yuv.cc	\
@@ -49,6 +51,8 @@ libvideogfx_graphics_fileio_include_HEADERS = \
 	yuv.hh	\
 	yuv_vqeg.hh	\
 	imagesink.hh	\
+	audiosink.hh	\
+	timedsink.hh	\
 	$(linux_headers)
 
 #	read_yuv.hh	\

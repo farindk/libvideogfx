@@ -30,7 +30,8 @@ V4L_Grabber::V4L_Grabber()
   : d_device(NULL),
     d_fd(-1),
     d_avg_422_to_420(false),
-    d_greyscale(false)
+    d_greyscale(false),
+    d_chroma(Chroma_420)
 {
   SetDevice("/dev/video0");
 
@@ -107,17 +108,18 @@ const uint64 mask_Y = 0x00FF00FF00FF00FFLL;
 
 void V4L_Grabber::Grab(Image<Pixel>& img)
 {
-  ImageParam spec = img.AskParam();
+  ImageParam spec;
 
-  Assert(d_greyscale || (spec.chroma == Chroma_420 ||
-			 spec.chroma == Chroma_422));
+  Assert(d_greyscale || (d_chroma == Chroma_420 ||
+			 d_chroma == Chroma_422));
 
   spec.width  = d_width;
   spec.height = d_height;
   spec.colorspace = (d_greyscale ? Colorspace_Greyscale : Colorspace_YUV);
   spec.halign  = 16;  // for MMX accelerated format conversion
+  spec.chroma  = d_chroma;
 
-  const bool do_avg_422_to_420 = (spec.chroma==Chroma_420 && d_avg_422_to_420);
+  const bool do_avg_422_to_420 = (d_chroma==Chroma_420 && d_avg_422_to_420);
 
   img.Create(spec);
 

@@ -33,6 +33,7 @@ public:
 
   void SetDevice(const char* device);
   void SetGreyscaleMode(bool greyscale=true) { d_greyscale=greyscale; }
+  void SetChroma(ChromaFormat chroma) { d_chroma=chroma; }
   void DoChromaAvgOn422To420(bool flag=true) { d_avg_422_to_420=flag; }
   void SetResolution(int w,int h);
   void AskResolution(int& w,int& h) { w = d_width; h = d_height; }
@@ -47,6 +48,7 @@ private:
 
   int d_width,d_height;
   bool d_greyscale;
+  ChromaFormat d_chroma;
   bool d_avg_422_to_420;
 
   struct GrabData* d_grabdata;
