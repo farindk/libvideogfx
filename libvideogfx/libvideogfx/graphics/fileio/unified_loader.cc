@@ -19,10 +19,18 @@
 
 #include "libvideogfx/graphics/fileio/unified_loader.hh"
 #include "libvideogfx/graphics/fileio/mplayer.hh"
+#include "libvideogfx/graphics/fileio/png.hh"
+#include "libvideogfx/graphics/fileio/ppm.hh"
+#include "libvideogfx/graphics/fileio/uyvy.hh"
+#include "libvideogfx/graphics/fileio/jpeg.hh"
 #include "libvideogfx/graphics/color/colorspace.hh"
 #include "libvideogfx/graphics/draw/draw.hh"
 #include "libvideogfx/graphics/draw/scale.hh"
+#include "libvideogfx/graphics/draw/format.hh"
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <string.h>
 #include <iostream>
 
@@ -31,6 +39,77 @@ namespace videogfx {
 
   const FileIOFactory* UnifiedImageLoader::s_plugins[MAX_LOADER_PLUGINS];
   int UnifiedImageLoader::s_nplugins;
+
+
+  static char* ExpandMacros(char* spec)
+  {
+    char* result = NULL;
+
+    while (*spec)
+      {
+	char* option = ExtractNextOption(spec);
+	RemoveOption(spec);
+
+	if (option[0]=='=') // is a macro
+	  {
+	    char buf[1000];
+	    sprintf(buf,"%s/.libvideogfxrc",getenv("HOME"));
+
+	    FILE* fh = fopen(buf,"r");
+	    if (!fh)
+	      return NULL;
+
+	    char* macro = option;
+	    char* line=NULL;
+	    size_t n=0;
+
+	    for(;;)
+	      {
+		getline(&line,&n,fh);
+		line[strlen(line)-1]=0;
+		if (feof(fh))
+		  break;
+
+		if (strncmp(macro,line,strlen(macro))==0)
+		  {
+		    char* replacement;
+
+		    option = new char[strlen(line)-strlen(macro)];
+		    strcpy(option,line+strlen(macro)+1);
+		    break;
+		  }
+	      }
+
+	    if (line) free(line);
+	    delete[] macro;
+
+	    fclose(fh);
+
+
+	    // recursive expansion
+
+	    char* recurs = ExpandMacros(option);
+	    delete[] option;
+	    option = recurs;
+	  }
+
+
+	// Last or expanded option is now in "option". Append to "result"
+
+	if (result==0) result=option;
+	else
+	  {
+	    char* newresult = new char[strlen(result)+1+strlen(option)+1];
+	    sprintf(newresult,"%s:%s",result,option);
+	    delete[] option;
+	    delete[] result;
+	    result = newresult;
+	  }
+      }
+
+    return result;
+  }
+
 
 
   void LoaderPlugin::SetPrevious(LoaderPlugin* previous)
@@ -48,25 +127,24 @@ namespace videogfx {
 
   bool UnifiedImageLoader::SetInput(const char* input_specification)
   {
-    char* spec = new char[strlen(input_specification)+1];
-    strcpy(spec,input_specification);
+    char* speccopy = new char[strlen(input_specification)+1];
+    strcpy(speccopy,input_specification);
+
+    char* spec = ExpandMacros(speccopy);
+    delete[] speccopy;
 
     d_loader_pipeline = NULL;
 
+
+
     while (*spec)
       {
-	cout << "current specification: " << spec << endl;
-
 	bool found_one = false;
 	for (int i=0;i<s_nplugins;i++)
 	  {
-	    cout << "  try plugin: " << s_plugins[i]->Name() << endl;
-
 	    LoaderPlugin* newpipe = s_plugins[i]->ParseSpec(&spec);
 	    if (newpipe)
 	      {
-		cout << "MATCH\n";
-
 		newpipe->SetPrevious(d_loader_pipeline);
 		d_loader_pipeline=newpipe;
 		found_one = true;
@@ -102,7 +180,7 @@ namespace videogfx {
       {
 	Image<Pixel> tmp;
 	ChangeColorspace(tmp,img, d_colorspace, d_chroma);
-	cout << "CONVERT\n";
+	cerr << "CONVERT\n";
 	img = tmp;
       }
   }
@@ -127,6 +205,14 @@ namespace videogfx {
     return opt;
   }
 
+  int  ExtractNextNumber(const char* spec)
+  {
+    char* o = ExtractNextOption(spec);
+    int num = atoi(o);
+    delete[] o;
+    return num;
+  }
+
   bool MatchOption(const char* spec,const char* option)
   {
     const char* p = index(spec,':');
@@ -143,13 +229,10 @@ namespace videogfx {
     if (!p) p=spec+strlen(spec);
     int len = (p-spec);
 
-    cout << "len: " << len << endl;
-
     if (len<strlen(suffix)+2)
       return false;
 
     p -= strlen(suffix)+1;
-    cout << "suffix in file: " << p << endl;
 
     if (*p != '.') return false;
     p++;
@@ -308,6 +391,101 @@ namespace videogfx {
 
 
 
+  class LoaderPlugin_SglPictures : public LoaderPlugin
+  {
+  public:
+    LoaderPlugin_SglPictures() : d_next(0) { d_filename_template[0]=0; }
+
+    enum FileFormat { Format_Undefined, Format_JPEG, Format_PNG, Format_PPM, Format_UYVY };
+
+    void SetFilenameTemplate(const char* t) { Assert(strlen(t)<900); strcpy(d_filename_template,t); }
+    void SetFormat(LoaderPlugin_SglPictures::FileFormat f) { d_format=f; }
+
+    int  AskNFrames() const { return 999999; }
+    bool IsEOF() const
+    {
+      GenerateFilename();
+      struct stat buf;
+      if (stat(d_filename,&buf)!=0)
+	return true;
+      else
+	return false;
+    }
+
+    bool SkipToImage(int nr) { d_next=nr; return true; } // only forward seek
+    void ReadImage(Image<Pixel>& img)
+    {
+      GenerateFilename();
+
+      switch (d_format)
+	{
+	case LoaderPlugin_SglPictures::Format_JPEG: ReadImage_JPEG(img, d_filename); break;
+	case LoaderPlugin_SglPictures::Format_PNG:  ReadImage_PNG (img, d_filename); break;
+	case LoaderPlugin_SglPictures::Format_PPM:  ReadImage_PPM (img, d_filename); break;
+	case LoaderPlugin_SglPictures::Format_UYVY:
+	  {
+	    ifstream istr(d_filename);
+	    ReadImage_UYVY (img, istr, 704,568); // TODO
+	  }
+	  break;
+	}
+
+      d_next++;
+    }
+
+  private:
+    int d_next;
+    FileFormat d_format;
+
+    char d_filename[1000];
+    char d_filename_template[1000];
+
+    void GenerateFilename() const
+    { Assert(strlen(d_filename_template)<900); sprintf((char*)d_filename,d_filename_template,d_next); }
+  };
+
+
+  class FileIOFactory_SglPictures : public FileIOFactory
+  {
+  public:
+    LoaderPlugin* ParseSpec(char** spec) const
+    {
+      LoaderPlugin_SglPictures::FileFormat f = LoaderPlugin_SglPictures::Format_Undefined;
+
+      if (CheckSuffix(*spec, "jpeg") || CheckSuffix(*spec, "jpg"))
+	f = LoaderPlugin_SglPictures::Format_JPEG;
+      else if (CheckSuffix(*spec, "pgm") || CheckSuffix(*spec, "ppm"))
+	f = LoaderPlugin_SglPictures::Format_PPM;
+      else if (CheckSuffix(*spec, "png"))
+	f = LoaderPlugin_SglPictures::Format_PNG;
+      else if (CheckSuffix(*spec, "uyvy"))
+	f = LoaderPlugin_SglPictures::Format_UYVY;
+
+      if (f != LoaderPlugin_SglPictures::Format_Undefined)
+	{
+	  LoaderPlugin_SglPictures* pl = new LoaderPlugin_SglPictures;
+	  char* name = ExtractNextOption(*spec);
+	  pl->SetFilenameTemplate(name);
+	  pl->SetFormat(f);
+	  delete[] name;
+	  RemoveOption(*spec);
+
+	  return pl;
+	}
+      else
+	return NULL;
+    }
+
+    const char* Name() const { return "loader: picture sequence"; }
+
+  } singleton_sglpictures;
+
+
+
+  // ------------------------------------------------------------------------------
+
+
+
   class LoaderPlugin_Quarter : public LoaderPlugin
   {
   public:
@@ -351,4 +529,294 @@ namespace videogfx {
     const char* Name() const { return "filter: quarter size"; }
 
   } singleton_quarter;
+
+
+
+  // ------------------------------------------------------------------------------
+
+
+
+  class LoaderPlugin_Crop : public LoaderPlugin
+  {
+  public:
+    LoaderPlugin_Crop() { l=r=t=b=0; }
+
+    void SetParam(int ll,int rr,int tt,int bb) { l=ll; r=rr; t=tt; b=bb; }
+
+    int  AskNFrames() const { Assert(prev); return prev->AskNFrames(); }
+    bool IsEOF() const { Assert(prev); return prev->IsEOF(); }
+
+    bool SkipToImage(int nr) { Assert(prev); return prev->SkipToImage(nr); }
+    void ReadImage(Image<Pixel>& img)
+    {
+      Assert(prev);
+
+      Image<Pixel> tmp;
+      prev->ReadImage(tmp);
+
+      Crop(img, tmp, l,r,t,b);
+    }
+
+  private:
+    int l,r,t,b;
+  };
+
+
+  class FileIOFactory_Crop : public FileIOFactory
+  {
+  public:
+    LoaderPlugin* ParseSpec(char** spec) const
+    {
+      if (MatchOption(*spec, "crop"))
+	{
+	  RemoveOption(*spec);
+	  LoaderPlugin_Crop* crop = new LoaderPlugin_Crop;
+	  int l = ExtractNextNumber(*spec); RemoveOption(*spec);
+	  int r = ExtractNextNumber(*spec); RemoveOption(*spec);
+	  int t = ExtractNextNumber(*spec); RemoveOption(*spec);
+	  int b = ExtractNextNumber(*spec); RemoveOption(*spec);
+	  crop->SetParam(l,r,t,b);
+	  return crop;
+	}
+      else
+	return NULL;
+    }
+
+    const char* Name() const { return "filter: crop image"; }
+
+  } singleton_crop;
+
+
+
+  // ------------------------------------------------------------------------------
+
+
+
+  class LoaderPlugin_Resize : public LoaderPlugin
+  {
+  public:
+    LoaderPlugin_Resize() { w=h=0; }
+
+    void SetParam(int ww,int hh) { w=ww; h=hh; }
+
+    int  AskNFrames() const { Assert(prev); return prev->AskNFrames(); }
+    bool IsEOF() const { Assert(prev); return prev->IsEOF(); }
+
+    bool SkipToImage(int nr) { Assert(prev); return prev->SkipToImage(nr); }
+    void ReadImage(Image<Pixel>& img)
+    {
+      Assert(prev);
+
+      Image<Pixel> tmp;
+      prev->ReadImage(tmp);
+
+      ImageParam spec=tmp.AskParam();
+      spec.width = w;
+      spec.height = h;
+      img.Create(spec);
+      CopyScaled(img,0,0,w,h,tmp);
+    }
+
+  private:
+    int w,h;
+  };
+
+
+  class FileIOFactory_Resize : public FileIOFactory
+  {
+  public:
+    LoaderPlugin* ParseSpec(char** spec) const
+    {
+      if (MatchOption(*spec, "resize"))
+	{
+	  RemoveOption(*spec);
+	  LoaderPlugin_Resize* resize = new LoaderPlugin_Resize;
+	  int w = ExtractNextNumber(*spec); RemoveOption(*spec);
+	  int h = ExtractNextNumber(*spec); RemoveOption(*spec);
+	  resize->SetParam(w,h);
+	  return resize;
+	}
+      else
+	return NULL;
+    }
+
+    const char* Name() const { return "filter: resize image"; }
+
+  } singleton_resize;
+
+
+
+  // ------------------------------------------------------------------------------
+
+
+  class LoaderPlugin_Decimate : public LoaderPlugin
+  {
+  public:
+    LoaderPlugin_Decimate() { d_factor=1; }
+
+    void SetFactor(int f) { d_factor=f; }
+
+    int  AskNFrames() const { Assert(prev); return prev->AskNFrames()/d_factor; }
+    bool IsEOF() const { Assert(prev); return prev->IsEOF(); }
+
+    bool SkipToImage(int nr) { Assert(prev); return prev->SkipToImage(nr*d_factor); }
+    void ReadImage(Image<Pixel>& img)
+    {
+      for (int i=0;i<d_factor;i++)
+	prev->ReadImage(img);
+    }
+
+  private:
+    int d_factor;
+  };
+
+
+  class FileIOFactory_Decimate : public FileIOFactory
+  {
+  public:
+    LoaderPlugin* ParseSpec(char** spec) const
+    {
+      if (MatchOption(*spec, "decimate"))
+	{
+	  RemoveOption(*spec);
+	  LoaderPlugin_Decimate* decim = new LoaderPlugin_Decimate;
+	  int f = ExtractNextNumber(*spec); RemoveOption(*spec);
+	  decim->SetFactor(f);
+	  return decim;
+	}
+      else
+	return NULL;
+    }
+
+    const char* Name() const { return "filter: decimate frame-rate"; }
+
+  } singleton_decimate;
+
+
+
+  // ------------------------------------------------------------------------------
+
+
+  class LoaderPlugin_Start : public LoaderPlugin
+  {
+  public:
+    LoaderPlugin_Start() : first(true) { d_start=0; }
+
+    void SetStartFrame(int s) { d_start=s; }
+
+    int  AskNFrames() const { Assert(prev); return prev->AskNFrames()-d_start; }
+    bool IsEOF() const { Assert(prev); return prev->IsEOF(); }
+
+    bool SkipToImage(int nr) { Assert(prev); return prev->SkipToImage(nr+d_start); }
+    void ReadImage(Image<Pixel>& img)
+    {
+      if (first)
+	{ prev->SkipToImage(d_start); first=false; }
+
+      prev->ReadImage(img);
+    }
+
+  private:
+    bool first;
+    int d_start;
+  };
+
+
+  class FileIOFactory_Start : public FileIOFactory
+  {
+  public:
+    LoaderPlugin* ParseSpec(char** spec) const
+    {
+      if (MatchOption(*spec, "start"))
+	{
+	  RemoveOption(*spec);
+	  LoaderPlugin_Start* startf = new LoaderPlugin_Start;
+	  int f = ExtractNextNumber(*spec); RemoveOption(*spec);
+	  startf->SetStartFrame(f);
+	  return startf;
+	}
+      else
+	return NULL;
+    }
+
+    const char* Name() const { return "filter: set start-frame"; }
+
+  } singleton_startframe;
+
+
+
+  // ------------------------------------------------------------------------------
+
+
+  class LoaderPlugin_Length : public LoaderPlugin
+  {
+  public:
+    LoaderPlugin_Length() { d_curr=0; d_len=999999; }
+
+    void SetSeqLength(int l) { d_len=l; }
+
+    int  AskNFrames() const { Assert(prev); return std::min(prev->AskNFrames(),d_len); }
+    bool IsEOF() const { Assert(prev); if (d_curr>=d_len) return true; else return prev->IsEOF(); }
+
+    bool SkipToImage(int nr) { Assert(prev); d_curr=nr; return prev->SkipToImage(nr); }
+    void ReadImage(Image<Pixel>& img)
+    {
+      prev->ReadImage(img);
+      d_curr++;
+    }
+
+  private:
+    int d_len;
+    int d_curr;
+  };
+
+
+  class FileIOFactory_Length : public FileIOFactory
+  {
+  public:
+    LoaderPlugin* ParseSpec(char** spec) const
+    {
+      if (MatchOption(*spec, "length"))
+	{
+	  RemoveOption(*spec);
+	  LoaderPlugin_Length* len = new LoaderPlugin_Length;
+	  int f = ExtractNextNumber(*spec); RemoveOption(*spec);
+	  len->SetSeqLength(f);
+	  return len;
+	}
+      else
+	return NULL;
+    }
+
+    const char* Name() const { return "filter: set sequence length"; }
+
+  } singleton_seqlength;
+
+
+  class FileIOFactory_Range : public FileIOFactory
+  {
+  public:
+    LoaderPlugin* ParseSpec(char** spec) const
+    {
+      if (MatchOption(*spec, "range"))
+	{
+	  RemoveOption(*spec);
+	  LoaderPlugin_Length* len   = new LoaderPlugin_Length;
+	  LoaderPlugin_Start*  start = new LoaderPlugin_Start;
+	  int s = ExtractNextNumber(*spec); RemoveOption(*spec);
+	  int e = ExtractNextNumber(*spec); RemoveOption(*spec);
+	  start->SetStartFrame(s);
+	  len->SetSeqLength(e);
+	  len->SetPrevious(start);
+	  return len;
+	}
+      else
+	return NULL;
+    }
+
+    const char* Name() const { return "filter: set sequence range"; }
+
+  } singleton_seqrange;
+
+
 }

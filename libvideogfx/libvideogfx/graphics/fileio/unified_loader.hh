@@ -9,6 +9,17 @@
     save parts of the input-definition pipeline as a macro,
     so that sequences can be accessed very easily.
 
+  usage:
+    =macro -- macro expansion (define in ~/.libvideogfxrc)
+    range:s:l -- only show 'l' pictures, starting from 's'
+    length:l -- sequence length is 'l'
+    start:s -- first frame at 's'
+    decimate:f -- only show every f'th frame (f=3 -> 2,5,8,...)
+    resize:w:h -- resize image
+    crop:l:r:t:b -- crop away image borders
+    quarter -- resize to quarter size (especially useful to deinterlace to CIF)
+    rgb -- generate alternating R,G,B images
+
   author(s):
    - Dirk Farin, dirk.farin@gmx.de
 
@@ -108,6 +119,7 @@ namespace videogfx {
 
 
   char* ExtractNextOption(const char* spec); // returned memory has to be freed with delete[]
+  int  ExtractNextNumber(const char* spec);
   bool MatchOption(const char* spec,const char* option);
   bool CheckSuffix(const char* spec,const char* suffix);
   void RemoveOption(char* spec);

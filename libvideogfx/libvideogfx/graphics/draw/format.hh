@@ -38,6 +38,7 @@
 #include <libvideogfx/graphics/datatypes/bitmap.hh>
 #include <libvideogfx/graphics/datatypes/image.hh>
 #include <libvideogfx/graphics/datatypes/primitives.hh>
+#include <libvideogfx/graphics/draw/blit.hh>
 
 namespace videogfx {
 
