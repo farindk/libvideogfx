@@ -62,7 +62,12 @@ namespace videogfx {
   template <class T> void Clear         (Bitmap<T>&,T color);
   template <class T> void Clear         (Image<T>& ,Color<T> color);
 
-  /* Draw filled H/V-aligned rectangle. */
+  /* Draw H/V-aligned rectangle. */
+  template <class T> void DrawRectangle(Bitmap<T>& bm,int x1,int y1,int w, int h,T color);
+  template <class T> void DrawRectangle(Image<T>&  bm,int x1,int y1,int w, int h,Color<T> color);
+  template <class T> void DrawRectangle_NEW(Bitmap<T>& bm,int x1,int y1,int x2,int y2,T color);
+  template <class T> void DrawRectangle_NEW(Image<T>&  bm,int x1,int y1,int x2,int y2,Color<T> color);
+
   template <class T> void FillRectangle(Bitmap<T>&,int x0,int y0,int x1,int y1,T color);
   template <class T> void FillRectangle(Image<T>&, int x0,int y0,int x1,int y1,Color<T> color);
 
@@ -88,9 +93,6 @@ namespace videogfx {
   template <class T> void DrawCircle(Image<T>&  bm,const Point2D<int>& p, int radius,Color<T> color,bool fill=false);
   template <class T> void DrawCircle(Bitmap<T>& bm,const Point2D<double>& p, int radius,T color,bool fill=false);
   template <class T> void DrawCircle(Image<T>&  bm,const Point2D<double>& p, int radius,Color<T> color,bool fill=false);
-
-  template <class T> void DrawRectangle(Bitmap<T>& bm,int x1,int y1,int w, int h,T color);
-  template <class T> void DrawRectangle(Image<T>&  bm,int x1,int y1,int w, int h,Color<T> color);
 
   /* This function draws a line and places a head on one (x1,y1) if bothends==false or
      both (if bothends==true) sides of the line. */
@@ -502,14 +504,57 @@ namespace videogfx {
 
   template <class T> void DrawRectangle(Bitmap<T>& bm,int x1,int y1,int w, int h,T color)
   {
+    MessageDisplay::Show(ErrSev_Warning, "depreceated use of old DrawRectangle() function.");
+    DrawRectangle_NEW(bm,x1,y1,x1+w-1,y1+h-1, color);
+  }
+
+  template <class T> void DrawRectangle_NEW(Bitmap<T>& bm,int px1,int py1,int px2,int py2,T color)
+  {
+    const int x1 = std::min(px1,px2);
+    const int x2 = std::max(px1,px2);
+    const int y1 = std::min(py1,py2);
+    const int y2 = std::max(py1,py2);
+
+    const int xmin = std::max(bm.AskMinX(), x1);
+    const int xmax = std::min(bm.AskMaxX(), x2);
+    const int ymin = std::max(bm.AskMinY(), y1);
+    const int ymax = std::min(bm.AskMaxY(), y2);
+
     T*const* p = bm.AskFrame();
 
-    for (int x=x1;x<x1+w;x++)  p[y1][x] = p[y1+h-1][x] = color;
-    for (int y=y1;y<y1+h;y++)  p[y][x1] = p[y][x1+w-1] = color;
+    // top line
+    if (y1>= bm.AskMinY() && y1<=bm.AskMaxY())
+      {
+	for (int x=xmin;x<xmax;x++)  p[y1][x] = color;
+      }
+
+    // bottom line
+    if (y2>= bm.AskMinY() && y2<=bm.AskMaxY())
+      {
+	for (int x=xmin;x<xmax;x++)  p[y2][x] = color;
+      }
+
+    // left line
+    if (x1>= bm.AskMinX() && x1<= bm.AskMaxX())
+      {
+	for (int y=ymin;y<ymax;y++)  p[y][x1] = color;
+      }
+
+    // right line
+    if (x2>= bm.AskMinX() && x2<= bm.AskMaxX())
+      {
+	for (int y=ymin;y<ymax;y++)  p[y][x2] = color;
+      }
   }
 
 
   template <class T> void DrawRectangle(Image<T>&  bm,int x1,int y1,int w, int h,Color<T> color)
+  {
+    MessageDisplay::Show(ErrSev_Warning, "depreceated use of old DrawRectangle() function.");
+    DrawRectangle_NEW(bm,x1,y1,x1+w-1,y1+h-1);
+  }
+
+  template <class T> void DrawRectangle_NEW(Image<T>&  bm,int x1,int y1,int x2, int y2,Color<T> color)
   {
     ImageParam param = bm.AskParam();
 
@@ -517,10 +562,10 @@ namespace videogfx {
       {
 	BitmapChannel b = (BitmapChannel)i;
 	if (!bm.AskBitmap(b).IsEmpty())
-	  DrawRectangle(bm.AskBitmap(b),
-			param.ChromaScaleH(b,x1), param.ChromaScaleV(b,y1),
-			param.ChromaScaleH(b,w),  param.ChromaScaleH(b,h),
-			color.c[i]);
+	  DrawRectangle_NEW(bm.AskBitmap(b),
+			    param.ChromaScaleH(b,x1), param.ChromaScaleV(b,y1),
+			    param.ChromaScaleH(b,w),  param.ChromaScaleH(b,h),
+			    color.c[i]);
       }
   }
 

@@ -169,8 +169,14 @@ namespace videogfx {
     */
     int AskStride() const { return AskFrame()[1]-AskFrame()[0]; }
 
+    /* NOTE: use of Ask*Offset() is deprecated. Use Ask[Min/Max][X/Y] instead. */
     int AskXOffset() const { return d_xoffset; }
     int AskYOffset() const { return d_yoffset; }
+
+    int AskMinX() const { return -d_xoffset; }
+    int AskMinY() const { return -d_yoffset; }
+    int AskMaxX() const { return -d_xoffset+d_width-1; }
+    int AskMaxY() const { return -d_yoffset+d_height-1; }
 
     /// Check if bitmap has any data associated with it.
     bool IsEmpty() const { return d_parent==NULL; }
