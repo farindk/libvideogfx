@@ -140,10 +140,15 @@ namespace videogfx {
 #  define AssertDescr(expr,descr)
 #else
 #  if defined(__ASSERT_FUNCTION) && defined(__STRING)
-#    define Assert(expr) \
+#    ifdef  OLDASSERT
+#      define Assert(expr) assert(expr)
+#      define AssertDescr(expr,descr) assert(expr)
+#    else
+#      define Assert(expr) \
   (void)(expr ? 0 : (throw Excpt_Assertion(__STRING(expr),__FILE__,__ASSERT_FUNCTION,__LINE__),1) );
-#    define AssertDescr(expr,descr) \
+#      define AssertDescr(expr,descr) \
  (void)(expr ? 0 : (throw Excpt_Assertion(descr,__FILE__,__ASSERT_FUNCTION,__LINE__),1) );
+#    endif
 #  else
 #    define Assert(expr) \
  (void)(expr ? 0 : (throw Excpt_Assertion("no string information",__FILE__, \
