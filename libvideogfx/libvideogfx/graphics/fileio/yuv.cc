@@ -54,12 +54,17 @@ namespace videogfx {
 
 	// Calculate the size of one frame.
 
-	switch (d_spec.chroma)
+	if (d_greyscale_input)
+	  d_Framesize = d_spec.width * d_spec.height;
+	else
 	  {
-	  case Chroma_420:  d_Framesize = d_spec.width * d_spec.height *3/2; break;
-	  case Chroma_422:  d_Framesize = d_spec.width * d_spec.height *2;   break;
-	  case Chroma_444:  d_Framesize = d_spec.width * d_spec.height *3;   break;
-	  default: assert(0); break;
+	    switch (d_spec.chroma)
+	      {
+	      case Chroma_420:  d_Framesize = d_spec.width * d_spec.height *3/2; break;
+	      case Chroma_422:  d_Framesize = d_spec.width * d_spec.height *2;   break;
+	      case Chroma_444:  d_Framesize = d_spec.width * d_spec.height *3;   break;
+	      default: assert(0); break;
+	      }
 	  }
 
 	d_nFrames = length/d_Framesize;
