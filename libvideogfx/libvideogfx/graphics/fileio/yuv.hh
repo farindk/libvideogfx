@@ -65,6 +65,9 @@
 
 namespace videogfx {
 
+  int YUVFileFrameSize(const ImageParam& param);
+
+
   class FileReader_YUV1
   {
   public:
@@ -77,6 +80,7 @@ namespace videogfx {
     void SetAlphaStream(std::istream& alphastream) { d_alphastr = &alphastream; d_initialized=false; }
 
     void SetImageParam(const ImageParam& spec) { d_spec = spec; d_initialized=false; }
+    void AskImageParam(ImageParam& param) { param = d_spec; }
     void SetInterleavedChroma(bool flag=true)  { d_interleavedUV = flag; d_initialized=false; }
     void SetInputIsGreyscale(bool flag=true) { d_greyscale_input = flag; d_initialized=false; }
 
@@ -120,6 +124,7 @@ namespace videogfx {
     void SetWriteColorAsGreyscale(bool flag=true) { d_write_color_as_greyscale=flag; }
     void SetWriteInterleaved(bool flag=true)      { d_write_interleaved=flag; }
 
+    void SkipToImage(int nr, const ImageParam& param);
     void WriteImage(const Image<Pixel>&);
 
   private:

@@ -33,6 +33,27 @@ namespace videogfx {
 
 
 
+  int YUVFileFrameSize(const ImageParam& param)
+  {
+    int size;
+
+    if (param.colorspace == Colorspace_Greyscale)
+      size = param.width * param.height;
+    else
+      {
+	switch (param.chroma)
+	  {
+	  case Chroma_420:  size = param.width * param.height *3/2; break;
+	  case Chroma_422:  size = param.width * param.height *2;   break;
+	  case Chroma_444:  size = param.width * param.height *3;   break;
+	  default: assert(0); break;
+	  }
+      }
+
+    return size;
+  }
+
+
   void FileReader_YUV1::Init()
   {
     if (d_initialized)
@@ -54,18 +75,7 @@ namespace videogfx {
 
 	// Calculate the size of one frame.
 
-	if (d_greyscale_input)
-	  d_Framesize = d_spec.width * d_spec.height;
-	else
-	  {
-	    switch (d_spec.chroma)
-	      {
-	      case Chroma_420:  d_Framesize = d_spec.width * d_spec.height *3/2; break;
-	      case Chroma_422:  d_Framesize = d_spec.width * d_spec.height *2;   break;
-	      case Chroma_444:  d_Framesize = d_spec.width * d_spec.height *3;   break;
-	      default: assert(0); break;
-	      }
-	  }
+	d_Framesize = YUVFileFrameSize(d_spec);
 
 	d_nFrames = length/d_Framesize;
 	if (d_nFrames * d_Framesize != length)
@@ -110,8 +120,8 @@ namespace videogfx {
     if (!d_initialized)
       Init();
 
-    assert(nr>=0);
-    assert(nr<d_nFrames);
+    //assert(nr>=0);
+    //assert(nr<d_nFrames);
 
     d_yuvstr->seekg(nr*d_Framesize,ios::beg);
     if (d_alphastr) d_alphastr->seekg(nr * d_spec.width * d_spec.height , ios::beg);
@@ -199,6 +209,13 @@ namespace videogfx {
       d_write_color_as_greyscale(false),
       d_write_interleaved(false)
   {
+  }
+
+
+  void FileWriter_YUV1::SkipToImage(int nr, const ImageParam& param)
+  {
+    d_yuvstr->seekp(nr*YUVFileFrameSize(param),ios::beg);
+    if (d_alphastr) d_alphastr->seekp(nr * param.width * param.height , ios::beg);
   }
 
 
