@@ -94,8 +94,8 @@ namespace videogfx {
     ~UnifiedImageLoader() { if (d_loader_pipeline) delete d_loader_pipeline; }
 
     bool SetInput(const char* input_specification);
-    void SetTargetColorspace(Colorspace c = Colorspace_Invalid);   // invalid -> keep input colorspace
-    void SetTargetChroma(ChromaFormat c = Chroma_Invalid); // invalid -> input input chroma
+    void SetTargetColorspace(Colorspace c = Colorspace_Invalid) { d_colorspace=c; }   // invalid -> keep input colorspace
+    void SetTargetChroma(ChromaFormat c = Chroma_Invalid) { d_chroma=c; } // invalid -> input input chroma
 
     // usage
 
