@@ -171,8 +171,8 @@ namespace videogfx {
     }
 
     bool IsNULL() const { return pointer==NULL; }
-    operator T*()   { AssertDescr(counter,"smart pointer is NULL"); return pointer; }
-    T& operator()() { AssertDescr(counter,"smart pointer is NULL"); return *pointer; }
+    operator T*()   { AssertDescr(SSP<T>::counter,"smart pointer is NULL"); return pointer; }
+    T& operator()() { AssertDescr(SSP<T>::counter,"smart pointer is NULL"); return *pointer; }
 
     void Decouple()
     {

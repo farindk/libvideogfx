@@ -35,7 +35,7 @@ template <class T> void Heap<T>::Insert(const T& e)
 
   if (d_entries==d_size)
     {
-      int newsize = max(max(d_size*2,d_size+10),INITIAL_HEAP_SIZE);
+      int newsize = std::max(std::max(d_size*2,d_size+10),INITIAL_HEAP_SIZE);
       assert(newsize>d_size);
 
       T* newheap = new T[newsize+1]; // Create array for new heap including an extra dummy element [0].
@@ -104,4 +104,3 @@ template <class T> void Heap<T>::SortHeap()
   for (int i=d_entries;i>=1;i--)
     DownHeap(i);
 }
-

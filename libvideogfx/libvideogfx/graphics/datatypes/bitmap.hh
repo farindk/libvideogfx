@@ -366,28 +366,31 @@ namespace videogfx {
     }
 
     /// the destructor frees the bitmap-data memory (if previously allocated)
-    ~BitmapProvider_Mem() { if (d_bitmap_ptr) delete[] d_bitmap_ptr; }
+    ~BitmapProvider_Mem() { 
+		if (BitmapProvider_Mem<Pel>::d_bitmap_ptr) 
+			delete[] BitmapProvider_Mem<Pel>::d_bitmap_ptr; 
+		}
 
     /// Create a new bitmap-data in memory, old data is never reused.
     void Create(int w,int h,int border=0,int halign=1,int valign=1)
     {
-      d_width  = w;
-      d_height = h;
-      d_border = border;
+      BitmapProvider_Mem<Pel>::d_width  = w;
+      BitmapProvider_Mem<Pel>::d_height = h;
+      BitmapProvider_Mem<Pel>::d_border = border;
 
       CalcAlignedSizes(w,h,border,halign,valign,
-		       d_aligned_width,d_aligned_height,d_aligned_border);
+		       BitmapProvider_Mem<Pel>::d_aligned_width,BitmapProvider_Mem<Pel>::d_aligned_height,BitmapProvider_Mem<Pel>::d_aligned_border);
 
       // total size including border
 
-      d_total_width  = d_aligned_width +2*d_aligned_border;
-      d_total_height = d_aligned_height+2*d_border;
+      BitmapProvider_Mem<Pel>::d_total_width  = BitmapProvider_Mem<Pel>::d_aligned_width +2*BitmapProvider_Mem<Pel>::d_aligned_border;
+      BitmapProvider_Mem<Pel>::d_total_height = BitmapProvider_Mem<Pel>::d_aligned_height+2*BitmapProvider_Mem<Pel>::d_border;
 
-      if (d_bitmap_ptr)
-	delete[] d_bitmap_ptr;
+      if (BitmapProvider_Mem<Pel>::d_bitmap_ptr)
+	delete[] BitmapProvider_Mem<Pel>::d_bitmap_ptr;
 
-      d_bitmap_ptr = new Pel[d_total_width * d_total_height];
-      SetFramePtrs();
+      BitmapProvider_Mem<Pel>::d_bitmap_ptr = new Pel[BitmapProvider_Mem<Pel>::d_total_width * BitmapProvider_Mem<Pel>::d_total_height];
+      BitmapProvider_Mem<Pel>::SetFramePtrs();
     }
   };
 

@@ -52,6 +52,7 @@ namespace videogfx {
   template <class T> void ClipValues(Bitmap<T>& bm,T low,T high);
   template <class T> void SearchForMinMaxValues(const Bitmap<T>& bm,T& low,T& high);
   template <class T> void StretchValues(Bitmap<T>& bm,T low,T high);
+  template <class T> void BinaryThreshold(Bitmap<T>& bm,T thresh,T setlow,T sethigh); // setlow if bm[]<thresh else sethigh
 
 
 
@@ -206,6 +207,20 @@ namespace videogfx {
     if (low!=0) ContrastBrightness(bm,1.0,low);
     maxi = high;
     mini = low;
+  }
+
+  template <class T> void BinaryThreshold(Bitmap<T>& bm,T thresh,T setlow,T sethigh)
+  {
+    int w=bm.AskWidth(), h=bm.AskHeight();
+
+    Pixel*const* p = bm.AskFrame();
+
+    for (int y=0;y<h;y++)
+      for (int x=0;x<w;x++)
+	{
+	  if (p[y][x] < thresh) p[y][x] = setlow;
+	  else                  p[y][x] = sethigh;
+	}
   }
 
 }
