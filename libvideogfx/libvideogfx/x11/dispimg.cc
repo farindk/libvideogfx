@@ -160,8 +160,8 @@ namespace videogfx {
   }
 
 
-  void DisplayImage_X11::UseMITSHM(bool flag=true) { d_data->mayUseMITSHM=flag; }
-  void DisplayImage_X11::UseXv(bool flag=true) { d_data->mayUseXv=flag; }
+  void DisplayImage_X11::UseMITSHM(bool flag) { d_data->mayUseMITSHM=flag; }
+  void DisplayImage_X11::UseXv(bool flag) { d_data->mayUseXv=flag; }
 
   bool DisplayImage_X11::UsesXv() const
   {
