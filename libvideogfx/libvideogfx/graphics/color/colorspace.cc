@@ -36,6 +36,7 @@ namespace videogfx {
     param.height     = src.AskHeight();
     param.colorspace = src.AskParam().colorspace;
     param.chroma     = chroma;
+    param.has_alpha  = src.AskParam().has_alpha;
     dst.Create(param);
 
     const ChromaFormat oldchroma = src.AskParam().chroma;
@@ -174,6 +175,18 @@ namespace videogfx {
 	ChangeColorspace(tmp, src, Colorspace_RGB);
 	ChangeColorspace(dst, tmp, colorspace);
       }
+
+
+    /* Copy alpha information to new image.
+     */
+
+    {
+      ImageParam dstspec = dst.AskParam();
+      dstspec.has_alpha  = src.AskParam().has_alpha;
+      dst.SetParam(dstspec);
+
+      CopyToNew(dst.AskBitmap(Bitmap_Alpha) , src.AskBitmap(Bitmap_Alpha));
+    }
   }
 
 
