@@ -32,6 +32,8 @@ libvideogfx_graphics_fileio_la_SOURCES = \
 	yuv.hh	\
 	yuv_vqeg.cc	\
 	yuv_vqeg.hh	\
+	imagesink.hh	\
+	imagesink.cc	\
 	$(linux_sources)
 
 #	read_yuv.cc	\
