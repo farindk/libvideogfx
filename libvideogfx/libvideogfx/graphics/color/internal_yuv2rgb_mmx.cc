@@ -20,15 +20,20 @@
 #include "libvideogfx/graphics/color/internal_yuv2rgb_mmx.hh"
 using namespace videogfx;  // for "uint64" declaration
 
-static uint64 UVoffset   = 0x0080008000800080LL;     //   0  4x  128   // UV offs
-static uint64 Yoffset    = 0x1010101010101010LL;     //   8  8x   16   // Y offs
-static uint64 Cb2Rfact   = 0x0066006600660066LL;     //  16  4x  102 =  409/4         // Cb  ->R
-static uint64 CbCr2Gfact = 0x0034001900340019LL;     //  24  2x (52 25) = 208/4 100/4 // CbCr->G
-static uint64 Cb2Bfact   = 0x0081008100810081LL;     //  32  4x  129 =  516/4         // Cb  ->B
-static uint64 Yfact      = 0x004A004A004A004ALL;     //  40  4x   74 =  298/4         // Y mul
-static uint64 shift6bit  = 0x0000000000000006LL;     //  40  4x   74 =  298/4         // Y mul
 
-static uint64 tmp_cr, tmp_rimpact, tmp_rimpact2, tmp_gimpact, tmp_bimpact, tmp_bimpact2;
+/* There is a very strange bug (most probably in the dynamic linker) which causes
+   a seg-fault at program start when the following variables are declared static.
+*/
+
+uint64 UVoffset   = 0x0080008000800080LL;     //   0  4x  128   // UV offs
+uint64 Yoffset    = 0x1010101010101010LL;     //   8  8x   16   // Y offs
+uint64 Cb2Rfact   = 0x0066006600660066LL;     //  16  4x  102 =  409/4         // Cb  ->R
+uint64 CbCr2Gfact = 0x0034001900340019LL;     //  24  2x (52 25) = 208/4 100/4 // CbCr->G
+uint64 Cb2Bfact   = 0x0081008100810081LL;     //  32  4x  129 =  516/4         // Cb  ->B
+uint64 Yfact      = 0x004A004A004A004ALL;     //  40  4x   74 =  298/4         // Y mul
+uint64 shift6bit  = 0x0000000000000006LL;     //  40  4x   74 =  298/4         // Y mul
+
+uint64 tmp_cr, tmp_rimpact, tmp_rimpact2, tmp_gimpact, tmp_bimpact, tmp_bimpact2;
 
 
 
