@@ -29,7 +29,7 @@ template <class T> Queue<T>::~Queue()
   if (d_queue) delete[] d_queue;
 }
 
-template <class T> void Queue<T>::Append(const T& e)
+template <class T> inline void Queue<T>::Append(const T& e)
 {
   // If queue is full, allocate a bigger one and copy the old one into it.
 
@@ -42,7 +42,7 @@ template <class T> void Queue<T>::Append(const T& e)
   d_entries++;
 }
 
-template <class T> void Queue<T>::AppendAtHead(const T& e)
+template <class T> void inline Queue<T>::AppendAtHead(const T& e)
 {
   // If queue is full, allocate a bigger one and copy the old one into it.
 
@@ -71,34 +71,34 @@ template <class T> void Queue<T>::Enlarge()
   d_first = 0;
 }
 
-template <class T> T& Queue<T>::AskTail() const
+template <class T> inline T& Queue<T>::AskTail() const
 {
   assert(!IsEmpty());
   return d_queue[(d_first+d_entries-1)%d_size];
 }
 
-template <class T> T& Queue<T>::AskFromHead(uint32 idx) const
+template <class T> inline T& Queue<T>::AskFromHead(uint32 idx) const
 {
   assert(!IsEmpty());
   assert(idx<d_entries);
   return d_queue[(d_first+idx)%d_size];
 }
 
-template <class T> T& Queue<T>::AskFromTail(uint32 idx) const
+template <class T> inline T& Queue<T>::AskFromTail(uint32 idx) const
 {
   assert(!IsEmpty());
   assert(idx<d_entries);
   return d_queue[(d_first+d_entries-1-idx)%d_size];
 }
 
-template <class T> void Queue<T>::RemoveHead()
+template <class T> inline void Queue<T>::RemoveHead()
 {
   assert(!IsEmpty());
   d_first++; d_first %= d_size;
   d_entries--;
 }
 
-template <class T> void Queue<T>::RemoveFromHead(uint32 idx)
+template <class T> inline void Queue<T>::RemoveFromHead(uint32 idx)
 {
   assert(!IsEmpty());
   assert(idx<d_entries);

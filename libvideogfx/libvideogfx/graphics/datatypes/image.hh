@@ -176,6 +176,8 @@ namespace videogfx {
 
     /** Create a new image according to the parameters specified. */
     void Create(const ImageParam&);
+    /** Create a new image according to the parameters specified. */
+    void Create(int w,int h,Colorspace cs,ChromaFormat cr=Chroma_420);
     /** Explicitly release the memory occupied for the image data. */
     void Release();
 
@@ -286,6 +288,13 @@ namespace videogfx {
   };
 
 
+
+  template <class Pel> void Image<Pel>::Create(int w,int h,Colorspace cs,ChromaFormat cr)
+  {
+    ImageParam spec(w,h,cs);
+    spec.chroma = cr;
+    Create(spec);
+  }
 
   template <class Pel> void Image<Pel>::Create(const ImageParam& param)
   {

@@ -83,8 +83,8 @@ namespace videogfx {
   template <class T> void DrawLine(Bitmap<T>& bm,const Point2D<double>& p1,const Point2D<double>& p2,T color);
   template <class T> void DrawLine(Image<T>&  bm,const Point2D<double>& p1,const Point2D<double>& p2,Color<T> color);
 
-  /* Only draws every 4th dot. */
-  template <class T> void DrawDottedLine(Bitmap<T>&,int x1,int y1,int x2,int y2,T color);
+  /* Only draws every nth dot. */
+  template <class T> void DrawDottedLine(Bitmap<T>&,int x1,int y1,int x2,int y2,T color,int nth=4);
 
   // Draw a circle
   template <class T> void DrawCircle(Bitmap<T>& bm,int x0,int y0, int radius,T color,bool fill=false);
@@ -340,7 +340,7 @@ namespace videogfx {
   template <class T> void DrawLine(Image<T>&  bm,const Point2D<double>& p1,const Point2D<double>& p2,Color<T> color)
   { DrawLine(bm,(int)(p1.x+0.5),(int)(p1.y+0.5),(int)(p2.x+0.5),(int)(p2.y+0.5),color); }
 
-  template <class T> void DrawDottedLine(Bitmap<T>& bm,int x1,int y1,int x2,int y2,T color)
+  template <class T> void DrawDottedLine(Bitmap<T>& bm,int x1,int y1,int x2,int y2,T color,int nth)
   {
     int vx = x2-x1;
     int vy = y2-y1;
@@ -348,13 +348,19 @@ namespace videogfx {
 
     if (abs(vx)>abs(vy))
       {
-	for (int x=0;x!=vx;x+=4*sign(vx))
-	  DrawPoint(bm , x1+x , vy*x/vx+y1 , color);
+	for (int x=0;x<abs(vx);x+=nth)
+	  {
+	    int xx=x*sign(vx);
+	    DrawPoint(bm , x1+xx , vy*xx/vx+y1 , color);
+	  }
       }
     else
       {
-	for (int y=0;y!=vy;y+=4*sign(vy))
-	  DrawPoint(bm , x1+vx*y/vy , y1+y , color);
+	for (int y=0;y<abs(vy);y+=nth)
+	  {
+	    int yy=y*sign(vy);
+	    DrawPoint(bm , x1+vx*yy/vy , y1+yy , color);
+	  }
       }
   }
 
