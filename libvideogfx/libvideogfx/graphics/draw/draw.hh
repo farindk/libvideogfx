@@ -164,15 +164,15 @@ namespace videogfx {
       }
   }
 
-  template <class T> void Clear         (Image<T>& ,Color<T> color)
+  template <class T> void Clear         (Image<T>& img,Color<T> color)
   {
-    ImageParam param = bm.AskParam();
+    ImageParam param = img.AskParam();
 
     for (int i=0;i<4;i++)
       {
 	BitmapChannel b = (BitmapChannel)i;
-	if (!bm.AskBitmap(b).IsEmpty())
-	  Clear(bm.AskBitmap(b), color.c[i]);
+	if (!img.AskBitmap(b).IsEmpty())
+	  Clear(img.AskBitmap(b), color.c[i]);
       }
   }
 
