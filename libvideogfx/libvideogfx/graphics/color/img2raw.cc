@@ -123,6 +123,7 @@ namespace videogfx {
       if (i2r_yuv_16bit   ::s_CanConvert(img,d_spec)) { t = new i2r_yuv_16bit;    goto found; }
       if (i2r_yuv_32bit   ::s_CanConvert(img,d_spec)) { t = new i2r_yuv_32bit;    goto found; }
       if (i2r_yuv422_32bit::s_CanConvert(img,d_spec)) { t = new i2r_yuv422_32bit; goto found; }
+      if (i2r_yuv444_16bit::s_CanConvert(img,d_spec)) { t = new i2r_yuv444_16bit; goto found; }
       if (i2r_yuv444_32bit::s_CanConvert(img,d_spec)) { t = new i2r_yuv444_32bit; goto found; }
 
       // --- grey -> raw RGB

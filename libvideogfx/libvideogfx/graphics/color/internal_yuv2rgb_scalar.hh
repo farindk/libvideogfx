@@ -59,6 +59,24 @@ namespace videogfx {
   };
 
 
+  /* Convert YUV 4:4:4 and place RGB components in 16bit entities in arbitrary order.
+   */
+  class i2r_yuv444_16bit : public Image2RawRGB_Transform
+  {
+  public:
+    virtual ~i2r_yuv444_16bit() { }
+
+    virtual void Transform(const Image<Pixel>&,uint8* mem,int firstline,int lastline);
+
+    static bool s_CanConvert(const Image<Pixel>&,const RawRGBImageSpec&);
+    virtual bool CanConvert(const Image<Pixel>& i,const RawRGBImageSpec& s) { return s_CanConvert(i,s); }
+
+    virtual const char* TransformationName() { return "scalar YUV 4:4:4 to 16bit RGB"; }
+
+  private:
+  };
+
+
   /* Convert YUV 4:2:0 and place RGB components in 32bit entities in arbitrary order.
    */
   class i2r_yuv_32bit : public Image2RawRGB_Transform

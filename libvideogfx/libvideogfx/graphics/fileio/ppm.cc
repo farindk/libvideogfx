@@ -91,7 +91,8 @@ namespace videogfx {
 
   void FileWriter_PPM::Write(const Image<Pixel>& img,const char* filename)
   {
-    ofstream ostr(filename);
+    ofstream ostr;
+    ostr.open(filename, std::ios::out | std::ios::binary);
     Write(img,ostr);
   }
 

@@ -27,7 +27,7 @@ namespace videogfx {
   {
     if (spec.dest_width || spec.upscale_factor || spec.downscale_factor) return false;
     if (spec.bits_per_pixel != 16) return false;
-    if (!spec.little_endian) return false;
+    // if (!spec.little_endian) return false;     // removed without being sure ...
 
     ImageParam param = img.AskParam();
 
@@ -180,6 +180,113 @@ namespace videogfx {
 		blue  = b0+yy;
 		if (blue<=0) { } else if (blue>=0xff00) { val |= bmask; } else { val |= (blue>>bshift)&bmask; }
 		*membuf16b++ = (d_spec.little_endian ? ToLittleEndian((uint16)val) : ToBigEndian((uint16)val));
+	      }
+	  }
+      }
+  }
+
+
+
+  // --------------------------------------------------------------------------------------------
+
+
+
+  bool i2r_yuv444_16bit::s_CanConvert(const Image<Pixel>& img,const RawRGBImageSpec& spec)
+  {
+    if (spec.dest_width || spec.upscale_factor || spec.downscale_factor) return false;
+    if (spec.bits_per_pixel != 16) return false;
+
+    ImageParam param = img.AskParam();
+
+    if (param.colorspace != Colorspace_YUV) return false;
+    if (param.chroma !=Chroma_444) return false;
+
+    return true;
+  }
+
+  void i2r_yuv444_16bit::Transform(const Image<Pixel>& img,uint8* mem,int firstline,int lastline)
+  {
+    const uint32 rmask=d_spec.r_mask;
+    const uint32 gmask=d_spec.g_mask;
+    const uint32 bmask=d_spec.b_mask;
+
+    uint32 rshift,gshift,bshift;
+
+    rshift = d_spec.r_shift;  rshift -= 8-d_spec.r_bits;  rshift -= 8;  rshift = -rshift;
+    gshift = d_spec.g_shift;  gshift -= 8-d_spec.g_bits;  gshift -= 8;  gshift = -gshift;
+    bshift = d_spec.b_shift;  bshift -= 8-d_spec.b_bits;  bshift -= 8;  bshift = -bshift;
+
+    ImageParam param = img.AskParam();
+
+    assert(param.chroma==Chroma_444);
+
+    const Pixel*const* yp = img.AskFrameY();
+    const Pixel*const* up = img.AskFrameU();
+    const Pixel*const* vp = img.AskFrameV();
+
+    const int w = img.AskWidth();
+
+    bool fastversion = (rshift==0 &&  // red does not need shifting
+			bshift>=0);   // blue will be shifted right -> no need to mask it out
+
+    if (fastversion)
+      {
+	for (int cy=firstline;cy<=lastline;cy++)
+	  {
+	    const Pixel*  yptr = yp[cy];
+	    const Pixel*  uptr = up[cy];
+	    const Pixel*  vptr = vp[cy];
+	    uint16* membuf16a = ((uint16*)(mem+ cy*d_spec.bytes_per_line));
+
+	    for (int cx=0;cx<w;cx++)
+	      {
+		int u=((int)*uptr++) -128;
+		int v=((int)*vptr++) -128;
+              
+		int r0 = (int)(         + 409*v);
+		int g0 = (int)( - 100*u - 208*v);
+		int b0 = (int)( + 516*u        );
+
+		int val;
+		int yy=(((int)*yptr++) -16)*298;
+
+		int red   = r0+yy;
+		if (red<=0) { val=0; } else if (red>0xff00) { val = rmask; } else { val = (red)&rmask; }
+		int green = g0+yy;
+		if (green<=0) { } else if (green>0xff00) { val|=gmask; } else { val |= (green>>gshift)&gmask; }
+		int blue  = b0+yy;
+		if (blue<=0) { } else if (blue>=0xff00) { val |= bmask; } else { val |= (blue>>bshift); }
+		*membuf16a++ = (d_spec.little_endian ? ToLittleEndian((uint16)val) : ToBigEndian((uint16)val));
+	      }
+	  }
+      }
+    else
+      {
+	for (int cy=firstline;cy<=lastline;cy++)
+	  {
+	    const Pixel*  yptr = yp[cy];
+	    const Pixel*  uptr = up[cy];
+	    const Pixel*  vptr = vp[cy];
+	    uint16* membuf16a = ((uint16*)(mem+ 2*cy   *d_spec.bytes_per_line));
+
+	    for (int cx=0;cx<w;cx++)
+	      {
+		int u=((int)*uptr++) -128;
+		int v=((int)*vptr++) -128;
+              
+		int r0 = (int)(         + 409*v);
+		int g0 = (int)( - 100*u - 208*v);
+		int b0 = (int)( + 516*u        );
+              
+		int val;
+		int yy=(((int)*yptr++) -16)*298;
+		int red   = r0+yy;
+		if (red<=0) { val=0; } else if (red>0xff00) { val=rmask; } else { val = (red>>rshift)&rmask; }
+		int green = g0+yy;
+		if (green<=0) { } else if (green>0xff00) { val|=gmask; } else { val |= (green>>gshift)&gmask; }
+		int blue  = b0+yy;
+		if (blue<=0) { } else if (blue>=0xff00) { val |= bmask; } else { val |= (blue>>bshift)&bmask; }
+		*membuf16a++ = (d_spec.little_endian ? ToLittleEndian((uint16)val) : ToBigEndian((uint16)val));
 	      }
 	  }
       }
