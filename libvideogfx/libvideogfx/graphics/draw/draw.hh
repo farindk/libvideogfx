@@ -551,7 +551,7 @@ namespace videogfx {
   template <class T> void DrawRectangle(Image<T>&  bm,int x1,int y1,int w, int h,Color<T> color)
   {
     MessageDisplay::Show(ErrSev_Warning, "depreceated use of old DrawRectangle() function.");
-    DrawRectangle_NEW(bm,x1,y1,x1+w-1,y1+h-1);
+    DrawRectangle_NEW(bm,x1,y1,x1+w-1,y1+h-1,color);
   }
 
   template <class T> void DrawRectangle_NEW(Image<T>&  bm,int x1,int y1,int x2, int y2,Color<T> color)
@@ -564,7 +564,7 @@ namespace videogfx {
 	if (!bm.AskBitmap(b).IsEmpty())
 	  DrawRectangle_NEW(bm.AskBitmap(b),
 			    param.ChromaScaleH(b,x1), param.ChromaScaleV(b,y1),
-			    param.ChromaScaleH(b,w),  param.ChromaScaleH(b,h),
+			    param.ChromaScaleH(b,x2), param.ChromaScaleH(b,y2),
 			    color.c[i]);
       }
   }
