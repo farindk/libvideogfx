@@ -107,6 +107,12 @@ namespace videogfx {
 
   template <class Pel> void Copy(Bitmap<Pel>& dst,const Bitmap<Pel>& src)
   {
+    if (src.IsEmpty())
+      {
+	dst.Release();
+	return;
+      }
+
     const int w = src.AskWidth();
     const int h = src.AskHeight();
 

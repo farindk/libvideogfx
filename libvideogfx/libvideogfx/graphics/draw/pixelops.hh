@@ -180,7 +180,7 @@ namespace videogfx {
     SearchForMinMaxValues(bm,mini,maxi);
 
     ContrastBrightness(bm,1.0,-mini);
-    maxi += mini;
+    maxi -= mini;
     mini  = 0;
     ContrastBrightness(bm,((double)(high-low))/maxi,0.0);
     maxi = high-low;

@@ -496,12 +496,12 @@ namespace videogfx {
     dxp = x1-x0;
     dyp = y1-y0;
 
-    norm = sqrt(dxp*dxp+dyp*dyp);
+    norm = ::sqrt(dxp*dxp+dyp*dyp);
 
     if (norm>0.0)
       {
-	xa = (int)((cos(alpha)*dxp-sin(alpha)*dyp)*l/norm);
-	ya = (int)((sin(alpha)*dxp+cos(alpha)*dyp)*l/norm);
+	xa = (int)((::cos(alpha)*dxp-::sin(alpha)*dyp)*l/norm);
+	ya = (int)((::sin(alpha)*dxp+::cos(alpha)*dyp)*l/norm);
 
 	DrawLine(bm,x1,y1,x1-xa,y1-ya,color);     
 
@@ -510,8 +510,8 @@ namespace videogfx {
 	    DrawLine(bm,x0,y0,x0+xa,y0+ya,color);
 	  }
 
-	xa = (int)(( cos(alpha)*dxp+sin(alpha)*dyp)*l/norm);
-	ya = (int)((-sin(alpha)*dxp+cos(alpha)*dyp)*l/norm);
+	xa = (int)(( ::cos(alpha)*dxp+::sin(alpha)*dyp)*l/norm);
+	ya = (int)((-::sin(alpha)*dxp+::cos(alpha)*dyp)*l/norm);
 
 	DrawLine(bm,x1,y1,x1-xa,y1-ya,color);  
 
