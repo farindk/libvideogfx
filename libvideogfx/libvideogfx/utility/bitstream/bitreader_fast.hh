@@ -102,7 +102,7 @@ class BitReader_Fast
 {
 public:
   BitReader_Fast(const uint8* buffer,uint32 len)
-    : d_ptr(buffer), d_endptr(buffer+len),
+    : d_ptr(buffer), d_endptr(buffer+len), d_start(buffer),
       d_buffer(0), d_freebits(16)
   {
     Fill16Bits();
@@ -261,6 +261,8 @@ public:
     return AskBitsLeft() <= 0;
   }
 
+  inline int    Position() const { return (d_ptr-d_start)*8 -(16-d_freebits); }
+  inline const uint8* Data() const { return d_start; }
 public:
   uint32 d_buffer;
   int    d_freebits; // number of invalid bits in top 16 bits of buffer
@@ -268,6 +270,7 @@ public:
 private:
   const uint8* d_ptr;
   const uint8* d_endptr;
+  const uint8* d_start;
 };
 
 #endif
