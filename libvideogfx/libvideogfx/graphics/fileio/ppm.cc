@@ -142,6 +142,7 @@ namespace videogfx {
   void WriteImage_PPM(const Image<Pixel>& img,const char* filename)
   {
     FileWriter_PPM writer;
+    writer.WriteYUVAsGreyscale(true);
     writer.Write(img,filename); 
   }
 
