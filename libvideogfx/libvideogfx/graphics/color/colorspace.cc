@@ -65,7 +65,8 @@ void ChangeChroma(Image<Pixel>& dst, const Image<Pixel>& src, ChromaFormat chrom
 
 
 
-void ChangeColorspace(Image<Pixel>& dst, const Image<Pixel>& src, Colorspace   colorspace)
+void ChangeColorspace(Image<Pixel>& dst, const Image<Pixel>& src,
+		      Colorspace colorspace, ChromaFormat chroma)
 {
   ImageParam param = dst.AskParam();
 
@@ -76,10 +77,10 @@ void ChangeColorspace(Image<Pixel>& dst, const Image<Pixel>& src, Colorspace   c
     {
       if (param.colorspace == Colorspace_YUV)
 	{
-	  if (param.chroma == src.AskParam().chroma)
+	  if (chroma == src.AskParam().chroma)
 	    CopyToNew(dst,src);
 	  else
-	    ChangeChroma(dst, src, dst.AskParam().chroma);
+	    ChangeChroma(dst, src, chroma);
 	}
       else
 	{
@@ -121,7 +122,7 @@ void ChangeColorspace(Image<Pixel>& dst, const Image<Pixel>& src, Colorspace   c
     {
       if (colorspace==Colorspace_YUV)
 	{
-	  RGB2YUV(dst, src, dst.AskParam().chroma);
+	  RGB2YUV(dst, src, chroma);
 	  did_convert=true;
 	}
       else if (colorspace==Colorspace_HSV)

@@ -27,14 +27,14 @@ template <class T> Array2<T>::Array2()
 }
 
 
-template <class T> Array2<T>::Array2(int width,int height)
+template <class T> Array2<T>::Array2(int width,int height,int xbase,int ybase)
   : d_array(NULL)
 {
-  Create(width,height);
+  Create(width,height,xbase,ybase);
 }
 
 
-template <class T> void Array2<T>::Create(int width,int height)
+template <class T> void Array2<T>::Create(int width,int height,int xbase,int ybase)
 {
   if (d_array)
     {
@@ -47,6 +47,9 @@ template <class T> void Array2<T>::Create(int width,int height)
 
   d_width  = width;
   d_height = height; 
+
+  d_xbase = xbase;
+  d_ybase = ybase;
 
   T* bitmap = new T[d_width * d_height];
   d_array   = new T* [d_height];

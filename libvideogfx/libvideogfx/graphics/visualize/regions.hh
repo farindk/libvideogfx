@@ -9,9 +9,7 @@
   to do:
 
   author(s):
-   - Dirk Farin, farin@ti.uni-mannheim.de
-     University Mannheim, Dept. Circuitry and Simulation
-     B 6,26 EG, room 0.10 / D-68131 Mannheim / Germany
+   - Dirk Farin, dirk.farin@gmx.de
 
   modifications:
     1999/Nov/02 - Dirk Farin - rewritten because original source

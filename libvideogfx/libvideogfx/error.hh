@@ -9,7 +9,7 @@
   to do:
 
   author(s):
-   - Dirk Farin, farin@ti.uni-mannheim.de
+   - Dirk Farin, dirk.farin@gmx.de
 
   modifications:
    29/Sep/1999 - Dirk Farin
@@ -24,7 +24,6 @@
     - new implementation based on exceptions
    15/Nov/1998 - Dirk Farin
     - first implementation
-
  ********************************************************************************
     Copyright (C) 1999  Dirk Farin
 
@@ -76,8 +75,8 @@ class MessageDisplay
 public:
   virtual ~MessageDisplay() { }
 
-  virtual void ShowMessage(ErrorSeverity,const char* text) const = 0;
-  virtual void ShowMessage(const class Excpt_Base&) const = 0;
+  virtual void ShowMessage(ErrorSeverity,const char* text) = 0;
+  virtual void ShowMessage(const class Excpt_Base&) = 0;
 
 
   // Message output on the standard display.
@@ -87,7 +86,7 @@ public:
   static void SetStandardDisplay(MessageDisplay*);
 
 private:
-  static const MessageDisplay* std_msgdisplay;
+  static MessageDisplay* std_msgdisplay;
 };
 
 
@@ -101,7 +100,7 @@ public:
   Excpt_Base(ErrorSeverity);
   virtual ~Excpt_Base() { }
 
-  virtual void GetText(char*,int maxChars) const = 0;
+  virtual int GetText(char*,int maxChars) const = 0;
 
   enum ErrorSeverity m_severity;
 };
@@ -115,7 +114,7 @@ public:
 
   void SetText(const char*);
   void AppendText(const char*);
-  void GetText(char*,int maxChars) const;
+  int GetText(char*,int maxChars) const;
 
 private:
   const static unsigned int c_MaxTextLen = 500;
@@ -130,20 +129,21 @@ public:
 };
 
 #ifdef NDEBUG
-#define Assert(expr)
+#  define Assert(expr)
+#  define AssertDescr(expr,descr)
 #else
-#if defined(__ASSERT_FUNCTION) && defined(__STRING)
-#define Assert(expr) \
- (void)(expr ? 0 : (throw Excpt_Assertion(__STRING(expr),__FILE__,__ASSERT_FUNCTION,__LINE__),1) );
-#define AssertDescr(expr,descr) \
+#  if defined(__ASSERT_FUNCTION) && defined(__STRING)
+#    define Assert(expr) \
+  (void)(expr ? 0 : (throw Excpt_Assertion(__STRING(expr),__FILE__,__ASSERT_FUNCTION,__LINE__),1) );
+#    define AssertDescr(expr,descr) \
  (void)(expr ? 0 : (throw Excpt_Assertion(descr,__FILE__,__ASSERT_FUNCTION,__LINE__),1) );
-#else
-#define Assert(expr) \
+#  else
+#    define Assert(expr) \
  (void)(expr ? 0 : (throw Excpt_Assertion("no string information",__FILE__, \
                                           "no function information",__LINE__),1) );
-#define AssertDescr(expr,descr) \
+#    define AssertDescr(expr,descr) \
  (void)(expr ? 0 : (throw Excpt_Assertion(descr,__FILE__,"no function information",__LINE__),1) );
-#endif
+#  endif
 #endif
 
 

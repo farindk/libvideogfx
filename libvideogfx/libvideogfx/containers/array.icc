@@ -62,11 +62,11 @@ template <class T> void Array<T>::Create(int size,int base)
 
 template <class T> Array<T>::~Array()
 {
-  Destroy();
+  Release();
 }
 
 
-template <class T> void Array<T>::Destroy()
+template <class T> void Array<T>::Release()
 {
   if (d_array)
     {
@@ -81,7 +81,7 @@ template <class T> void Array<T>::Destroy()
 
 template <class T> const Array<T>& Array<T>::operator=(const Array<T>& a)
 {
-  Destroy();
+  Release();
 
   if (a.d_array)
     {

@@ -33,7 +33,8 @@ main(int argc,char** argv)
 	vp[y][x] = y*2;
       }
 
-  WriteText_X11(img.AskBitmapY(),"Test",100,110,"-adobe-helvetica-bold-r-*-*-20-*-*-*-*-*-*-*");
+  WriteText_X11(img.AskBitmapY(),"Test",100,110,
+		(Pixel)255,(Pixel)0,"-adobe-helvetica-bold-r-*-*-20-*-*-*-*-*-*-*");
 
   win.Create(256,256,"test");
   win.Display(img);

@@ -1,7 +1,13 @@
 /********************************************************************************
   $Header$
 
+  purpose:
     Memory buffer that can be filled with bit-strings.
+
+  author(s):
+   - Dirk Farin, dirk.farin@gmx.de
+
+  modifications:
  ********************************************************************************
     Copyright (C) 2000 Dirk Farin (see the README for complete list of authors)
 

@@ -254,7 +254,7 @@ void NormalizeFilter(Array<double>& filter)
   int i0 = filter.AskStartIdx();
   int i1 = filter.AskEndIdx();
 
-  double* f = filter.Data();
+  double* f = filter.AskData();
 
   for (int i=i0;i<=i1;i++)
     sum += f[i];
@@ -286,7 +286,7 @@ void CreateGaussFilter(Array<double>& filter,double sigma,double cutoffval,bool 
     throw "CreateGaussFilter(): Gauss filter is too wide.";
 
   filter.Create(2*lastidx+1 , -lastidx);
-  double* f = filter.Data();
+  double* f = filter.AskData();
 
   for (int i=0;i<=lastidx;i++)
     f[-i]=f[i]=filt[i];
@@ -300,7 +300,7 @@ void CreateGaussDerivFilter(Array<double>& filter,double sigma,double cutoffval)
   CreateGaussFilter(filter,sigma,cutoffval,false);
 
   for (int i=filter.AskStartIdx();i<=filter.AskEndIdx();i++)
-    filter.Data()[i] *= i;
+    filter.AskData()[i] *= i;
 
   // normalize
 
@@ -309,7 +309,7 @@ void CreateGaussDerivFilter(Array<double>& filter,double sigma,double cutoffval)
   int i0 = filter.AskStartIdx();
   int i1 = filter.AskEndIdx();
 
-  double* f = filter.Data();
+  double* f = filter.AskData();
 
   for (int i=i0;i<=i1;i++)
     sum += i*f[i];

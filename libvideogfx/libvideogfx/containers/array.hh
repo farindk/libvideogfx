@@ -9,7 +9,7 @@
   to do:
 
   author(s):
-   - Dirk Farin, farin@ti.uni-mannheim.de
+   - Dirk Farin, dirk.farin@gmx.de
 
   modifications:
    19/Sep/2000 - Dirk Farin
@@ -53,12 +53,15 @@ public:
 
   void Create(int size,int base=0);
   void CreateRange(int first,int last) { Create(last-first+1,first); }
-  void Destroy();
+  void Release();
 
   bool IsInitialized() const { return d_array != NULL; }
 
-        T* Data()       { return &d_array[d_baseoffset]; }
-  const T* Data() const { return &d_array[d_baseoffset]; }
+        T* AskData()       { return &d_array[d_baseoffset]; }
+  const T* AskData() const { return &d_array[d_baseoffset]; }
+
+        T& operator[](int n)       { return d_array[d_baseoffset+n]; }
+  const T& operator[](int n) const { return d_array[d_baseoffset+n]; }
 
   int AskBase() const { return -d_baseoffset;  }
   int AskSize() const { return d_size; }

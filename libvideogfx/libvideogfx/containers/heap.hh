@@ -48,8 +48,11 @@ class HeapElement
 public:
   virtual ~HeapElement() { }
 
+  /* The value is used as the head ordering criterion. The smallest value
+     will be at the top of the head. */
   virtual int AskValue() const = 0;
 };
+
 
 template <class T> class Heap
 {
@@ -62,7 +65,7 @@ public:
   void RemoveTop(); // Remove minimum element.
 
   bool   IsEmpty() const { return d_entries==0; }
-  uint32 Length()  const { return d_entries;    }
+  uint32 AskSize() const { return d_entries;    }
 
 private:
   T*  d_heap;

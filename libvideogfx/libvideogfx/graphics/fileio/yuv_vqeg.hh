@@ -11,7 +11,7 @@
     writer
 
   author(s):
-   - Dirk Farin, farin@ti.uni-mannheim.de
+   - Dirk Farin, dirk.farin@gmx.de
 
   modifications:
    12/Nov/2001 - Dirk Farin - first implementation

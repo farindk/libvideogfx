@@ -211,7 +211,6 @@ libvideogfx/Makefile
 libvideogfx/arch/Makefile
 libvideogfx/containers/Makefile
 libvideogfx/graphics/Makefile
-libvideogfx/graphics/basic/Makefile
 libvideogfx/graphics/color/Makefile
 libvideogfx/graphics/datatypes/Makefile
 libvideogfx/graphics/draw/Makefile

@@ -9,7 +9,7 @@
   to do:
 
   author(s):
-   - Dirk Farin, farin@ti.uni-mannheim.de
+   - Dirk Farin, dirk.farin@gmx.de
 
   modifications:
    14/Apr/2002 - Dirk Farin
@@ -38,6 +38,8 @@
 #ifndef LIBVIDEOGFX_GRAPHICS_FILEIO_AUDIOSINK_HH
 #define LIBVIDEOGFX_GRAPHICS_FILEIO_AUDIOSINK_HH
 
+#include <libvideogfx/types.hh>
+
 
 struct AudioParam
 {
@@ -57,6 +59,9 @@ public:
 
   virtual void SetParam(const AudioParam& p) { }
   virtual AudioParam AskParam() const { return AudioParam(); }
+
+  virtual void  SendSamples(int16* left,int16* right,int len) = 0;
+  virtual int   AskBufferingDelay() const { return 0; } // buffering delay in msecs
 };
 
 #endif

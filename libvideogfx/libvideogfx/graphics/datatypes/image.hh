@@ -8,7 +8,7 @@
   to do:
 
   author(s):
-   - Dirk Farin, farin@ti.uni-mannheim.de
+   - Dirk Farin, farin@informatik.uni-mannheim.de
      University Mannheim, Dept. Circuitry and Simulation
      L 15,16 room 410 / D-68131 Mannheim / Germany
 
@@ -53,19 +53,22 @@ enum Colorspace
     Colorspace_Invalid
   };
 
-enum ChromaFormat {
-  /** Subsampling h:2 v:2 */ Chroma_420,
-  /** Subsampling h:2 v:1 */ Chroma_422,
-  /** No subsampling      */ Chroma_444,
-  Chroma_Invalid
-};
+enum ChromaFormat
+  {
+    /** subsampling h:2 v:2 */ Chroma_420,
+    /** subsampling h:2 v:1 */ Chroma_422,
+    /** No subsampling      */ Chroma_444,
+    Chroma_Invalid
+  };
 
-enum BitmapChannel { Bitmap_Red = 0, Bitmap_Green = 1, Bitmap_Blue = 2,
-		     Bitmap_Y   = 0, Bitmap_Cb    = 1, Bitmap_Cr   = 2,
-  		                     Bitmap_U     = 1, Bitmap_V    = 2,
-		     Bitmap_Hue = 0, Bitmap_Saturation = 1, Bitmap_Value = 2,
-		     Bitmap_Alpha=3
-};
+enum BitmapChannel
+  {
+    Bitmap_Red = 0, Bitmap_Green = 1, Bitmap_Blue = 2,
+    Bitmap_Y   = 0, Bitmap_Cb    = 1, Bitmap_Cr   = 2,
+                    Bitmap_U     = 1, Bitmap_V    = 2,
+    Bitmap_Hue = 0, Bitmap_Saturation = 1, Bitmap_Value = 2,
+    Bitmap_Alpha=3
+  };
 
 
 /** Check if chroma is horizontally subsampled. Usage of the more general #ChromaSubH()# is recommended. */
@@ -99,14 +102,6 @@ struct ImageParam
   int  chroma_halign;
   int  chroma_valign;
 
-#if 0
-  /** If set to #true#: don't allow the alignment or the border to be greater than specified.
-      {\bf Explanation}: As it is more efficient to keep and older bitmap if the new one
-      is smaller than the old one, the old one is sometimes used instead of creating
-      a new one. This does not work if you are depending on the exact memory layout of
-      the image. So you can disable it by setting exact\_size to true. */
-  bool exact_size;
-#endif
 
   int  AskChromaWidth()  const
   {

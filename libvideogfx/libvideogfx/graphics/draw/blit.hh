@@ -9,9 +9,7 @@
   to do:
 
   author(s):
-   - Dirk Farin, farin@ti.uni-mannheim.de
-     University Mannheim, Dept. Circuitry and Simulation
-     B 6,26 EG, room 0.10 / D-68131 Mannheim / Germany
+   - Dirk Farin, dirk.farin@gmx.de
 
   modifications:
     29/Jan/2002 - Dirk Farin - first implementation
@@ -48,13 +46,6 @@ template <class Pel> void Copy(Bitmap<Pel>& dst,       int dstx0,int dsty0,
 			       const Bitmap<Pel>& src, int srcx0,int srcy0, int w,int h);
 template <class Pel> void Copy(Image<Pel>& dst,       int dstx0,int dsty0,
 			       const Image<Pel>& src, int srcx0,int srcy0, int w,int h);
-
-/* Copy scaled version of region into another bitmap.
- */
-template <class Pel> void CopyScaled(Bitmap<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
-				     const Bitmap<Pel>& src, int srcx0,int srcy0, int sw,int sh);
-template <class Pel> void CopyScaled(Image<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
-				     const Image<Pel>& src, int srcx0,int srcy0, int sw,int sh);
 
 /* Copy the image content at the border lines into the border area.
  */
@@ -142,43 +133,6 @@ template <class Pel> void Copy(Image<Pel>& dst,       int dstx0,int dsty0,
       Copy(dst.AskBitmap(b),  param.ChromaScaleH(b,dstx0),param.ChromaScaleV(b,dsty0),
 	   src.AskBitmap(b),  param.ChromaScaleH(b,srcx0),param.ChromaScaleV(b,srcy0),
 	   param.ChromaScaleH(b,w), param.ChromaScaleV(b,h));
-    }
-}
-
-template <class Pel> void CopyScaled(Bitmap<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
-				     const Bitmap<Pel>& src, int srcx0,int srcy0, int sw,int sh)
-{
-  if (src.IsEmpty()) return;
-
-  const Pel*const* sp = src.AskFrame();
-  Pel*const* dp = dst.AskFrame();
-
-  Assert(dst.AskWidth()  >= dstx0+dw);
-  Assert(dst.AskHeight() >= dsty0+dh);
-  Assert(src.AskWidth()  >= srcx0+sw);
-  Assert(src.AskHeight() >= srcy0+sh);
-
-  for (int y=0;y<dh;y++)
-    for (int x=0;x<dw;x++)
-      dp[dsty0+y][dstx0+x] = sp[srcy0+y*sh/dh][srcx0+x*sw/dw];
-}
-
-
-template <class Pel> void CopyScaled(Image<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
-				     const Image<Pel>& src, int srcx0,int srcy0, int sw,int sh)
-{
-  ImageParam param = src.AskParam();
-
-  for (int i=0;i<4;i++)
-    {
-      BitmapChannel b = (BitmapChannel)i;
-      CopyScaled(dst.AskBitmap(b),
-		 param.ChromaScaleH(b,dstx0),param.ChromaScaleV(b,dsty0),
-		 param.ChromaScaleH(b,dw), param.ChromaScaleV(b,dh),
-
-		 src.AskBitmap(b),
-		 param.ChromaScaleH(b,srcx0),param.ChromaScaleV(b,srcy0),
-		 param.ChromaScaleH(b,sw), param.ChromaScaleV(b,sh));
     }
 }
 

@@ -22,7 +22,7 @@
   MEM:      O00 O01 O02 O03 O04 O05 O06 O07      8bit
  */
 
-void LowPass_3x3gauss_MMX(const Bitmap<Pixel>& srcbm,Bitmap<Pixel>& destbm)
+void LowPass_3x3Gauss_MMX(const Bitmap<Pixel>& srcbm,Bitmap<Pixel>& destbm)
 {
   destbm.Create((srcbm.AskWidth()+1)/2,(srcbm.AskHeight()+1)/2 ,8);
 

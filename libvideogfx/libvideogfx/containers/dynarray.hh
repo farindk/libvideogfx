@@ -48,11 +48,18 @@ public:
   ~DynArray();
 
   void Append(const T& t);
+
+  /* Append a new, empty element and return a reference to it. */
   T&   AppendNewEntry() { T t; Append(t); return d_array[d_nentries-1]; }
+
+  /* Insert the element at the specified position. */
   void Insert(int pos,const T& t);
   T    RemoveEntry(int n);
   int  Size() const { return d_nentries; }
-  T&   operator[](int n) const { return d_array[n]; }
+
+        T& operator[](int n)       { return d_array[n]; }
+  const T& operator[](int n) const { return d_array[n]; }
+
   const DynArray<T> operator=(const DynArray<T>&);
 
 private:

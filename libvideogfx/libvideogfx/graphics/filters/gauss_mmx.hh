@@ -9,7 +9,7 @@
   to do:
 
   author(s):
-   - Dirk Farin and Gerald Kuehne, farin@ti.uni-mannheim.de
+   - Dirk Farin and Gerald Kuehne, farin@informatik.uni-mannheim.de
      University Mannheim, Dept. Circuitry and Simulation
      L 15,16 room 410 / D-68131 Mannheim / Germany
 
@@ -35,6 +35,6 @@
    NOTE: this algorithm expectes an alignment of 8 pixels
          plus a border of 8 pixels.
 */
-void LowPass_3x3gauss_MMX(const Bitmap<Pixel>& img,Bitmap<Pixel>& dest);
+void LowPass_3x3Gauss_MMX(const Bitmap<Pixel>& img,Bitmap<Pixel>& dest);
 
 #endif

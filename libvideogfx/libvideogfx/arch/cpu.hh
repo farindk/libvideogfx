@@ -4,11 +4,13 @@
   purpose:
 
   notes:
+    Use CPU_Capabilities::AskCapabilities() to get access to the object
+    describing the active CPU.
 
   to do:
 
   author(s):
-   - Dirk Farin, farin@ti.uni-mannheim.de
+   - Dirk Farin, dirk.farin@gmx.de
 
   modifications:
     09/Nov/1999 - Dirk Farin - First revision

@@ -10,7 +10,7 @@
   to do:
 
   author(s):
-   - Dirk Farin, farin@ti.uni-mannheim.de
+   - Dirk Farin, farin@informatik.uni-mannheim.de
      University Mannheim, Dept. Cumputer Science IV
      L 15,16, room 410 / D-68161 Mannheim / Germany
 

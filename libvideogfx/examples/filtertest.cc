@@ -42,9 +42,9 @@ main(int argc,char** argv)
 
       Array<double> filter;
       filter.Create(3,-1);
-      filter.Data()[-1] = 1;
-      filter.Data()[ 0] = 2;
-      filter.Data()[ 1] = 1;
+      filter[-1] = 1;
+      filter[ 0] = 2;
+      filter[ 1] = 1;
       //CreateGaussFilter(filter,2.0);
 
       Bitmap<Pixel> filteredbm;

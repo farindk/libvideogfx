@@ -8,9 +8,7 @@
   to do:
 
   author(s):
-   - Dirk Farin, farin@ti.uni-mannheim.de
-     University Mannheim, Dept. Circuitry and Simulation
-     B 6,26 EG, room 0.10 / D-68131 Mannheim / Germany
+   - Dirk Farin, farin@informatik.uni-mannheim.de
    - Alexander Staller, alexander.staller@engineer.com
 
   modifications:

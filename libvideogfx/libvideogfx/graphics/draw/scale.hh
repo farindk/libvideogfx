@@ -33,6 +33,14 @@ template <class Pel> void HalfSize_Avg_H(Bitmap<Pel>& dst,const Bitmap<Pel>& src
 template <class Pel> void HalfSize_Avg_V(Bitmap<Pel>& dst,const Bitmap<Pel>& src);
 
 
+/* Copy scaled version of region into another bitmap.
+ */
+template <class Pel> void CopyScaled(Bitmap<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
+				     const Bitmap<Pel>& src, int srcx0,int srcy0, int sw,int sh);
+template <class Pel> void CopyScaled(Image<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
+				     const Image<Pel>& src, int srcx0,int srcy0, int sw,int sh);
+
+
 // ------------------------------- implementation -----------------------------------
 
 template <class Pel> void DoubleSize_Dup  (Bitmap<Pel>& dst,const Bitmap<Pel>& src)
@@ -187,6 +195,43 @@ template <class Pel> void HalfSize_Avg_V(Bitmap<Pel>& dst,const Bitmap<Pel>& src
       assert(h==newh*2-1);
       for (int x=0;x<w;x++)
 	dp[newh-1][x] = sp[h-1][x];
+    }
+}
+
+template <class Pel> void CopyScaled(Bitmap<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
+				     const Bitmap<Pel>& src, int srcx0,int srcy0, int sw,int sh)
+{
+  if (src.IsEmpty()) return;
+
+  const Pel*const* sp = src.AskFrame();
+  Pel*const* dp = dst.AskFrame();
+
+  Assert(dst.AskWidth()  >= dstx0+dw);
+  Assert(dst.AskHeight() >= dsty0+dh);
+  Assert(src.AskWidth()  >= srcx0+sw);
+  Assert(src.AskHeight() >= srcy0+sh);
+
+  for (int y=0;y<dh;y++)
+    for (int x=0;x<dw;x++)
+      dp[dsty0+y][dstx0+x] = sp[srcy0+y*sh/dh][srcx0+x*sw/dw];
+}
+
+
+template <class Pel> void CopyScaled(Image<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
+				     const Image<Pel>& src, int srcx0,int srcy0, int sw,int sh)
+{
+  ImageParam param = src.AskParam();
+
+  for (int i=0;i<4;i++)
+    {
+      BitmapChannel b = (BitmapChannel)i;
+      CopyScaled(dst.AskBitmap(b),
+		 param.ChromaScaleH(b,dstx0),param.ChromaScaleV(b,dsty0),
+		 param.ChromaScaleH(b,dw), param.ChromaScaleV(b,dh),
+
+		 src.AskBitmap(b),
+		 param.ChromaScaleH(b,srcx0),param.ChromaScaleV(b,srcy0),
+		 param.ChromaScaleH(b,sw), param.ChromaScaleV(b,sh));
     }
 }
 

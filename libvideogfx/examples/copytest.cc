@@ -3,6 +3,7 @@
 #include "libvideogfx/graphics/fileio/jpeg.hh"
 #include "libvideogfx/graphics/draw/blit.hh"
 #include "libvideogfx/graphics/draw/format.hh"
+#include "libvideogfx/graphics/draw/scale.hh"
 
 #include <unistd.h>
 #include <time.h>

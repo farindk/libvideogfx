@@ -15,7 +15,7 @@
   to do:
 
   author(s):
-   - Dirk Farin, farin@ti.uni-mannheim.de
+   - Dirk Farin, farin@informatik.uni-mannheim.de
      University Mannheim, Dept. Circuitry and Simulation
      L 15,16 room 410 / D-68131 Mannheim / Germany
 
@@ -55,7 +55,7 @@
 #include <algorithm>
 
 
-/* Set global defaults for bitmap alignment. Every new bitmap created by an
+/* Set global defaults for bitmap alignment. Every new bitmap created by a
    BitmapProvider that supports user-defined alignment will be aligned to
    at least these defaults. I.e. if you globally specify a border of 4 and
    an alignment of 3, and a bitmap should be created with a border of 2

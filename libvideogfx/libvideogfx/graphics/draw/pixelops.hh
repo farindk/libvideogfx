@@ -9,7 +9,7 @@
   to do:
 
   author(s):
-   - Dirk Farin, farin@ti.uni-mannheim.de
+   - Dirk Farin, farin@informatik.uni-mannheim.de
      University Mannheim, Dept. Cumputer Science IV
      L 15,16, room 410 / D-68161 Mannheim / Germany
 
@@ -26,7 +26,7 @@
 template <class T> void MakeAbsolute(Bitmap<T>&);
 template <class T> void Inverse(const Bitmap<T>&,T maxval);
 template <class T> void AddValues(Bitmap<T>& dest,const Bitmap<T>& a,const Bitmap<T>& b);
-template <class T> void HalfPlusOffset(Bitmap<T>& bm,T offset);
+template <class T> void HalfPlusOffset(Bitmap<T>& bm,T offset); // p = p/2+offset
 
 /* dest = a-b */
 template <class T> void AbsoluteDifference(Bitmap<T>& dest,const Bitmap<T>& a,const Bitmap<T>& b);

@@ -31,7 +31,7 @@ using namespace std;
 static class MessageDisplay_cerr : public MessageDisplay
 {
 public:
-  void ShowMessage(ErrorSeverity severity,const char* text) const
+  void ShowMessage(ErrorSeverity severity,const char* text)
     {
       cout.flush(); /* Flush program output. Do this for better sync of
                        debug and error display. */
@@ -49,7 +49,7 @@ public:
       cerr << text << endl;
     }
 
-  void ShowMessage(const Excpt_Base& e) const
+  void ShowMessage(const Excpt_Base& e)
     {
       char buf[1000]; // TODO: replace me
       e.GetText(buf,1000);
@@ -77,7 +77,7 @@ void MessageDisplay::SetStandardDisplay(MessageDisplay* disp)
   std_msgdisplay = disp;
 }
 
-const MessageDisplay* MessageDisplay::std_msgdisplay = &msgdisplay_cerr;
+MessageDisplay* MessageDisplay::std_msgdisplay = &msgdisplay_cerr;
 
 
 
@@ -120,18 +120,27 @@ void Excpt_Text::AppendText(const char* text)
 }
 
 
-void Excpt_Text::GetText(char* buf,int maxChars) const
+int Excpt_Text::GetText(char* buf,int maxChars) const
 {
   if (strlen(d_text)==0)
     {
       const char* notext = "<unspecified error>";
       assert(maxChars > strlen(notext));
       strcpy(buf,notext);
-      return;
+      return strlen(notext);
     }
 
-  assert(strlen(d_text)<maxChars);
-  strcpy(buf,d_text);
+  if (strlen(d_text)<maxChars)
+    strcpy(buf,d_text);
+  else
+    {
+      strncpy(buf,d_text,maxChars-5);
+      buf[maxChars-5]=0;
+      strcat(buf," ...");
+      return maxChars;
+    }
+
+  return strlen(buf);
 }
 
 

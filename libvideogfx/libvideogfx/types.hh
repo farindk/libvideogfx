@@ -2,17 +2,17 @@
   types.hh
 
   purpose:
-    Very basic type declarations.
+    Basic type declarations and commonly used macros, inline functions.
 
   notes:
 
   to do:
 
   author(s):
-   - Dirk Farin, farin@ti.uni-mannheim.de
+   - Dirk Farin, dirk.farin@gmx.de
 
   modifications:
-    1999/Nov/03 - Dirk Farin - New constants: BoolPixel_*
+    03/Nov/1999 - Dirk Farin - New constants: BoolPixel_*
  ********************************************************************************
     Copyright (C) 1999  Dirk Farin
 
@@ -95,8 +95,9 @@ typedef  int8  int3;
 typedef  int8  int4;
 
 typedef uint8 Pixel;
-const Pixel BoolPixel_Set   = 0;
-const Pixel BoolPixel_Clear = 255;
+
+const Pixel BoolPixel_Set   = 255;
+const Pixel BoolPixel_Clear = 0;
 
 #ifndef NULL
 #define NULL 0

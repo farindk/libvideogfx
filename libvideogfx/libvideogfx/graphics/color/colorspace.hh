@@ -9,7 +9,7 @@
   to do:
 
   author(s):
-   - Dirk Farin, farin@ti.uni-mannheim.de
+   - Dirk Farin, farin@informatik.uni-mannheim.de
      University Mannheim, Dept. Circuitry and Simulation
      L 15,16 room 410 / D-68131 Mannheim / Germany
 
@@ -35,7 +35,8 @@ void ChangeChroma    (Image<Pixel>& dst, const Image<Pixel>& src, ChromaFormat d
    the chroma format. If source and target image are in YUV colorspace, but their chroma
    differs, chroma conversion is done just like ChangeChroma().
  */
-void ChangeColorspace(Image<Pixel>& dst, const Image<Pixel>& src, Colorspace   colorspace);
+void ChangeColorspace(Image<Pixel>& dst, const Image<Pixel>& src,
+		      Colorspace colorspace, ChromaFormat chroma=Chroma_420);
 
 
 // -------- single pixel colorspace conversion routines -------

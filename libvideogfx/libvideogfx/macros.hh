@@ -5,14 +5,12 @@
     Macros for library internal usage only.
 
   notes:
+    This file does not get installed !
 
   to do:
 
   author(s):
    - Dirk Farin, farin@ti.uni-mannheim.de
-
-  modifications:
-    1999/Nov/03 - Dirk Farin - New constants: BoolPixel_*
  ********************************************************************************
     Copyright (C) 1999  Dirk Farin
 

@@ -11,9 +11,7 @@
   to do:
 
   author(s):
-   - Dirk Farin, farin@ti.uni-mannheim.de
-     University Mannheim, Dept. Circuitry and Simulation
-     B 6,26 EG, room 0.10 / D-68131 Mannheim / Germany
+   - Dirk Farin, dirk.farin@gmx.de
 
   modifications:
     21/Jul/1999 - Dirk Farin - first implementation
@@ -73,7 +71,7 @@ template <class PelIn,class PelOut> void ConvolveH(Bitmap<PelOut>& dst,const Bit
 
   dst.Create(w,h,border);
 
-  const double* f = filter.Data();
+  const double* f = filter.AskData();
 
   const PelIn*const* sp = src.AskFrame();
   PelOut*const* dp = dst.AskFrame();
@@ -100,7 +98,7 @@ template <class PelIn,class PelOut> void ConvolveH(Bitmap<PelOut>& dst,const Bit
     {
       Array<double> borderfilter = filter;
       
-      double* bf = borderfilter.Data();
+      double* bf = borderfilter.AskData();
 
       int first=filter.AskBase();
       for (int x=xs-1;x>=0;x--)
@@ -125,7 +123,7 @@ template <class PelIn,class PelOut> void ConvolveH(Bitmap<PelOut>& dst,const Bit
     {
       Array<double> borderfilter = filter;
       
-      double* bf = borderfilter.Data();
+      double* bf = borderfilter.AskData();
 
       int last=right;
       for (int x=xe+1;x<w;x++)
@@ -159,7 +157,7 @@ template <class PelIn,class PelOut> void ConvolveV(Bitmap<PelOut>& dst,const Bit
 
   dst.Create(w,h,border);
 
-  const double* f = filter.Data();
+  const double* f = filter.AskData();
 
   const PelIn*const* sp = src.AskFrame();
   PelOut*const* dp = dst.AskFrame();
@@ -186,7 +184,7 @@ template <class PelIn,class PelOut> void ConvolveV(Bitmap<PelOut>& dst,const Bit
     {
       Array<double> borderfilter = filter;
       
-      double* bf = borderfilter.Data();
+      double* bf = borderfilter.AskData();
 
       int first=filter.AskBase();
       for (int y=ys-1;y>=0;y--)
@@ -211,7 +209,7 @@ template <class PelIn,class PelOut> void ConvolveV(Bitmap<PelOut>& dst,const Bit
     {
       Array<double> borderfilter = filter;
       
-      double* bf = borderfilter.Data();
+      double* bf = borderfilter.AskData();
 
       int last=right;
       for (int y=ye+1;y<h;y++)
@@ -266,16 +264,16 @@ template <class Pel> void ConvolveHV(Bitmap<Pel>& bm,const Array<double>& filter
 template <class PelIn,class PelOut> void Prewitt_Hor(Bitmap<PelOut>& dst,const Bitmap<PelIn>& src)
 {
   Array<double> filter(3,-1);
-  filter.Data()[-1]=1.0/3;
-  filter.Data()[ 0]=1.0/3;
-  filter.Data()[ 1]=1.0/3;
+  filter[-1]=1.0/3;
+  filter[ 0]=1.0/3;
+  filter[ 1]=1.0/3;
 
   Bitmap<double> tmpbm;
   ConvolveV(tmpbm,src,filter);
 
-  filter.Data()[-1]=-1;
-  filter.Data()[ 0]=0;
-  filter.Data()[ 1]=1;
+  filter[-1]=-1;
+  filter[ 0]=0;
+  filter[ 1]=1;
 
   ConvolveH(dst,tmpbm,filter);
 }
@@ -283,16 +281,16 @@ template <class PelIn,class PelOut> void Prewitt_Hor(Bitmap<PelOut>& dst,const B
 template <class PelIn,class PelOut> void Prewitt_Ver(Bitmap<PelOut>& dst,const Bitmap<PelIn>& src)
 {
   Array<double> filter(3,-1);
-  filter.Data()[-1]=1.0/3;
-  filter.Data()[ 0]=1.0/3;
-  filter.Data()[ 1]=1.0/3;
+  filter[-1]=1.0/3;
+  filter[ 0]=1.0/3;
+  filter[ 1]=1.0/3;
 
   Bitmap<double> tmpbm;
   ConvolveH(tmpbm,src,filter);
 
-  filter.Data()[-1]=-1;
-  filter.Data()[ 0]=0;
-  filter.Data()[ 1]=1;
+  filter[-1]=-1;
+  filter[ 0]=0;
+  filter[ 1]=1;
 
   ConvolveV(dst,tmpbm,filter);
 }
@@ -300,16 +298,16 @@ template <class PelIn,class PelOut> void Prewitt_Ver(Bitmap<PelOut>& dst,const B
 template <class PelIn,class PelOut> void Sobel_Hor(Bitmap<PelOut>& dst,const Bitmap<PelIn>& src)
 {
   Array<double> filter(3,-1);
-  filter.Data()[-1]=1.0/4;
-  filter.Data()[ 0]=2.0/4;
-  filter.Data()[ 1]=1.0/4;
+  filter[-1]=1.0/4;
+  filter[ 0]=2.0/4;
+  filter[ 1]=1.0/4;
 
   Bitmap<double> tmpbm;
   ConvolveV(tmpbm,src,filter);
 
-  filter.Data()[-1]=-1;
-  filter.Data()[ 0]=0;
-  filter.Data()[ 1]=1;
+  filter[-1]=-1;
+  filter[ 0]=0;
+  filter[ 1]=1;
 
   ConvolveH(dst,tmpbm,filter);
 }
@@ -317,16 +315,16 @@ template <class PelIn,class PelOut> void Sobel_Hor(Bitmap<PelOut>& dst,const Bit
 template <class PelIn,class PelOut> void Sobel_Ver(Bitmap<PelOut>& dst,const Bitmap<PelIn>& src)
 {
   Array<double> filter(3,-1);
-  filter.Data()[-1]=1.0/4;
-  filter.Data()[ 0]=2.0/4;
-  filter.Data()[ 1]=1.0/4;
+  filter[-1]=1.0/4;
+  filter[ 0]=2.0/4;
+  filter[ 1]=1.0/4;
 
   Bitmap<double> tmpbm;
   ConvolveH(tmpbm,src,filter);
 
-  filter.Data()[-1]=-1;
-  filter.Data()[ 0]=0;
-  filter.Data()[ 1]=1;
+  filter[-1]=-1;
+  filter[ 0]=0;
+  filter[ 1]=1;
 
   ConvolveV(dst,tmpbm,filter);
 }

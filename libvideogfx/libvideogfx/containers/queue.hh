@@ -60,7 +60,7 @@ public:
   T    AskAndRemoveHead() { T& x=AskHead(); RemoveHead(); return x; }
 
   bool   IsEmpty() const { return d_entries==0; }
-  uint32 Length()  const { return d_entries;    }
+  uint32 AskSize() const { return d_entries;    }
 
 private:
   T*  d_queue;

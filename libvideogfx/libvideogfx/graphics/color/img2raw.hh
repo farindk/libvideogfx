@@ -17,9 +17,7 @@
   to do:
 
   author(s):
-   - Dirk Farin, farin@ti.uni-mannheim.de
-     University Mannheim, Dept. Circuitry and Simulation
-     B 6,26 EG, room 0.10 / D-68131 Mannheim / Germany
+   - Dirk Farin, dirk.farin@gmx.de
 
   modifications:
     18/Jul/2000 - Dirk Farin - complete reimplementation
@@ -90,7 +88,10 @@ private:
 };
 
 
-// --------------------------------- only for internal use ------------------------------
+
+
+
+// --------------------- following definitions are only for internal use --------------------------
 
 
 class Image2RawRGB_Transform

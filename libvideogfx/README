@@ -1,1 +1,68 @@
-Readme
+
+  LibVideoGfx - video processing library
+
+  Copyright (C) 1999-2002 Dirk Farin
+
+===============================================================================
+
+INTRODUCTION
+
+  LibVideoGfx is a C++ library for low-level video processing. It aims at
+  speeding up the development process for image and video processing
+  applications by providing high-level classes for commonly required tasks.
+  The library comprises support for:
+
+    - basic image data classes
+    - color-space convertion for RGB, YUV, HSV
+    - drawing primitives (lines, circles, ...)
+    - image manipulation (scaling, pixel-ops, convolution)
+    - file-IO (ppm, yuv, jpeg, mpeg, V4L-grabbing)
+    - X11 image display (including Xv-extension support)
+
+  Furthermore, it includes support for:
+
+    - bit-stream reading/writing
+    - commonly used container classes (dynamic array, heap, queue, ...)
+    - processor feature detection
+
+  LibVideoGfx includes MMX accelerated routines, which are used if a MMX
+  capable processor is detected. However, the library provides scalar
+  replacement routines and can thus be compiled on all UNIX platforms
+  (including CygWin).
+
+  JPEG file access requires the libjpeg. If this library cannot be detected
+  during library configuration, JPEG support is disabled.
+  The MPEG reader depends on the DVDview MPEG decoding program.
+
+===============================================================================
+
+COPYRIGHT AND AUTHOR
+
+  LibVideoGfx
+  Copyright (C) 1999-2002 Dirk Farin
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+ 
+  The file `COPYING' contains the full text of the GNU GPL.
+
+  If you would like to negotiate alternate licensing terms, you may do
+  so by contacting the author.
+
+
+  Send inquiries, comments, bug reports, suggestions, patches, etc. to:
+
+      Dirk Farin <dirk.farin@gmx.de>
+
+  See also the LibVideoGfx home page on the web:
+
+      < ... to come soon ... >
+
+===============================================================================

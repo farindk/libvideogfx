@@ -9,7 +9,7 @@
   to do:
 
   author(s):
-   - Dirk Farin, farin@ti.uni-mannheim.de
+   - Dirk Farin, dirk.farin@gmx.de
 
   modifications:
    03/Jul/2000 - Dirk Farin
@@ -67,7 +67,7 @@ public:
   inline int32  AskBitsLeft() const; // Return number of bits that have still not been read.
 
   inline bool   IsEOF() const;       // True iff current cursor position at or behind file end
-  inline int    Position() const { return (d_ptr-d_start)*8 -d_bitsleft; }
+  inline int    AskPosition() const { return (d_ptr-d_start)*8 -d_bitsleft; }
 
 private:
   uint64 d_buffer;

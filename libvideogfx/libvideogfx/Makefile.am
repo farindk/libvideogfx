@@ -36,7 +36,7 @@ endif
 #
 libvideogfx_la_LIBADD = \
 	arch/libvideogfx-arch.la		\
-	graphics/basic/libvideogfx-graphics-basic.la		\
+	graphics/datatypes/libvideogfx-graphics-datatypes.la	\
 	graphics/fileio/libvideogfx-graphics-fileio.la		\
 	graphics/color/libvideogfx-graphics-color.la		\
 	graphics/draw/libvideogfx-graphics-draw.la		\
@@ -47,7 +47,6 @@ libvideogfx_la_LIBADD = \
 	utility/libvideogfx-utility.la	\
 	$(x11_sources)
 
-#	graphics/datatypes/libvideogfx-graphics-datatypes.la	\
 #	graphics/fileio/avi/libvideogfx-graphics-fileio-avi.la	\
 #	graphics/lowlevel/libvideogfx-graphics-lowlevel.la	\
 #	postscript/libvideogfx-postscript.la			\
