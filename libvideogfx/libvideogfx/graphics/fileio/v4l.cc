@@ -28,6 +28,7 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <fcntl.h>
+#include <errno.h>
 #include <linux/videodev.h>
 
 #include "libvideogfx/graphics/fileio/v4l.hh"
@@ -140,7 +141,10 @@ namespace videogfx {
 
     img.Create(spec);
 
+  again_csync:
     if (-1 == ioctl(d_fd,VIDIOCSYNC,&d_nextbuf)) {
+      if (errno == EINTR)
+	goto again_csync;
       perror("ioctl VIDIOCSYNC");
       exit(10);
     }
