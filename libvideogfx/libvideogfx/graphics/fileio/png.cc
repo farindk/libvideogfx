@@ -235,13 +235,14 @@ namespace videogfx {
           param.colorspace = Colorspace_Greyscale;
           img.Create(param);
           Pixel*const* Y = img.AskFrameY();
-          Pixel*const* A = img.AskFrameA();
+          Pixel*const* A = (param.has_alpha ? img.AskFrameA() : NULL);
 
           for (uint32 y = 0; y < height; y++) {
               uint8* p = row_pointers[y];
 
 	      if (param.has_alpha)
 		{
+		  assert(A != NULL);
 		  for (uint32 x = 0; x < width; x++) {
 		    Y[y][x] = *p++;
 		    A[y][x] = *p++;
@@ -258,13 +259,14 @@ namespace videogfx {
           Pixel*const* R = img.AskFrameR();
           Pixel*const* G = img.AskFrameG();
           Pixel*const* B = img.AskFrameB();
-          Pixel*const* A = img.AskFrameA();
+          Pixel*const* A = (param.has_alpha ? img.AskFrameA() : NULL);
 
           for (uint32 y = 0; y < height; y++) {
               uint8* p = row_pointers[y];
 
 	      if (param.has_alpha)
 		{
+		  assert(A != NULL);
 		  for (uint32 x = 0;x < width; x++) {
 		    R[y][x] = *p++;
 		    G[y][x] = *p++;
@@ -281,7 +283,13 @@ namespace videogfx {
 		  }
 		}
           }
-      } 
+      }
+
+      for (uint32 y = 0; y < height; y++) {
+	free(row_pointers[y]);
+      } // for
+
+      delete[] row_pointers;
     }
     
   void ReadImage_PNG(Image<Pixel>& img, const char* filename)
@@ -424,6 +432,12 @@ namespace videogfx {
 
       /* clean up after the write, and free any memory allocated */
       png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
+
+      for (int y = 0; y < h; y++) {
+	delete[] row_pointers[y];
+      } // for
+
+      delete[] row_pointers;
   }
 
     void WriteImage_PNG(const Image<Pixel>& img, const char* filename)
