@@ -43,11 +43,12 @@ namespace videogfx {
   template <class T> class DynArray
   {
   public:
-    DynArray(int initial_size=100);
+    DynArray();
+    DynArray(int initial_size);
     DynArray(const DynArray<T>&);
     ~DynArray();
 
-    void Clear() { d_nentries=0; }
+    void Clear();
     void Append(const T& t);
 
     /* Append a new, empty element and return a reference to it. */
@@ -58,22 +59,43 @@ namespace videogfx {
     T    RemoveEntry(int n);
     int  AskSize() const { return d_nentries; }
 
-    T& operator[](int n)       { return d_array[n]; }
+    void SetEmptyValue(const T& e) { d_empty_value=e; d_empty_val_set=true; }
+
     const T& operator[](int n) const { return d_array[n]; }
+    T& operator[](int n)
+    {
+      EnlargeToSize(n+1);
+      if (n>=d_nentries)
+	d_nentries = n+1;
+      return d_array[n];
+    }
 
     const DynArray<T> operator=(const DynArray<T>&);
 
   private:
+    T    d_empty_value;
+    bool d_empty_val_set;
+
     T*   d_array;
     int  d_nentries;
     int  d_size;
 
     void EnlargeIfFull();
+    void EnlargeToSize(int n);
   };
 
 
+  template <class T> DynArray<T>::DynArray()
+  {
+    d_empty_val_set=false;
+    d_array = NULL;
+    d_nentries=0;
+    d_size =0;
+  }
+
   template <class T> DynArray<T>::DynArray(int initial_size)
   {
+    d_empty_val_set=false;
     d_array = new T[initial_size];
     d_nentries=0;
     d_size=initial_size;
@@ -81,16 +103,31 @@ namespace videogfx {
 
   template <class T> DynArray<T>::DynArray(const DynArray<T>& t)
   {
-    d_array = new T[t.d_size];
-    d_size = t.d_size;
+    d_empty_val_set=t.d_empty_val_set;
+    if (d_empty_val_set)
+      d_empty_value = t.d_empty_value;
+
+    d_array = new T[t.d_nentries];
+    d_size = t.d_nentries;
+
+    d_nentries=t.d_nentries;
     for (int i=0;i<t.d_nentries;i++)
       d_array[i] = t.d_array[i];
-    d_nentries=t.d_nentries;
   }
 
   template <class T> DynArray<T>::~DynArray()
   {
-    delete[] d_array;
+    if (d_array) delete[] d_array;
+  }
+
+  template <class T> void DynArray<T>::Clear()
+  {
+    d_nentries=0;
+    if (d_empty_val_set)
+      {
+	for (int i=0;i<d_size;i++)
+	  d_array[i] = d_empty_val;
+      }
   }
 
   template <class T> void DynArray<T>::Append(const T& t)
@@ -115,15 +152,31 @@ namespace videogfx {
   template <class T> void DynArray<T>::EnlargeIfFull()
   {
     if (d_nentries==d_size)
+      EnlargeToSize(d_nentries+1);
+  }
+
+
+  template <class T> void DynArray<T>::EnlargeToSize(int n)
+  {
+    if (n > d_size)
       {
-	T* newlist = new T[d_size*2];
+	int newsize = (d_size > 10000 ? d_size+10000 : d_size*2);
+	if (n>newsize) newsize=n;
+
+	T* newlist = new T[newsize];
 	for (int i=0;i<d_size;i++)
 	  newlist[i] = d_array[i];
 
-	delete[] d_array;
+	if (d_empty_val_set)
+	  {
+	    for (int i=d_size;i<newsize;i++)
+	      newlist[i] = d_empty_value;
+	  }
+
+	if (d_array) delete[] d_array;
 
 	d_array = newlist;
-	d_size *= 2;
+	d_size = newsize;
       }
   }
 
@@ -136,6 +189,9 @@ namespace videogfx {
     for (int i=n;i<d_nentries;i++)
       d_array[i]=d_array[i+1];
 
+    if (d_empty_val_set)
+      d_array[d_nentries] = d_empty_value;
+
     return e;
   }
 
@@ -145,8 +201,8 @@ namespace videogfx {
       return *this;
 
     delete[] d_array;
-    d_array = new T[t.d_size];
-    d_size = t.d_size;
+    d_array = new T[t.d_nentires];
+    d_size = t.d_nentries;
     for (int i=0;i<t.d_nentries;i++)
       d_array[i] = t.d_array[i];
     d_nentries=t.d_nentries;
