@@ -47,6 +47,10 @@ template <class PelIn,class PelOut> void Prewitt_Ver(Bitmap<PelOut>& dst,const B
 template <class PelIn,class PelOut> void Sobel_Hor  (Bitmap<PelOut>& dst,const Bitmap<PelIn>& src);
 template <class PelIn,class PelOut> void Sobel_Ver  (Bitmap<PelOut>& dst,const Bitmap<PelIn>& src);
 
+/* Calculate a map of the gradient strength in the specified bitmap.
+   Note: the result is scaled by a constant factor.
+*/
+void CalcGaussGradientStrength(Bitmap<int16>& gradient,const Bitmap<Pixel>& bm,double sigma=1.5);
 
 void NormalizeFilter(Array<double>& filter); // Make coefficients sum up to 1.0 .
 

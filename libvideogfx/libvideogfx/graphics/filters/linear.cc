@@ -320,6 +320,41 @@ void CreateGaussDerivFilter(Array<double>& filter,double sigma,double cutoffval)
     f[i] *= fact;
 }
 
+void CalcGaussGradientStrength(Bitmap<int16>& gradient,const Bitmap<Pixel>& bm,double sigma)
+{
+  int w = bm.AskWidth();
+  int h = bm.AskHeight();
+
+  Array<double> lowpass,deriv;
+  CreateGaussFilter(lowpass,sigma,0.1);
+  CreateGaussDerivFilter(deriv,sigma,0.1);
+
+  Bitmap<Pixel> tmp;
+  Bitmap<int16> deriv_h, deriv_v;
+
+  ConvolveH(tmp, bm, lowpass);
+  ConvolveV(deriv_v, tmp, deriv);
+
+  ConvolveV(tmp, bm, lowpass);
+  ConvolveH(deriv_h, tmp, deriv);
+
+
+  // calculate gradient strength
+
+  gradient.Create(w,h);
+
+  {
+    int16*const* valp = gradient.AskFrame();
+    const int16*const* hp = deriv_h.AskFrame();
+    const int16*const* vp = deriv_v.AskFrame();
+
+    for (int y=0;y<h;y++)
+      for (int x=0;x<w;x++)
+	valp[y][x] = (hp[y][x]*hp[y][x] + vp[y][x]*vp[y][x])/4;  // divide by four to limit range
+  }
+}
+
+
 
 template void ConvolveH (Bitmap<Pixel>&,const Bitmap<Pixel>&,const Array<double>&);
 template void ConvolveV (Bitmap<Pixel>&,const Bitmap<Pixel>&,const Array<double>&);
