@@ -82,7 +82,7 @@ struct ImageParam
 {
   ImageParam() : width(0), height(0), halign(1), valign(1), border(0),
 		 colorspace(Colorspace_Invalid), has_alpha(false),
-		 chroma(Chroma_420), reduced_chroma_resolution(true),
+		 chroma(Chroma_444), reduced_chroma_resolution(true),
 		 chroma_border(-1), chroma_halign(-1), chroma_valign(-1)
   { }
 
@@ -108,12 +108,31 @@ struct ImageParam
   bool exact_size;
 #endif
 
-  int  AskChromaWidth()  const { return (width +ChromaSubH(chroma)-1)/ChromaSubH(chroma); }
-  int  AskChromaHeight() const { return (height+ChromaSubV(chroma)-1)/ChromaSubV(chroma); }
+  int  AskChromaWidth()  const
+  {
+    if (colorspace==Colorspace_YUV)
+      return (width +ChromaSubH(chroma)-1)/ChromaSubH(chroma);
+    else
+      return width;
+  }
+  int  AskChromaHeight() const
+  {
+    if (colorspace==Colorspace_YUV)
+      return (height+ChromaSubV(chroma)-1)/ChromaSubV(chroma);
+    else
+      return height;
+  }
   void AskChromaSizes(int& w,int &h) const;
   int  AskChromaBorder() const;
   int  AskChromaHAlign() const;
   int  AskChromaVAlign() const;
+
+  int  BitmapWidth (BitmapChannel b) const { if (b==1||b==2) return AskChromaWidth();  else return width; }
+  int  BitmapHeight(BitmapChannel b) const { if (b==1||b==2) return AskChromaHeight(); else return height; }
+  int  ChromaScaleH(BitmapChannel b,int x) const
+  { if ((b==1||b==2) && colorspace==Colorspace_YUV) return x/ChromaSubH(chroma); else return x; }
+  int  ChromaScaleV(BitmapChannel b,int y) const
+  { if ((b==1||b==2) && colorspace==Colorspace_YUV) return y/ChromaSubV(chroma); else return y; }
 };
 
 
