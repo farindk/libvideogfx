@@ -56,7 +56,7 @@ namespace videogfx {
       {
 	const char* SOUND_DEVICE = "/dev/dsp";
       
-	if ( (d_fd = open(SOUND_DEVICE, O_WRONLY, 0)) == -1) { 
+	if ( (d_fd = open(SOUND_DEVICE, O_WRONLY|O_NONBLOCK, 0)) == -1) { 
 	  perror("Cannot open sound device"); exit(0); 
 	}
 
@@ -75,6 +75,8 @@ namespace videogfx {
     char buf[2000*2*2];
     int  idx=0;
 
+    int total_written = 0;
+
     for (int i=0;i<len;i++)
       {
 	*((int16*)(&buf[idx])) = left[i];
@@ -84,15 +86,22 @@ namespace videogfx {
 
 	if (idx==2000*2*2)
 	  {
-	    if ( write(d_fd, buf, 2000*2*2) < 2000*2*2 ) perror("Cannot write samples");
+	    int written = write(d_fd, buf, 2000*2*2);
+	    total_written += written;
 	    idx=0;
+
+	    if (written<2000*2*2)
+	      return total_written/4;
 	  }
       }
 
     if (idx>0)
       {
-	if ( write(d_fd, buf, idx) < idx ) perror("Cannot write samples");
+	int written = write(d_fd, buf, idx);
+	total_written += written;
       }
+
+    return total_written/4;
   }
 
 }

@@ -7,7 +7,7 @@ using namespace videogfx;
 #include <unistd.h>
 
 
-main(int argc,char** argv)
+int main(int argc,char** argv)
 {
   bool useXv = (argc>1 && strcmp(argv[1],"-xv")==0);
 
@@ -41,4 +41,6 @@ main(int argc,char** argv)
   win.Display(img);
 
   sleep(10);
+
+  return 0;
 }

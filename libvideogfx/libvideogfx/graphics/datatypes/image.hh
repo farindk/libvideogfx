@@ -256,6 +256,10 @@ namespace videogfx {
 	d_pm[1].Release();
 	d_pm[2].Release();
 	break;
+
+      case Colorspace_Invalid:
+	Assert(0);
+	break;
       }
 
     if (param.has_alpha)

@@ -7,7 +7,7 @@ using namespace std;
 using namespace videogfx;
 
 
-void main(int argc,char** argv)
+int main(int argc,char** argv)
 {
   ifstream istr(argv[1]);
   ofstream ostr(argv[2]);
@@ -25,4 +25,6 @@ void main(int argc,char** argv)
       }
 
   WriteImage_PPM(img,ostr);
+
+  return 0;
 }

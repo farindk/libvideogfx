@@ -15,4 +15,6 @@ main (int   argc,
       char *argv[])
 {
   cout << "\nNot written yet ;-)\n\n";
+
+  return 0;
 }

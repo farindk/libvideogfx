@@ -13,7 +13,7 @@ using namespace videogfx;
 
 // ARGS: give me 4 JPEG files
 
-main(int argc,char** argv)
+int main(int argc,char** argv)
 {
   srand(time(NULL));
 
@@ -59,4 +59,6 @@ main(int argc,char** argv)
     }
 
   sleep(10);
+
+  return 0;
 }

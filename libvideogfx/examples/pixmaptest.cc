@@ -19,7 +19,7 @@ void Show(Bitmap<Pixel> pm)
 }
 
 
-main(int argc,char** argv)
+int main(int argc,char** argv)
 {
   try
     {
@@ -58,4 +58,6 @@ main(int argc,char** argv)
     {
       MessageDisplay::Show(e);
     }
+
+  return 0;
 }

@@ -35,7 +35,7 @@ namespace videogfx {
     AudioSink_LinuxSndCard();
     ~AudioSink_LinuxSndCard();
 
-    void SendSamples(int16* left,int16* right,int len);
+    int SendSamples(int16* left,int16* right,int len);
 
   private:
     bool d_initialized;

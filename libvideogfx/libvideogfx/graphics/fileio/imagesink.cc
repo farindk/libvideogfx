@@ -20,6 +20,7 @@
 #include <libvideogfx/graphics/fileio/imagesink.hh>
 #include <libvideogfx/graphics/fileio/jpeg.hh>
 #include <libvideogfx/graphics/fileio/ppm.hh>
+#include <libvideogfx/graphics/fileio/png.hh>
 #include <libvideogfx/graphics/color/colorspace.hh>
 #include <stdio.h>
 
@@ -37,6 +38,26 @@ namespace videogfx {
   ImageSink_Save::~ImageSink_Save()
   {
     if (d_filename_template) delete[] d_filename_template;
+  }
+
+  bool ImageSink_Save::IsFormatSupported(ImageFileFormat f)
+  {
+    switch (f)
+      {
+      case Format_PPM:
+      case Format_PGM:
+	return true;
+	break;
+      case Format_JPEG:
+	return JPEG_Supported();
+	break;
+      case Format_PNG:
+	return PNG_Supported();
+	break;
+      }
+
+    Assert(0);
+    return false;
   }
 
   void ImageSink_Save::SetFilename(const char* tmpl, bool autosuffix)
@@ -70,6 +91,10 @@ namespace videogfx {
       case Format_PGM:
 	number = true;
 	suffix = "pgm";
+	break;
+      case Format_PNG:
+	number = true;
+	suffix = "png";
 	break;
       }
 
@@ -136,6 +161,19 @@ namespace videogfx {
 
 	  ofstream ostr(buf);
 	  WriteImage_PPM(dst,ostr);
+	}
+	break;
+
+      case Format_PNG:
+	{
+	  Image<Pixel> dst;
+	  if (img.AskParam().colorspace == Colorspace_RGB)
+	    dst = img;
+	  else
+	    ChangeColorspace(dst,img,Colorspace_RGB);
+
+	  ofstream ostr(buf);
+	  WriteImage_PNG(dst,ostr);
 	}
 	break;
       }

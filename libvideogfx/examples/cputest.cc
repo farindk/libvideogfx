@@ -7,7 +7,7 @@ using namespace std;
 using namespace videogfx;
 
 
-main(int argc,char** argv)
+int main(int argc,char** argv)
 {
   try
     {
@@ -33,4 +33,6 @@ main(int argc,char** argv)
     {
       MessageDisplay::Show(b);
     }
+
+  return 0;
 }

@@ -21,7 +21,7 @@ linuxprogs =
 endif
 
 noinst_PROGRAMS = test-libvideogfx bitstream_output cputest pixmaptest filtertest \
-	ppmflip chromatest \
+	ppmflip chromatest smartpointer \
 	$(linuxprogs) $(x11progs) # ppm2avi
 
 test_libvideogfx_DEPENDENCIES = ../libvideogfx/libvideogfx.la
@@ -35,6 +35,12 @@ bitstream_output_CFLAGS = $(X_CFLAGS)
 bitstream_output_LDFLAGS = -g $(X_LDFLAGS)
 bitstream_output_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs) $(png_libs)
 bitstream_output_SOURCES = bitstream_output.cc
+
+smartpointer_DEPENDENCIES = ../libvideogfx/libvideogfx.la
+smartpointer_CFLAGS = $(X_CFLAGS)
+smartpointer_LDFLAGS = -g $(X_LDFLAGS)
+smartpointer_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs) $(png_libs)
+smartpointer_SOURCES = smartpointer.cc
 
 #ppm2avi_DEPENDENCIES = ../libvideogfx/libvideogfx.la
 #ppm2avi_CFLAGS = $(X_CFLAGS)

@@ -1,1 +1,10 @@
-News
+
+version 1.0.2
+
+- generic smart pointers templates
+- audio-sink for linux OSS drivers
+
+version 1.0.1
+
+- PNG loader / saver
+

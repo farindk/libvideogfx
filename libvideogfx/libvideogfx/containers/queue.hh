@@ -60,6 +60,8 @@ namespace videogfx {
     void RemoveFromHead(uint32 idx);
     T    AskAndRemoveHead() { T& x=AskHead(); RemoveHead(); return x; }
 
+    void Clear() { d_entries=0; d_first=0; }
+
     bool   IsEmpty() const { return d_entries==0; }
     uint32 AskSize() const { return d_entries;    }
 

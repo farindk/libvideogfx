@@ -8,8 +8,11 @@ using namespace videogfx;
 #include <time.h>
 #include <stdlib.h>
 
+#include <algorithm>
+using namespace std;
 
-main(int argc,char** argv)
+
+int main(int argc,char** argv)
 {
   srand(time(NULL));
 
@@ -113,4 +116,6 @@ main(int argc,char** argv)
     }
 
   sleep(3);
+
+  return 0;
 }

@@ -21,7 +21,7 @@ void FillGradient(Bitmap<Pixel>& bmx,Bitmap<Pixel>& bmy)
 }
 
 
-main(int argc,char** argv)
+int main(int argc,char** argv)
 {
   ImageWindow_Autorefresh_X11 win_rgb;
   ImageWindow_Autorefresh_X11 win_yuv;
@@ -57,4 +57,6 @@ main(int argc,char** argv)
   win_hsv.SetPosition(610,10); win_hsv.Create(256,256,"hsv"); win_hsv.Display(dispimg);
 
   sleep(10);
+
+  return 0;
 }

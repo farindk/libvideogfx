@@ -52,7 +52,7 @@ namespace videogfx {
 
   enum ImageFileFormat
   {
-    Format_JPEG, Format_PPM, Format_PGM // , Format_PlanarYUV420
+    Format_JPEG, Format_PPM, Format_PGM, Format_PNG // , Format_PlanarYUV420
   };
 
   class ImageSink_Save : public ImageSink
@@ -60,6 +60,8 @@ namespace videogfx {
   public:
     ImageSink_Save(ImageFileFormat fmt = Format_JPEG);
     ~ImageSink_Save();
+
+    bool IsFormatSupported(ImageFileFormat);
 
     void SetFileFormat(ImageFileFormat fmt) { d_format = fmt; }
     void SetFilename(const char*,bool autosuffix=false);
