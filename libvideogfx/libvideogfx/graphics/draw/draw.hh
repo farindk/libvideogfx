@@ -72,6 +72,42 @@ template <class T> void DrawArrow(Bitmap<T>& bm,int x0,int y0,int x1, int y1,T c
 				  double alpha=20.0,int len=7,bool bothends = false);
 
 
+/* A PolylinePainter helps to draw polygons.
+   You initialize the painter with a bitmap or an image and add points of the
+   polygon to it. Finally, you have to stroke the path. You can close the path
+   beforehand by calling "Close()".
+*/
+template <class T> class PolylinePainter
+{
+public:
+  PolylinePainter()
+    : d_bm(NULL), d_img(NULL), d_began(false) { }
+
+  void SetBitmap(Bitmap<T>& b, T value)   { d_bm = &b; d_img=NULL; d_color.c[0]=value; d_began=false; }
+  void SetImage (Image<T>& b, Color<T> c) { d_img = &b, d_bm=NULL; d_color=c; d_began=false; }
+
+  void AddPoint(int x,int y)
+  {
+    if (!d_began) { d_start.x = d_last.x = x; d_start.y = d_last.y = y; d_began=true; return; }
+    if (d_bm)  DrawLine(*d_bm, d_last.x, d_last.y, x,y, d_color.c[0]);
+    if (d_img) DrawLine(*d_img,d_last.x, d_last.y, x,y, d_color);
+    d_last.x = x;
+    d_last.y = y;
+  }
+  void AddPoint(Point2D<int> p) { AddPoint(p.x,p.y); }
+  void Close() { AddPoint(d_start); Stroke(); }
+  void Stroke() { d_began=false; }
+
+private:
+  Bitmap<T>*   d_bm;
+  Image<T>*    d_img;
+  Color<T>     d_color;
+  bool         d_began;
+  Point2D<int> d_start;
+  Point2D<int> d_last;
+};
+
+
 // ---------------------------- implementation -------------------------
 
 
