@@ -17,8 +17,8 @@ AC_DIVERT_PUSH(AC_DIVERSION_NOTICE)dnl
 # set LIBVIDEOGFX_BINARY_AGE and LIBVIDEOGFX_INTERFACE_AGE to 0.
 #
 LIBVIDEOGFX_MAJOR_VERSION=1
-LIBVIDEOGFX_MINOR_VERSION=2
-LIBVIDEOGFX_MICRO_VERSION=3
+LIBVIDEOGFX_MINOR_VERSION=0
+LIBVIDEOGFX_MICRO_VERSION=0
 LIBVIDEOGFX_INTERFACE_AGE=0
 LIBVIDEOGFX_BINARY_AGE=0
 LIBVIDEOGFX_VERSION=$LIBVIDEOGFX_MAJOR_VERSION.$LIBVIDEOGFX_MINOR_VERSION.$LIBVIDEOGFX_MICRO_VERSION
@@ -233,6 +233,8 @@ libvideogfx/graphics/fileio/Makefile
 libvideogfx/graphics/filters/Makefile
 libvideogfx/graphics/visualize/Makefile
 libvideogfx/graphics/measure/Makefile
+libvideogfx/audio/Makefile
+libvideogfx/audio/fileio/Makefile
 libvideogfx/utility/Makefile
 libvideogfx/utility/bitstream/Makefile
 libvideogfx/x11/Makefile
