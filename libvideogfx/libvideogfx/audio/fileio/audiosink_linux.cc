@@ -50,7 +50,7 @@ namespace videogfx {
   }
 
 
-  void AudioSink_LinuxSndCard::SendSamples(int16* left,int16* right,int len)
+  int AudioSink_LinuxSndCard::SendSamples(int16* left,int16* right,int len)
   {
     if (!d_initialized)
       {

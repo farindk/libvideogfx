@@ -48,6 +48,7 @@ libvideogfx_la_LIBADD = \
 	utility/libvideogfx-utility.la				\
 	$(x11_sources)
 
+
 #	graphics/fileio/avi/libvideogfx-graphics-fileio-avi.la	\
 #	graphics/lowlevel/libvideogfx-graphics-lowlevel.la	\
 #	postscript/libvideogfx-postscript.la			\

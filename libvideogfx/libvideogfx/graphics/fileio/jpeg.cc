@@ -38,12 +38,12 @@ namespace videogfx {
     return false;
   }
 
-  void ReadImage_JPEG(const char* filename,Image_YUV<Pixel>& img)
+  void ReadImage_JPEG(Image<Pixel>& img,const char* filename)
   {
     AssertDescr(false,"JPEG support has not been compiled into libvideogfx.\n");
   }
 
-  void WriteImage_JPEG(const char* filename,const Image_YUV<Pixel>& img)
+  void WriteImage_JPEG(const Image<Pixel>& img,const char* filename)
   {
     AssertDescr(false,"JPEG support has not been compiled into libvideogfx.\n");
   }
