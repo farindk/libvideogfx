@@ -53,7 +53,7 @@ namespace videogfx {
 
   static char* ExpandMacros(char* spec)
   {
-    cout << "----------- start (" << spec << ") -------------\n";
+    //cout << "----------- start (" << spec << ") -------------\n";
 
     char* result = NULL;
 
@@ -63,9 +63,9 @@ namespace videogfx {
 	char* option = ExtractNextMacroOption(spec, nextc);
 	RemoveMacroOption(spec);
 
-	cerr << "macro-option: " << option << endl;
-	cerr << "remains: " << spec << endl;
-	cerr << "delimiter: " << (nextc ? nextc : '0') << endl;
+	//cerr << "macro-option: " << option << endl;
+	//cerr << "remains: " << spec << endl;
+	//cerr << "delimiter: " << (nextc ? nextc : '0') << endl;
 
 	if (option[0]=='=') // is a macro
 	  {
@@ -120,17 +120,17 @@ namespace videogfx {
 
 	// Last or expanded option is now in "option". Append to "result"
 
-	cout << "COMBINE ->\n";
+	//cout << "COMBINE ->\n";
 
-	cout << "result |" << (result ? result : "NULL") << endl;
-	cout << "option |" << option << endl;
-	cout << "spec   |" << spec << endl;
-	cout << "nextc  |" << nextc << endl;
+	//cout << "result |" << (result ? result : "NULL") << endl;
+	//cout << "option |" << option << endl;
+	//cout << "spec   |" << spec << endl;
+	//cout << "nextc  |" << nextc << endl;
 
 	if (!result)
 	  {
 	    result = new char[1+strlen(option)+1];
-	    if (*spec) { sprintf(result,"%s%c",option,nextc); cout << "opt1\n"; }
+	    if (*spec) { sprintf(result,"%s%c",option,nextc); }
 	    else sprintf(result,"%s",option);
 	    delete[] option;
 	  }
@@ -144,14 +144,12 @@ namespace videogfx {
 	    result = newresult;
 	  }
 
-	cout << ">>>>>> |" << (result ? result : "NULL") << endl;
-
-	cout << "END COMBINE\n";
-
-	cout << "result: " << result << endl;
+	//cout << ">>>>>> |" << (result ? result : "NULL") << endl;
+	//cout << "END COMBINE\n";
+	//cout << "result: " << result << endl;
       }
 
-    cout << "----------- quit (" << result << ") -------------\n";
+    //cout << "----------- quit (" << result << ") -------------\n";
     return result;
   }
 
@@ -1169,6 +1167,86 @@ namespace videogfx {
     const char* Name() const { return "filter: set sequence range"; }
 
   } singleton_seqrange;
+
+
+  // ------------------------------------------------------------------------------
+
+
+  class LoaderPlugin_Alpha : public LoaderPlugin
+  {
+  public:
+    LoaderPlugin_Alpha() { d_framenr=0; fh=NULL; }
+    ~LoaderPlugin_Alpha() { if (fh) fclose(fh); }
+
+    void SetAlphaStream(const char* name) { fh=fopen(name,"rb"); }
+
+    int  AskNFrames() const { Assert(prev); return prev->AskNFrames(); }
+    bool IsEOF() const { Assert(prev); return prev->IsEOF(); }
+
+    bool SkipToImage(int nr) { Assert(prev); d_framenr=nr; return prev->SkipToImage(nr); }
+    void ReadImage(Image<Pixel>& img)
+    {
+      // read image as usual
+
+      prev->ReadImage(img);
+      d_framenr++;
+
+
+      // seek to position of current alpha mask
+
+      int w=img.AskWidth(), h=img.AskHeight();
+      int size = w*h;
+
+      fseek(fh, size*d_framenr, SEEK_SET);
+
+
+      // load alpha mask
+
+      Bitmap<Pixel> alpha;
+      alpha.Create(w,h);
+
+      for (int y=0;y<h;y++)
+	{
+	  fread(alpha.AskFrame()[y], w,1, fh);
+	}
+
+
+      // insert alpha mask into image
+
+      img.ReplaceBitmap(Bitmap_Alpha, alpha);
+      ImageParam spec;
+      spec = img.AskParam();
+      spec.has_alpha = true;
+      img.SetParam(spec);
+    }
+
+  private:
+    FILE* fh;
+    int d_framenr;
+  };
+
+
+  class FileIOFactory_Alpha : public FileIOFactory
+  {
+  public:
+    LoaderPlugin* ParseSpec(char** spec) const
+    {
+      if (MatchOption(*spec, "alpha"))
+	{
+	  RemoveOption(*spec);
+	  LoaderPlugin_Alpha* alpha = new LoaderPlugin_Alpha;
+	  char* name = ExtractNextOption(*spec); RemoveOption(*spec);
+	  alpha->SetAlphaStream(name);
+	  delete[] name;
+	  return alpha;
+	}
+      else
+	return NULL;
+    }
+
+    const char* Name() const { return "filter: add alpha channel"; }
+
+  } singleton_alpha;
 
 
 }

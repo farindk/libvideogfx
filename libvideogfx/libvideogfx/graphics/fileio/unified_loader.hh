@@ -18,6 +18,7 @@
     resize:w:h -- resize image
     crop:l:r:t:b -- crop away image borders
     quarter -- resize to quarter size (especially useful to deinterlace to CIF)
+    alpha:n -- add alpha-channel file 'n' to the loaded images
     cache -- add a temporary disk-based image cache to allow searching
     rgb -- generate alternating R,G,B images
 
