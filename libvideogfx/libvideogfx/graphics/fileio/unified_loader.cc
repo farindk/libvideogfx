@@ -234,8 +234,11 @@ namespace videogfx {
 
     if (d_colorspace != Colorspace_Invalid || d_chroma != Chroma_Invalid)
       {
+	Colorspace   colorspace = (d_colorspace == Colorspace_Invalid ? img.AskParam().colorspace : d_colorspace);
+	ChromaFormat chroma     = (d_chroma     == Chroma_Invalid     ? img.AskParam().chroma     : d_chroma);
+
 	Image<Pixel> tmp;
-	ChangeColorspace(tmp,img, d_colorspace, d_chroma);
+	ChangeColorspace(tmp,img, colorspace, chroma);
 	img = tmp;
       }
   }
@@ -491,6 +494,7 @@ namespace videogfx {
 	  CheckSuffix(*spec, "avi") ||
 	  CheckSuffix(*spec, "wmv") ||
 	  CheckSuffix(*spec, "mpg") ||
+	  CheckSuffix(*spec, "vob") ||
 	  CheckSuffix(*spec, "m1v") ||
 	  CheckSuffix(*spec, "m2v") ||
 	  CheckSuffix(*spec, "mpeg") ||
