@@ -212,9 +212,9 @@ inline void CalcInternalSizes(int w,int h,int border,int halign,int valign,
   inth = h;
   intb = border;
 
-  AlignUp(intw, halign);
-  AlignUp(inth, valign);
-  AlignUp(intb, halign);       // align border to halign to provide aligned memory access
+  intw = AlignUp(intw, halign);
+  inth = AlignUp(inth, valign);
+  intb = AlignUp(intb, halign);       // align border to halign to provide aligned memory access
 }
 
 
@@ -235,8 +235,8 @@ public:
 
     // total size including border
 
-    d_total_width  = w+2*border;
-    d_total_height = h+2*border;
+    d_total_width  = d_internal_width +2*border;
+    d_total_height = d_internal_height+2*border;
 
     if (d_bitmap_ptr)
       delete[] d_bitmap_ptr;
@@ -590,7 +590,7 @@ template <class Pel> Bitmap<Pel> Bitmap<Pel>::Clone(int border,int halign,int va
   for (int y=0;y<minheight;y++)
     memcpy(&dst[y-minborder][-minborder],
 	   &src[y-minborder][-minborder],
-	   minwidth);
+	   minwidth*sizeof(Pel));
 
   return pm;
 }
