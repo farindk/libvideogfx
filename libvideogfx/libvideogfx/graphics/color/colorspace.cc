@@ -85,14 +85,12 @@ namespace videogfx {
   void ChangeColorspace(Image<Pixel>& dst, const Image<Pixel>& src,
 			Colorspace colorspace, ChromaFormat chroma)
   {
-    ImageParam param = dst.AskParam();
-
     /* If source and target colorspace are the same, do nothing.
        Exception: if both are YUV and the chroma format differs, do chroma format conversion. */
 
     if (src.AskParam().colorspace == colorspace)
       {
-	if (param.colorspace == Colorspace_YUV)
+	if (colorspace == Colorspace_YUV)
 	  {
 	    if (chroma == src.AskParam().chroma)
 	      CopyToNew(dst,src);
@@ -161,7 +159,7 @@ namespace videogfx {
 	  }
 	else if (colorspace==Colorspace_YUV)
 	  {
-	    Greyscale2RGB(dst, src);
+	    Greyscale2YUV(dst, src);
 	    did_convert=true;
 	  }
       }
