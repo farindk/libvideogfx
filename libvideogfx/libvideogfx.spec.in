@@ -1,0 +1,73 @@
+#
+# spec file for package libvideogfx
+#
+# Copyright (c) 2002 SuSE Linux AG, Nuernberg, Germany.
+# This file and all modifications and additions to the pristine
+# package are under the same license as the package itself.
+#
+# please send bugfixes or comments to feedback@suse.de.
+#
+
+# neededforbuild  gcc-c++ libstdc++ libstdc++-devel
+# usedforbuild    aaa_base acl attr bash bind9-utils bison cpio cpp cyrus-sasl db devs diffutils e2fsprogs file filesystem fileutils fillup findutils flex gawk gdbm-devel glibc glibc-devel glibc-locale gpm grep groff gzip kbd less libgcc libstdc++ libxcrypt m4 make man mktemp modutils ncurses ncurses-devel net-tools netcfg pam pam-devel pam-modules patch permissions ps rcs readline sed sendmail sh-utils shadow strace syslogd sysvinit tar texinfo textutils timezone unzip util-linux vim zlib-devel autoconf automake binutils bzip2 cracklib gcc gcc-c++ gdbm gettext libstdc++-devel libtool perl rpm zlib
+
+Name:         libvideogfx
+License:      LGPL
+Group:        Productivity/Multimedia/Other
+Autoreqprov:  on
+Version:      @LIBVIDEOGFX_VERSION@
+Release:      0
+Source0:      libvideogfx-%{version}.tar.bz2
+Patch0:       libvideogfx-%{version}.diff
+BuildRoot:    %{_tmppath}/%{name}-%{version}-build
+Summary:      video processing library
+
+%description
+This library contains functions for low-level video processing.
+
+%package devel
+Summary:      video processing library
+Group:        Productivity/Multimedia/Other
+Requires:     libvideogfx
+
+%description devel
+This library contains functions for low-level video processing.
+
+%prep
+%setup
+%patch0 -p1
+%{?suse_update_config:%{suse_update_config -f }}
+autoreconf --force --install
+
+%build
+export CFLAGS="$RPM_OPT_FLAGS -fPIC"
+export CXXFLAGS="$RPM_OPT_FLAGS -fPIC"
+./configure --prefix=/usr --libdir=%{_libdir} --includedir=/usr/include
+make
+
+%install
+[ "$RPM_BUILD_ROOT" != "/" ] && [ -d $RPM_BUILD_ROOT ] && rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT
+make DESTDIR=$RPM_BUILD_ROOT install
+ldconfig -n $RPM_BUILD_ROOT/%{_libdir}
+
+%clean
+[ "$RPM_BUILD_ROOT" != "/" ] && [ -d $RPM_BUILD_ROOT ] && rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(-,root,root)
+%{_libdir}/*.so.*
+%doc AUTHORS COPYING NEWS README
+
+%files devel
+/usr/bin/libvideogfx-config
+/usr/share/aclocal/libvideogfx.m4
+/usr/include/*
+%{_libdir}/*.so
+%{_libdir}/*.la
+
+%changelog -n libvideogfx
+* Wed Nov 06 2002 - farin@informatik.uni-mannheim.de
+- added aclocal M4 macro to 'devel' package
+* Sat Nov 02 2002 - stepan@suse.de
+- initial release
