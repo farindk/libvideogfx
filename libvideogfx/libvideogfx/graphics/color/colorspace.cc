@@ -175,9 +175,11 @@ inline int Clip(int x) { if (x<0) return 0; if (x>255) return 255; return x; }
 
 void RGB2YUV(Pixel& y,Pixel& u,Pixel& v, Pixel r,Pixel g,Pixel b)
 {
-  y = Clip((( 65*r +  129*g +  24*b)>>8)+16);
-  u = Clip(((-37*r +  -74*g + 112*b)>>8)+128);
-  v = Clip(((112*r +  -93*g + -18*b)>>8)+128);
+  // clipping is not needed here
+
+  y = (( 65*r +  129*g +  24*b)>>8)+16;
+  u = ((-37*r +  -74*g + 112*b)>>8)+128;
+  v = ((112*r +  -93*g + -18*b)>>8)+128;
 }
 
 
