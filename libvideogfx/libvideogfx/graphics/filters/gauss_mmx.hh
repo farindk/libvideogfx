@@ -21,7 +21,7 @@
 #ifndef LIBVIDEOGFX_GRAPHICS_FILTERS_GAUSS_MMX_HH
 #define LIBVIDEOGFX_GRAPHICS_FILTERS_GAUSS_MMX_HH
 
-#include "libvideogfx/graphics/basic/image.hh"
+#include <libvideogfx/graphics/datatypes/image.hh>
 
 
 /* Low-pass filtering is done using this kernel:

@@ -19,7 +19,7 @@
 #ifndef LIBVIDEOGFX_GRAPHICS_COLOR_INTERNAL_YUV2RGB_MMX_HH
 #define LIBVIDEOGFX_GRAPHICS_COLOR_INTERNAL_YUV2RGB_MMX_HH
 
-#include "libvideogfx/graphics/color/img2raw.hh"
+#include <libvideogfx/graphics/color/img2raw.hh>
 
 
 class i2r_16bit_mmx : public Image2RawRGB_Transform

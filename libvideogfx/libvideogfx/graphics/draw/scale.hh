@@ -20,8 +20,8 @@
 #ifndef LIBVIDEOGFX_GRAPHICS_DRAW_SCALE_HH
 #define LIBVIDEOGFX_GRAPHICS_DRAW_SCALE_HH
 
-#include "libvideogfx/graphics/basic/bitmap.hh"
-#include "libvideogfx/graphics/basic/image.hh"
+#include <libvideogfx/graphics/datatypes/bitmap.hh>
+#include <libvideogfx/graphics/datatypes/image.hh>
 
 
 template <class Pel> void DoubleSize_Dup  (Bitmap<Pel>& dst,const Bitmap<Pel>& src);

@@ -18,7 +18,7 @@
 #ifndef LIBVIDEOGFX_GRAPHICS_FILEIO_V4L_HH
 #define LIBVIDEOGFX_GRAPHICS_FILEIO_V4L_HH
 
-#include <libvideogfx/graphics/basic/image.hh>
+#include <libvideogfx/graphics/datatypes/image.hh>
 
 
 class V4L_Grabber

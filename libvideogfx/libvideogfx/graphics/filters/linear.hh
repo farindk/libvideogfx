@@ -20,9 +20,9 @@
 #ifndef LIBVIDEOGFX_GRAPHICS_FILTERS_LINEAR_HH
 #define LIBVIDEOGFX_GRAPHICS_FILTERS_LINEAR_HH
 
-#include "libvideogfx/graphics/basic/image.hh"
-#include "libvideogfx/graphics/draw/blit.hh"
-#include "libvideogfx/containers/array.hh"
+#include <libvideogfx/graphics/datatypes/image.hh>
+#include <libvideogfx/graphics/draw/blit.hh>
+#include <libvideogfx/containers/array.hh>
 
 
 template <class PelIn,class PelOut> void ConvolveH (Bitmap<PelOut>& dst,const Bitmap<PelIn>& src,

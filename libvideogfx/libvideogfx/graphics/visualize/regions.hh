@@ -20,7 +20,7 @@
 #define LIBVIDEOGFX_GRAPHICS_VISUALIZE_REGIONS_HH
 
 #include <libvideogfx/types.hh>
-#include <libvideogfx/graphics/basic/image.hh>
+#include <libvideogfx/graphics/datatypes/image.hh>
 
 void DrawRegionBoundaries(Bitmap<Pixel>& bm,const Bitmap<int>& regionmap);
 void OverlayRegionBoundaries(Bitmap<Pixel>& bm,const Bitmap<int>& regionmap, Pixel value);

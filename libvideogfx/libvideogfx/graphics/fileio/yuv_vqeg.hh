@@ -24,7 +24,7 @@
 #include <iostream>
 using namespace std;
 
-#include "libvideogfx/graphics/basic/image.hh"
+#include "libvideogfx/graphics/datatypes/image.hh"
 
 
 class FileReader_YUV_VQEG

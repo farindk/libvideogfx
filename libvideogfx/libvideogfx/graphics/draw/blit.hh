@@ -18,9 +18,9 @@
 #ifndef LIBVIDEOGFX_GRAPHICS_DRAW_BLIT_HH
 #define LIBVIDEOGFX_GRAPHICS_DRAW_BLIT_HH
 
-#include "libvideogfx/graphics/basic/bitmap.hh"
-#include "libvideogfx/graphics/basic/image.hh"
-#include "libvideogfx/error.hh"
+#include <libvideogfx/graphics/datatypes/bitmap.hh>
+#include <libvideogfx/graphics/datatypes/image.hh>
+#include <libvideogfx/error.hh>
 
 
 /* Copy bitmap "src" into "dst". The destination bitmap will be created to have the

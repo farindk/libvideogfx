@@ -24,8 +24,8 @@
 #ifndef LIBVIDEOGFX_GRAPHICS_COLOR_COLORSPACE_HH
 #define LIBVIDEOGFX_GRAPHICS_COLOR_COLORSPACE_HH
 
-#include "libvideogfx/graphics/basic/image.hh"
-#include "libvideogfx/error.hh"
+#include <libvideogfx/graphics/datatypes/image.hh>
+#include <libvideogfx/error.hh>
 
 
 void ChangeChroma    (Image<Pixel>& dst, const Image<Pixel>& src, ChromaFormat dstformat);

@@ -27,7 +27,7 @@
 #ifndef LIBVIDEOGFX_GRAPHICS_LOWLEVEL_IMG2RAW_HH
 #define LIBVIDEOGFX_GRAPHICS_LOWLEVEL_IMG2RAW_HH
 
-#include "libvideogfx/graphics/basic/image.hh"
+#include <libvideogfx/graphics/datatypes/image.hh>
 
 
 /* Image manipulation operators that are executed on the fly while converting to raw image data.

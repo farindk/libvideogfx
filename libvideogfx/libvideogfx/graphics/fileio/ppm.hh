@@ -28,7 +28,7 @@
 #include <iostream>
 using namespace std;
 
-#include <libvideogfx/graphics/basic/image.hh>
+#include <libvideogfx/graphics/datatypes/image.hh>
 
 
 /* Reads PPM P5 and P6 types images.

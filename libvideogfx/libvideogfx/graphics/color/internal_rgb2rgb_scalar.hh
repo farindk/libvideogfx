@@ -23,7 +23,7 @@
 #ifndef LIBVIDEOGFX_GRAPHICS_COLOR_INTERNAL_RGB2RGB_SCALAR_HH
 #define LIBVIDEOGFX_GRAPHICS_COLOR_INTERNAL_RGB2RGB_SCALAR_HH
 
-#include "libvideogfx/graphics/color/img2raw.hh"
+#include <libvideogfx/graphics/color/img2raw.hh>
 
 /* Place RGB components in 32bit entities in arbitrary order.
    For the special cases that can be handled by the classes i2r_xrgb and i2r_xbgr you

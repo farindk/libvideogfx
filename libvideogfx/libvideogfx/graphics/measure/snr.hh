@@ -17,7 +17,7 @@
 #ifndef LIBVIDEOGFX_GRAPHICS_MEASURE_SNR_HH
 #define LIBVIDEOGFX_GRAPHICS_MEASURE_SNR_HH
 
-#include "libvideogfx/graphics/basic/image.hh"
+#include <libvideogfx/graphics/datatypes/image.hh>
 
 double CalcMSE(const Bitmap<Pixel>& img1,
 	       const Bitmap<Pixel>& img2,

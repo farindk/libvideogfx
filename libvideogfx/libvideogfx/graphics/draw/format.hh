@@ -18,8 +18,8 @@
 #ifndef LIBVIDEOGFX_GRAPHICS_DRAW_BMFORMAT_HH
 #define LIBVIDEOGFX_GRAPHICS_DRAW_BMFORMAT_HH
 
-#include "libvideogfx/graphics/basic/bitmap.hh"
-#include "libvideogfx/graphics/basic/image.hh"
+#include <libvideogfx/graphics/datatypes/bitmap.hh>
+#include <libvideogfx/graphics/datatypes/image.hh>
 
 
 // --------- bitmap type conversion ----------

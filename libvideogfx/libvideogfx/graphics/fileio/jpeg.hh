@@ -20,7 +20,7 @@
 #ifndef LIBVIDEOGFX_GRAPHICS_FILEIO_JPEG_HH
 #define LIBVIDEOGFX_GRAPHICS_FILEIO_JPEG_HH
 
-#include <libvideogfx/graphics/basic/image.hh>
+#include <libvideogfx/graphics/datatypes/image.hh>
 
 bool JPEG_Supported();
 

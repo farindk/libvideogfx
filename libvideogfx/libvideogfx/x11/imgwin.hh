@@ -27,8 +27,8 @@
 #include <X11/Xlib.h>
 #include "dispimg.hh"
 
-#include "libvideogfx/graphics/basic/image.hh"
-#include "libvideogfx/graphics/color/img2raw.hh"
+#include <libvideogfx/graphics/datatypes/image.hh>
+#include <libvideogfx/graphics/color/img2raw.hh>
 
 
 /* Wrapper class for creating one X11 window with the highest color depth possible.

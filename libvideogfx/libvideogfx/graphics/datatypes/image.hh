@@ -43,7 +43,7 @@
 #include <assert.h>
 
 #include <libvideogfx/types.hh>
-#include <libvideogfx/graphics/basic/bitmap.hh>
+#include <libvideogfx/graphics/datatypes/bitmap.hh>
 #include <algorithm>
 
 

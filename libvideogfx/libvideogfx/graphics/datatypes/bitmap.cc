@@ -1,5 +1,5 @@
 
-#include <libvideogfx/graphics/basic/bitmap.hh>
+#include <libvideogfx/graphics/datatypes/bitmap.hh>
 
 static int default_align_border=0;
 static int default_align_halign=1;

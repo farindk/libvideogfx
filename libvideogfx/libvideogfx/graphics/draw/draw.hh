@@ -26,9 +26,9 @@
 
 #include <math.h>
 
-#include "libvideogfx/graphics/basic/bitmap.hh"
-#include "libvideogfx/graphics/basic/image.hh"
-#include "libvideogfx/graphics/datatypes/primitives.hh"
+#include <libvideogfx/graphics/datatypes/bitmap.hh>
+#include <libvideogfx/graphics/datatypes/image.hh>
+#include <libvideogfx/graphics/datatypes/primitives.hh>
 
 #ifndef M_PI
 #define M_PI 3.1415926535

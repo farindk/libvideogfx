@@ -21,7 +21,7 @@
 #ifndef LIBVIDEOGFX_GRAPHICS_DRAW_PIXELOPS_HH
 #define LIBVIDEOGFX_GRAPHICS_DRAW_PIXELOPS_HH
 
-#include <libvideogfx/graphics/basic/bitmap.hh>
+#include <libvideogfx/graphics/datatypes/bitmap.hh>
 
 template <class T> void MakeAbsolute(Bitmap<T>&);
 template <class T> void Inverse(const Bitmap<T>&,T maxval);

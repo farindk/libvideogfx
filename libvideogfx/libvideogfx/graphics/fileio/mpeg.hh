@@ -22,7 +22,7 @@
 #define LIBVIDEOGFX_GRAPHICS_FILEIO_READ_MPEG_HH
 
 #include <stdio.h>
-#include <libvideogfx/graphics/basic/image.hh>
+#include <libvideogfx/graphics/datatypes/image.hh>
 
 
 class FileReader_MPEG

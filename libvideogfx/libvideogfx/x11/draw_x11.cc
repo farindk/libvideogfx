@@ -7,9 +7,10 @@
 
 
 void WriteText_X11(Bitmap<Pixel>& bm,const char* txt,int x0,int y0,
+		   Pixel front,Pixel back,
 		   const char* fontname,
 		   HTextAlign halign,VTextAlign valign,
-		   TextDrawMode mode,Pixel front,Pixel back)
+		   TextDrawMode mode)
 {
   int bmwidth  = bm.AskWidth();
   int bmheight = bm.AskHeight();
