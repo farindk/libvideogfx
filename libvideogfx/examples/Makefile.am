@@ -5,7 +5,7 @@
 #
 
 if HAVE_X11
-x11progs = x11test chromaspaces drawingtest
+x11progs = x11test chromaspaces drawingtest copytest
 else
 x11progs =
 endif
@@ -86,6 +86,12 @@ drawingtest_CFLAGS = $(X_CFLAGS)
 drawingtest_LDFLAGS = -g $(X_LDFLAGS)
 drawingtest_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs)
 drawingtest_SOURCES = drawingtest.cc
+
+copytest_DEPENDENCIES = ../libvideogfx/libvideogfx.la
+copytest_CFLAGS = $(X_CFLAGS)
+copytest_LDFLAGS = -g $(X_LDFLAGS)
+copytest_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs)
+copytest_SOURCES = copytest.cc
 endif
 
 if LINUX
