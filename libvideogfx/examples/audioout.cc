@@ -42,7 +42,7 @@ int main()
 
       while (snd.PresentationDataPending())
 	{
-	  int64 next = snd.NextDataPresentationTime(0);
+	  int64 next = snd.NextDataPresentationTime();
 	  usleep(next*1000);
 
 	  snd.PresentData(0);
