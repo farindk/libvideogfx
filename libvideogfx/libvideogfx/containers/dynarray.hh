@@ -47,6 +47,7 @@ namespace videogfx {
     DynArray(const DynArray<T>&);
     ~DynArray();
 
+    void Clear() { d_nentries=0; }
     void Append(const T& t);
 
     /* Append a new, empty element and return a reference to it. */
