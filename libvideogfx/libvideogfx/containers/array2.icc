@@ -77,6 +77,7 @@ template <class T> void Array2<T>::Resize(int newwidth,int newheight)
 
   T** old_row_array = d_array;
   int old_width     = d_width;
+  int old_height    = d_height;
   d_array = NULL;
 
 
@@ -87,8 +88,8 @@ template <class T> void Array2<T>::Resize(int newwidth,int newheight)
 
   // copy old content to new array
 
-  int copywidth  = std::min(d_width ,newwidth);
-  int copyheight = std::min(d_height,newheight);
+  int copywidth  = std::min(old_width ,newwidth);
+  int copyheight = std::min(old_height,newheight);
 
   for (int y=0;y<copyheight;y++)
     for (int x=0;x<copywidth;x++)

@@ -66,6 +66,8 @@ namespace videogfx {
     bool   IsEmpty() const { return d_entries==0; }
     uint32 AskSize() const { return d_entries;    }
 
+    void SortHeap();
+
   private:
     T*  d_heap;
     int d_size; // Size of heap excluding the first (dummy) element

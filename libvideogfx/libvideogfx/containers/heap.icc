@@ -98,3 +98,10 @@ again1:
     }
 }
 
+
+template <class T> void Heap<T>::SortHeap()
+{
+  for (int i=d_entries;i>=1;i--)
+    DownHeap(i);
+}
+
