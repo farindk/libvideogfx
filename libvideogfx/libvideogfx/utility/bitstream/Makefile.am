@@ -12,14 +12,20 @@ libvideogfx_utility_bitstream_la_SOURCES = \
 	bitreader.cc	\
 	bitreader.hh	\
 	bitreader.icc	\
-	bytebuffer.cc
+	bytebuffer.cc	\
+	inputstream.hh	\
+	inputstream.cc	\
+	inputstream_istr.hh	\
+	inputstream_istr.cc
 
 libvideogfx_utility_bitstream_include_HEADERS = \
 	bitbuffer.hh	\
 	bitreader_fast.hh	\
 	bitreader.hh	\
 	bitreader.icc	\
-	bytebuffer.hh
+	bytebuffer.hh	\
+	inputstream.hh	\
+	inputstream_istr.hh
 
 INCLUDES = \
 	-I$(top_srcdir)

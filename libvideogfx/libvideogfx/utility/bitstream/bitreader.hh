@@ -46,16 +46,17 @@
 #define LIBVIDEOGFX_UTILITY_BITSTREAM_BITREADER_HH
 
 #include "libvideogfx/types.hh"
+#include "libvideogfx/utility/bitstream/inputstream.hh"
 #include <assert.h>
 
 namespace videogfx {
 
-  // #define MemBitstreamReader BitReader
-
   class BitReader
   {
   public:
+    BitReader(InputStream& istr);
     BitReader(const uint8* buffer,uint32 len);
+    ~BitReader();
 
     inline uint32 GetBits (int nbits);
     inline uint32 PeekBits(int nbits);
@@ -64,7 +65,7 @@ namespace videogfx {
 					      least as many bits before! */
     inline void   SkipToByteBoundary();
 
-    inline int32  AskBitsLeft() const; // Return number of bits that have still not been read.
+    int32  AskBitsLeft() const; // Return number of bits that have still not been read.
 
     inline bool   IsEOF() const;       // True iff current cursor position at or behind file end
     inline int    AskPosition() const { return (d_ptr-d_start)*8 -d_bitsleft; }
@@ -74,8 +75,11 @@ namespace videogfx {
     int    d_bitsleft;
 
     const uint8* d_start;
-    const uint8* d_ptr;
-    const uint8* d_endptr;
+    mutable const uint8* d_ptr;
+    mutable const uint8* d_endptr;
+
+    InputStream* d_istr;
+    uint8*       d_filebuf;
 
     void Refill();
   };

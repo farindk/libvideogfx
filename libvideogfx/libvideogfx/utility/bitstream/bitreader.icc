@@ -70,8 +70,3 @@ inline bool   BitReader::IsEOF() const
 }
 
 
-inline int32 BitReader::AskBitsLeft() const
-{
-  return ((d_endptr-d_ptr)*8) + d_bitsleft;
-}
-
