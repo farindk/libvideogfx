@@ -214,6 +214,7 @@ void RGB2YUV(Image<Pixel>& dst, const Image<Pixel>& src, ChromaFormat chroma)
   param.colorspace = Colorspace_YUV;
   param.width  = src.AskWidth();
   param.height = src.AskHeight();
+  param.chroma = Chroma_444;
   out->Create(param);
 
 
@@ -223,9 +224,9 @@ void RGB2YUV(Image<Pixel>& dst, const Image<Pixel>& src, ChromaFormat chroma)
   const Pixel*const* gs = src.AskFrameG();
   const Pixel*const* bs = src.AskFrameB();
 
-  Pixel*const* yd = dst.AskFrameY();
-  Pixel*const* ud = dst.AskFrameU();
-  Pixel*const* vd = dst.AskFrameV();
+  Pixel*const* yd = out->AskFrameY();
+  Pixel*const* ud = out->AskFrameU();
+  Pixel*const* vd = out->AskFrameV();
 
   for (int y=0;y<param.height;y++)
     for (int x=0;x<param.width;x++)
@@ -234,9 +235,9 @@ void RGB2YUV(Image<Pixel>& dst, const Image<Pixel>& src, ChromaFormat chroma)
 	int g = ((int)gs[y][x]);
 	int b = ((int)bs[y][x]);
 
-	yd[y][x] = Clip((( 65*r +  129*g +  24*b)>>8)+16);
-	ud[y][x] = Clip(((-37*r +  -74*g + 112*b)>>8)+128);
-	vd[y][x] = Clip(((112*r +  -93*g + -18*b)>>8)+128);
+	yd[y][x] = (( 65*r +  129*g +  24*b)>>8)+16;
+	ud[y][x] = ((-37*r +  -74*g + 112*b)>>8)+128;
+	vd[y][x] = ((112*r +  -93*g + -18*b)>>8)+128;
       }
 
 
