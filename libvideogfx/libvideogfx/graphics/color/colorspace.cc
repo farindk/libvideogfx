@@ -83,8 +83,8 @@ namespace videogfx {
 
 
 
-  const Image<Pixel> ChangeColorspace_Inplace(const Image<Pixel>& src,
-					       Colorspace colorspace, ChromaFormat chroma)
+  const Image<Pixel> ChangeColorspace_NoCopy(const Image<Pixel>& src,
+					     Colorspace colorspace, ChromaFormat chroma)
   {
     if (src.AskParam().colorspace == colorspace)
       {

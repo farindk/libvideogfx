@@ -44,6 +44,7 @@ namespace videogfx {
 
   /** Create a greyscale image from a bitmap. */
   template <class T> Image<T> MakeImage(Bitmap<T>&);
+  template <class T> const Image<T> MakeImage(const Bitmap<T>&);
 
   // --------- bitmap type conversion ----------
 
@@ -67,6 +68,20 @@ namespace videogfx {
   // -----------------------------------------------------------------------------------------
 
   template <class T> Image<T> MakeImage(Bitmap<T>& bm)
+  {
+    Image<T> img;
+    img.ReplaceBitmap(Bitmap_Y, bm);
+
+    ImageParam spec;
+    spec.width  = bm.AskWidth();
+    spec.height = bm.AskHeight();
+    spec.colorspace = Colorspace_Greyscale;
+    img.SetParam(spec);
+
+    return img;
+  }
+
+  template <class T> const Image<T> MakeImage(const Bitmap<T>& bm)
   {
     Image<T> img;
     img.ReplaceBitmap(Bitmap_Y, bm);

@@ -57,8 +57,8 @@ namespace videogfx {
   /* Same as above, but does not copy the content to a fresh image, if the colorspace
      is already correct. This is faster for cases in which you will not modify the image data.
   */
-  const Image<Pixel> ChangeColorspace_Inplace(const Image<Pixel>& src,
-					      Colorspace colorspace, ChromaFormat chroma=Chroma_420);
+  const Image<Pixel> ChangeColorspace_NoCopy(const Image<Pixel>& src,
+					     Colorspace colorspace, ChromaFormat chroma=Chroma_420);
 
   /* Get a bitmap of the Y-plane. If 'src' is already greyscale or YUV, the bitmap of this
      image is returned without copying it. If it has a different colorspace, it is converted
