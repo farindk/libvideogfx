@@ -73,6 +73,10 @@ namespace videogfx {
   // Fast line drawing, line-clipping is included.
   template <class T> void DrawLine(Bitmap<T>& bm,int x0,int y0,int x1, int y1,T color);
   template <class T> void DrawLine(Image<T>&  bm,int x0,int y0,int x1, int y1,Color<T> color);
+  template <class T> void DrawLine(Bitmap<T>& bm,const Point2D<int>& p1,const Point2D<int>& p2,T color);
+  template <class T> void DrawLine(Image<T>&  bm,const Point2D<int>& p1,const Point2D<int>& p2,Color<T> color);
+  template <class T> void DrawLine(Bitmap<T>& bm,const Point2D<double>& p1,const Point2D<double>& p2,T color);
+  template <class T> void DrawLine(Image<T>&  bm,const Point2D<double>& p1,const Point2D<double>& p2,Color<T> color);
 
   /* Only draws every 4th dot. */
   template <class T> void DrawDottedLine(Bitmap<T>&,int x1,int y1,int x2,int y2,T color);
@@ -80,6 +84,10 @@ namespace videogfx {
   // Draw a circle
   template <class T> void DrawCircle(Bitmap<T>& bm,int x0,int y0, int radius,T color,bool fill=false);
   template <class T> void DrawCircle(Image<T>&  bm,int x0,int y0, int radius,Color<T> color,bool fill=false);
+  template <class T> void DrawCircle(Bitmap<T>& bm,const Point2D<int>& p, int radius,T color,bool fill=false);
+  template <class T> void DrawCircle(Image<T>&  bm,const Point2D<int>& p, int radius,Color<T> color,bool fill=false);
+  template <class T> void DrawCircle(Bitmap<T>& bm,const Point2D<double>& p, int radius,T color,bool fill=false);
+  template <class T> void DrawCircle(Image<T>&  bm,const Point2D<double>& p, int radius,Color<T> color,bool fill=false);
 
   template <class T> void DrawRectangle(Bitmap<T>& bm,int x1,int y1,int w, int h,T color);
   template <class T> void DrawRectangle(Image<T>&  bm,int x1,int y1,int w, int h,Color<T> color);
@@ -181,6 +189,15 @@ namespace videogfx {
   template <class T> void FillRectangle(Bitmap<T>& bm,int x0,int y0,int x1,int y1,T color)
   {
     T*const* p = bm.AskFrame();
+
+    x0 = std::max(x0,-bm.AskXOffset());
+    y0 = std::max(y0,-bm.AskYOffset());
+    x0 = std::min(x0,-bm.AskXOffset()+bm.AskWidth()-1);
+    y0 = std::min(y0,-bm.AskYOffset()+bm.AskHeight()-1);
+    x1 = std::max(x1,-bm.AskXOffset());
+    y1 = std::max(y1,-bm.AskYOffset());
+    x1 = std::min(x1,-bm.AskXOffset()+bm.AskWidth()-1);
+    y1 = std::min(y1,-bm.AskYOffset()+bm.AskHeight()-1);
 
     for (int y=y0;y<=y1;y++)
       for (int x=x0;x<=x1;x++)
@@ -308,6 +325,18 @@ namespace videogfx {
 		   color.c[i]);
       }
   }
+
+  template <class T> void DrawLine(Bitmap<T>& bm,const Point2D<int>& p1,const Point2D<int>& p2,T color)
+  { DrawLine(bm,p1.x,p1.y,p2.x,p2.y,color); }
+
+  template <class T> void DrawLine(Image<T>&  bm,const Point2D<int>& p1,const Point2D<int>& p2,Color<T> color)
+  { DrawLine(bm,p1.x,p1.y,p2.x,p2.y,color); }
+
+  template <class T> void DrawLine(Bitmap<T>& bm,const Point2D<double>& p1,const Point2D<double>& p2,T color)
+  { DrawLine(bm,(int)(p1.x+0.5),(int)(p1.y+0.5),(int)(p2.x+0.5),(int)(p2.y+0.5),color); }
+
+  template <class T> void DrawLine(Image<T>&  bm,const Point2D<double>& p1,const Point2D<double>& p2,Color<T> color)
+  { DrawLine(bm,(int)(p1.x+0.5),(int)(p1.y+0.5),(int)(p2.x+0.5),(int)(p2.y+0.5),color); }
 
   template <class T> void DrawDottedLine(Bitmap<T>& bm,int x1,int y1,int x2,int y2,T color)
   {
@@ -461,15 +490,22 @@ namespace videogfx {
       }
   }
 
+  template <class T> void DrawCircle(Bitmap<T>& bm,const Point2D<int>& p, int radius,T color,bool fill)
+  { DrawCircle(bm,p.x,p.y,radius,color,fill); }
+  template <class T> void DrawCircle(Image<T>&  bm,const Point2D<int>& p, int radius,Color<T> color,bool fill)
+  { DrawCircle(bm,p.x,p.y,radius,color,fill); }
+  template <class T> void DrawCircle(Bitmap<T>& bm,const Point2D<double>& p, int radius,T color,bool fill)
+  { DrawCircle(bm,(int)(p.x+0.5),(int)(p.y+0.5),radius,color,fill); }
+  template <class T> void DrawCircle(Image<T>&  bm,const Point2D<double>& p, int radius,Color<T> color,bool fill)
+  { DrawCircle(bm,(int)(p.x+0.5),(int)(p.y+0.5),radius,color,fill); }
+
 
   template <class T> void DrawRectangle(Bitmap<T>& bm,int x1,int y1,int w, int h,T color)
   {
     T*const* p = bm.AskFrame();
 
-    DrawLine(bm,x1,y1,x1+w,y1,color);
-    DrawLine(bm,x1+w,y1,x1+w,y1+h,color);
-    DrawLine(bm,x1+w,y1+h,x1,y1+h,color);
-    DrawLine(bm,x1,y1+h,x1,y1,color);
+    for (int x=x1;x<x1+w;x++)  p[y1][x] = p[y1+h-1][x] = color;
+    for (int y=y1;y<y1+h;y++)  p[y][x1] = p[y][x1+w-1] = color;
   }
 
 
