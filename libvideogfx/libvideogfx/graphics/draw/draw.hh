@@ -1,5 +1,5 @@
 /*********************************************************************
-  libvideogfx/graphics/draw/draw.hh
+  libvideogfx/draw/draw.hh
 
   purpose:
 
@@ -496,7 +496,7 @@ namespace videogfx {
     dxp = x1-x0;
     dyp = y1-y0;
 
-    norm = ::sqrt(((double)(dxp*dxp+dyp*dyp));
+    norm = ::sqrt((double)(dxp*dxp+dyp*dyp));
 
     if (norm>0.0)
       {
