@@ -1,5 +1,7 @@
 
-(version 1.0.3)
+version 1.0.4
+
+version 1.0.3
 
 - redesigned audio output interface
 - greyscale to 24 bit raw conversion
@@ -8,7 +10,7 @@
   - solved incompatibility with ncurses library
     because of namespace clash
   - several errors in image drawing functions
-
+- compiles cleanly with gcc 3.2
 
 version 1.0.2
 
