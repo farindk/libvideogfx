@@ -126,7 +126,7 @@ namespace videogfx {
     if (d_empty_val_set)
       {
 	for (int i=0;i<d_size;i++)
-	  d_array[i] = d_empty_val;
+	  d_array[i] = d_empty_value;
       }
   }
 
