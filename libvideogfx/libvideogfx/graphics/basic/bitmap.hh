@@ -102,7 +102,7 @@ public:
   int AskTotalWidth() const;
   int AskTotalHeight() const;
   int AskBorder() const;
-  int AskStride() const { return AskTotalWidth(); }
+  int AskStride() const { return AskFrame()[1]-AskFrame()[0]; }  // NOTE: this is != TotalWidth (field view)
 
   bool IsEmpty() const { return d_parent==NULL; }
 

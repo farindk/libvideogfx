@@ -61,7 +61,7 @@ enum ChromaFormat {
 };
 
 enum BitmapChannel { Bitmap_Red = 0, Bitmap_Green = 1, Bitmap_Blue = 2,
-		     Bitmap_Y   = 0, Bitmap_Cr    = 1, Bitmap_Cb   = 2,
+		     Bitmap_Y   = 0, Bitmap_Cb    = 1, Bitmap_Cr   = 2,
   		                     Bitmap_U     = 1, Bitmap_V    = 2,
 		     Bitmap_Hue = 0, Bitmap_Saturation = 1, Bitmap_Value = 2,
 		     Bitmap_Alpha=3
