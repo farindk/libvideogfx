@@ -206,7 +206,9 @@ AC_CHECK_LIB(png,
              png_read_image,
              png_available="true"
              png_libs="-lpng -lz -lm",
-             AC_MSG_RESULT([*** libpng not found. PNG loader will be disabled.]))
+             AC_MSG_RESULT([*** libpng not found. PNG loader will be disabled.]),
+	     -lz -lm
+	     )
 AC_SUBST(png_libs)
 
 if test "x$png_available" = "xtrue" ; then
