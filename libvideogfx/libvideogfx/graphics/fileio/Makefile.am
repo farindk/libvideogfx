@@ -48,6 +48,7 @@ libvideogfx_graphics_fileio_include_HEADERS = \
 	ppm.hh  \
 	yuv.hh	\
 	yuv_vqeg.hh	\
+	imagesink.hh	\
 	$(linux_headers)
 
 #	read_yuv.hh	\
