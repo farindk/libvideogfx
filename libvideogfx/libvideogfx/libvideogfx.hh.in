@@ -53,6 +53,7 @@
 #include <libvideogfx/graphics/fileio/imagesink.hh>
 #include <libvideogfx/graphics/filters/linear.hh>
 #include <libvideogfx/graphics/measure/snr.hh>
+#include <libvideogfx/graphics/visualize/regions.hh>
 #include <libvideogfx/audio/fileio/audiosink.hh>
 #include <libvideogfx/audio/fileio/timedsink.hh>
 #include <libvideogfx/utility/bitmanip.hh>
