@@ -62,11 +62,12 @@ public:
   inline void   SkipBits(int nbits);
   inline void   SkipBitsFast(int nbits); /* Use ONLY when you called PeekBits() with at
 					    least as many bits before! */
+  inline void   SkipToByteBoundary();
 
   inline int32  AskBitsLeft() const; // Return number of bits that have still not been read.
 
   inline bool   IsEOF() const;       // True iff current cursor position at or behind file end
-  inline int    Position() const { return (d_ptr-d_start)*8 + 64-d_bitsleft; }
+  inline int    Position() const { return (d_ptr-d_start)*8 -d_bitsleft; }
 
 private:
   uint64 d_buffer;

@@ -63,6 +63,12 @@ inline void   BitReader::SkipBitsFast(int nbits)
 }
 
 
+inline void   BitReader::SkipToByteBoundary()
+{
+  int nskip = (d_bitsleft & 7);
+  if (nskip) SkipBits(nskip);
+}
+
 inline bool   BitReader::IsEOF() const
 {
   return d_ptr >= d_endptr;
