@@ -18,7 +18,7 @@ AC_DIVERT_PUSH(AC_DIVERSION_NOTICE)dnl
 #
 LIBVIDEOGFX_MAJOR_VERSION=1
 LIBVIDEOGFX_MINOR_VERSION=0
-LIBVIDEOGFX_MICRO_VERSION=0
+LIBVIDEOGFX_MICRO_VERSION=1
 LIBVIDEOGFX_INTERFACE_AGE=0
 LIBVIDEOGFX_BINARY_AGE=0
 LIBVIDEOGFX_VERSION=$LIBVIDEOGFX_MAJOR_VERSION.$LIBVIDEOGFX_MINOR_VERSION.$LIBVIDEOGFX_MICRO_VERSION
@@ -196,6 +196,25 @@ else
   FEATURE_JPEG="no"
 fi
 AC_SUBST(FEATURE_JPEG)
+
+
+# Check for the PNG library
+AC_CHECK_LIB(png,
+             png_read_image,
+             png_available="true"
+             png_libs="-lpng",
+             AC_MSG_RESULT([*** libpng not found. PNG loader will be disabled.]))
+AC_SUBST(png_libs)
+
+if test "x$png_available" = "xtrue" ; then
+  AC_DEFINE(HAVE_LIBPNG)
+  AM_CONDITIONAL(HAVE_LIBPNG, true)
+  FEATURE_PNG="yes"
+else
+  AM_CONDITIONAL(HAVE_LIBPNG, false)
+  FEATURE_PNG="no"
+fi
+AC_SUBST(FEATURE_PNG)
   
 CFLAGS="$saved_cflags"
 LDFLAGS="$saved_ldflags"

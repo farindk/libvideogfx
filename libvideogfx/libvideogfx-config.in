@@ -70,6 +70,8 @@ while test $# -gt 0; do
         ;;
         xv)  echo @FEATURE_XV@
         ;;
+        png) echo @FEATURE_PNG@
+	;;
       esac
       ;;
     *)
@@ -103,5 +105,5 @@ if test "$echo_libs" = "yes"; then
       if test "$libvideogfx" = "yes"; then
 	 libs="-lvideogfx $libs"
       fi
-      echo $libs @jpeg_libs@ $x_libs
+      echo $libs @jpeg_libs@ @png_libs@ $x_libs
 fi

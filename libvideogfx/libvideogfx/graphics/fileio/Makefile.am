@@ -22,6 +22,8 @@ endif
 libvideogfx_graphics_fileio_la_SOURCES = \
 	jpeg.cc	\
 	jpeg.hh	\
+	png.cc	\
+	png.hh	\
 	mpeg.cc	\
 	mpeg.hh	\
 	uyvy.cc	\
@@ -44,6 +46,7 @@ libvideogfx_graphics_fileio_la_SOURCES = \
 libvideogfx_graphics_fileio_include_HEADERS = \
         uyvy.hh	\
 	jpeg.hh	\
+	png.hh	\
 	mpeg.hh	\
 	ppm.hh  \
 	yuv.hh	\

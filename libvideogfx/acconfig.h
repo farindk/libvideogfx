@@ -7,6 +7,8 @@
 
 #undef HAVE_LIBJPEG
 
+#undef HAVE_LIBPNG
+
 /* Define if MMX assembly code should be compiled. */
 #undef ENABLE_MMX
 
