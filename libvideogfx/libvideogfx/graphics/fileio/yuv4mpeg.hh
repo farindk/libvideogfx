@@ -59,7 +59,7 @@ namespace videogfx {
     void SkipToImage(int nr);
     ImageParam AskParam() { Init(); return d_spec; }
 
-    void ReadImage(Image<Pixel>&);
+    bool ReadImage(Image<Pixel>&);  // returns false if no more images in the file/stream
 
   private:
     std::istream* d_yuvstr;

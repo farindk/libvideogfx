@@ -43,9 +43,11 @@ namespace videogfx {
     if (d_initialized)
       return;
 
+#if 0
     d_yuvstr->seekg(0,ios::end);
     d_length = d_yuvstr->tellg();
     d_yuvstr->seekg(0,ios::beg);
+#endif
 
     char buf[512];
     d_yuvstr->getline(buf,511);
@@ -139,8 +141,10 @@ namespace videogfx {
     if (d_yuvstr->eof())
       return true;
 
+#if 0
     if (d_yuvstr->tellg() >= d_length)
       return true;
+#endif
 
     return false;
   }
@@ -165,7 +169,7 @@ namespace videogfx {
 
 
 
-  void FileReader_YUV4MPEG::ReadImage(Image<Pixel>& img)
+  bool FileReader_YUV4MPEG::ReadImage(Image<Pixel>& img)
   {
     if (!d_initialized)
       Init();
@@ -175,8 +179,12 @@ namespace videogfx {
     char buf[512];
     d_yuvstr->getline(buf,511);
 
+    if (d_yuvstr->eof())
+      return false;
+
     if (strncmp(buf, Y4M_FRAME_MAGIC, strlen(Y4M_FRAME_MAGIC)))
-      throw Excpt_Text(ErrSev_Error,"no more frames in input stream");
+      return false;
+      //throw Excpt_Text(ErrSev_Error,"no more frames in input stream");
 
     img.Create(d_spec);
 
@@ -203,6 +211,8 @@ namespace videogfx {
       d_yuvstr->read((char*)vp[y],cw);
 
     d_nextFrame++;
+
+    return true;
   }
 
 
