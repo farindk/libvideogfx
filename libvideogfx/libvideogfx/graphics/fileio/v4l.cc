@@ -17,8 +17,11 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ********************************************************************************/
 
+#define V4l_ENABLE 0
+
 #include "config.h"
 
+#if V4L_ENABLE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,21 +32,24 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <linux/videodev.h>
 #include <iostream>
+#include <linux/videodev.h>
+#endif
 
 #include "libvideogfx/graphics/fileio/v4l.hh"
+
 
 namespace videogfx {
   using namespace std;
 
+#if V4L_ENABLE
   struct GrabData
   {
     unsigned char* d_map;
     struct video_mbuf d_vidmbuf;
     struct video_mmap d_vidmmap;
   };
-
+#endif
 
   V4L_Grabber::V4L_Grabber()
     : d_device(NULL),
@@ -52,22 +58,26 @@ namespace videogfx {
       d_chroma(Chroma_420),
       d_avg_422_to_420(false)
   {
+#if V4L_ENABLE
     SetDevice("/dev/video0");
 
     d_width  = 384;
     d_height = 288;
 
     d_grabdata = new GrabData;
+#endif
   }
 
   V4L_Grabber::~V4L_Grabber()
   {
+#if V4L_ENABLE
     if (d_device) delete[] d_device;
 
     if (d_fd>=0)
       close(d_fd);
 
     delete d_grabdata;
+#endif
   }
 
 
@@ -87,6 +97,7 @@ namespace videogfx {
 
   void V4L_Grabber::StartGrabbing()
   {
+#if V4L_ENABLE
     d_fd = open(d_device,O_RDWR);
     if (d_fd==-1)
       { perror("open video-device: "); exit(10); }
@@ -169,6 +180,7 @@ namespace videogfx {
       }
 
     d_nextbuf=0;
+#endif
   }
 
 
@@ -176,6 +188,7 @@ namespace videogfx {
 
   void V4L_Grabber::Grab(Image<Pixel>& img)
   {
+#if V4L_ENABLE
     ImageParam spec;
 
     Assert(d_greyscale || (d_chroma == Chroma_420 ||
@@ -280,7 +293,7 @@ namespace videogfx {
 	    __asm__
 	      (
 	       "movq %0,%%mm7\n\t"
-	       : : "m"(mask_Y)
+	       : : "r"(mask_Y)
 	       );
 
 	    for (int y=0;y<d_height;y++)
@@ -385,6 +398,7 @@ namespace videogfx {
     }
 
     d_nextbuf=1-d_nextbuf;
+#endif
   }
 
 }
