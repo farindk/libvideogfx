@@ -64,6 +64,8 @@
 #include <libvideogfx/utility/bitstream/bitbuffer.hh>
 #include <libvideogfx/utility/bitstream/bitreader.hh>
 #include <libvideogfx/utility/bitstream/bitreader_fast.hh>
+#include <libvideogfx/utility/bitstream/inputstream.hh>
+#include <libvideogfx/utility/bitstream/inputstream_istr.hh>
 
 @X11_COMMENT@#include <libvideogfx/x11/dispimg.hh>
 @X11_COMMENT@#include <libvideogfx/x11/imgwin.hh>
