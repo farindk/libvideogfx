@@ -92,7 +92,7 @@ template <class T> void Array2<T>::Resize(int newwidth,int newheight)
 
   for (int y=0;y<copyheight;y++)
     for (int x=0;x<copywidth;x++)
-      d_array[y*d_width+x] = old_row_array[y][x];
+      d_array[y][x] = old_row_array[y][x];
 
 
   // delete old array
