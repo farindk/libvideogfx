@@ -39,7 +39,20 @@ namespace videogfx {
 
   template <class T> struct Point2D
   {
+    Point2D() { }
+    Point2D(const T& _x,const T& _y) { x = _x; y = _y; }
+
     T x,y;
+  };
+
+  template <class T> struct Vector2D
+  {
+    Vector2D() { }
+    Vector2D(const T& _x,const T& _y) { x = _x; y = _y; }
+
+    T x,y;
+
+    T Length() const { return (T)sqrt((double)(x*x+y*y)); }
   };
 
   template <class T> struct Rect2D
