@@ -13,16 +13,16 @@ endif
 if LINUX
 if HAVE_X11
 linuxprogs = v4ltest v4ledges
-else
-linuxprogs =
 endif
-else
-linuxprogs =
+endif
+
+if LINUX
+audioprogs = audioout
 endif
 
 noinst_PROGRAMS = test-libvideogfx bitstream_output cputest pixmaptest filtertest \
 	ppmflip chromatest smartpointer \
-	$(linuxprogs) $(x11progs) # ppm2avi
+	$(linuxprogs) $(audioprogs) $(x11progs) # ppm2avi
 
 test_libvideogfx_DEPENDENCIES = ../libvideogfx/libvideogfx.la
 test_libvideogfx_CFLAGS = $(X_CFLAGS)
@@ -104,7 +104,14 @@ copytest_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs) $
 copytest_SOURCES = copytest.cc
 endif
 
+audioout_DEPENDENCIES = ../libvideogfx/libvideogfx.la
+audioout_CFLAGS = $(X_CFLAGS)
+audioout_LDFLAGS = -g $(X_LDFLAGS)
+audioout_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs) $(png_libs)
+audioout_SOURCES = audioout.cc
+
 if LINUX
+if HAVE_X11
 v4ltest_DEPENDENCIES = ../libvideogfx/libvideogfx.la
 v4ltest_CFLAGS = $(X_CFLAGS)
 v4ltest_LDFLAGS = -g $(X_LDFLAGS)
@@ -116,4 +123,5 @@ v4ledges_CFLAGS = $(X_CFLAGS)
 v4ledges_LDFLAGS = -g $(X_LDFLAGS)
 v4ledges_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs) $(png_libs)
 v4ledges_SOURCES = v4ledges.cc
+endif
 endif
