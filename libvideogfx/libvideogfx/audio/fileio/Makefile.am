@@ -15,6 +15,7 @@ libvideogfx_audio_fileio_includedir = \
 
 libvideogfx_audio_fileio_la_SOURCES = \
 	audiosink.hh	\
+	audiosink.cc	\
 	timedsink.hh	\
 	$(linux_files)
 

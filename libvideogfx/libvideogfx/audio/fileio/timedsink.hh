@@ -46,17 +46,24 @@ namespace videogfx {
   public:
     virtual ~TimedPresentationSink() { }
 
-    // If more input data can be fed into the object.
-    virtual bool  CanAcceptMorePresentationData() const { return true; }
+    // Begin new sequential output with new time-base.
+    virtual void  Reset() { }
+
+    // If "true", there is plenty of space for data to be buffered. This is only a hint!
+    virtual bool  EnoughSpaceForMoreData() const { return true; }
 
     // Wether object holds data which is not presented yet.
     virtual bool  PresentationDataPending() const { return false; }
 
-    // Absolute time (msecs) when next available data should be presented.
-    virtual int64 DataPresentationTime() const { return 0; }
+    // Absolute time when next available data should be presented.
+    virtual int64 NextDataPresentationTime() const { return 0; }
+    virtual int64 LastDataPresentationTime() const { return 0; }
 
-    // Present data which is already available in the object upto the given time.
+    // Present a data-unit which is already available in the object.
     virtual void  PresentData(int64 now) { }
+
+    // Wether the sink presents the data at real-time. Savers are non-realtime for example.
+    virtual bool  IsRealtimeSink() const { return false; }
   };
 
 }

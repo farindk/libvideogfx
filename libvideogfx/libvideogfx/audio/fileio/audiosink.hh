@@ -37,30 +37,33 @@
 #define LIBVIDEOGFX_AUDIO_FILEIO_AUDIOSINK_HH
 
 #include <libvideogfx/types.hh>
+#include <libvideogfx/audio/fileio/timedsink.hh>
 #include <iostream>
+
 
 namespace videogfx {
 
   struct AudioParam
   {
-    AudioParam() : n_channels(2), rate(44100), bits_per_sample(16), little_endian(true) { }
+    AudioParam() : n_channels(2), rate(44100), bits_per_sample(16) { }
 
     int  n_channels;
     int  rate;
     int  bits_per_sample;
-    bool little_endian;
   };
 
 
-  class AudioSink
+  class AudioSink : public TimedPresentationSink
   {
   public:
     virtual ~AudioSink() { }
 
-    virtual void SetParam(const AudioParam& p) { }
+    virtual void       SetParam(const AudioParam& p) { }
     virtual AudioParam AskParam() const { return AudioParam(); }
 
-    virtual int  SendSamples(int16* left,int16* right,int len) = 0;
+    virtual void SendSamples(const int8*  samples,int len,int64 timestamp);
+    virtual void SendSamples(const int16* samples,int len,int64 timestamp);
+    virtual void SendSamples(const int32* samples,int len,int64 timestamp);
     virtual int  AskBufferingDelay() const { return 0; } // buffering delay in msecs
   };
 
@@ -68,15 +71,12 @@ namespace videogfx {
   class AudioSink_cout : public AudioSink
   {
   public:
-    int SendSamples(int16* left,int16* right,int len)
+    void SendSamples(const int16* samples,int len)
     {
       for (int i=0;i<len;i++)
 	{
-	  std::cout.write((char*)&left[i],2);
-	  std::cout.write((char*)&right[i],2);
+	  std::cout.write((char*)&samples[i],2);
 	}
-
-      return len;
     }
   };
 
