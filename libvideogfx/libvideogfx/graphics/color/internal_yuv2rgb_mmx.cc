@@ -26,6 +26,8 @@ bool i2r_16bit_mmx::s_CanConvert(const Image<Pixel>& img,const RawRGBImageSpec& 
   if (param.colorspace != Colorspace_YUV) return false;
   if (param.chroma != Chroma_420) return false;
 
+  if ((param.width & 7) != 0) return false;
+
   int w = (param.width+7) & ~7;
   if (spec.bytes_per_line < 2*w) return false;
 
