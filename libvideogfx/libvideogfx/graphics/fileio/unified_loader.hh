@@ -43,35 +43,46 @@ namespace videogfx {
   class LoaderPlugin
   {
   public:
+    LoaderPlugin() : prev(NULL) { }
     virtual ~LoaderPlugin() { }
+
+    void SetPrevious(LoaderPlugin* previous);
 
     virtual int  AskNFrames() const = 0;
     virtual bool IsEOF() const = 0;
 
     virtual bool SkipToImage(int nr) { return false; }
     virtual void ReadImage(Image<Pixel>&) = 0;
+
+  protected:
+    LoaderPlugin* prev;
   };
 
 
   class FileIOFactory
   {
   public:
+    FileIOFactory();
     virtual ~FileIOFactory() { }
 
     /* Parse the specification. If the loader factory can handle it, it removes
        the option from the specification and appends it to the plugin pipeline. */
-    virtual LoaderPlugin* ParseSpec(char* spec, LoaderPlugin* previous);
+    virtual LoaderPlugin* ParseSpec(char** spec) const = 0;
+    virtual const char* Name() const { return "noname"; }
   };
 
+
+#define MAX_LOADER_PLUGINS 100
 
   class UnifiedImageLoader
   {
   public:
+    UnifiedImageLoader() : d_loader_pipeline(NULL), d_colorspace(Colorspace_Invalid), d_chroma(Chroma_Invalid) { }
     ~UnifiedImageLoader() { }
 
-    void SetInput(const char* input_specification);
+    bool SetInput(const char* input_specification);
     void SetTargetColorspace(Colorspace c = Colorspace_Invalid);   // invalid -> keep input colorspace
-    void SetTargetChroma(Chroma c = Chroma_Invalid); // invalid -> input input chroma
+    void SetTargetChroma(ChromaFormat c = Chroma_Invalid); // invalid -> input input chroma
 
     // usage
 
@@ -81,11 +92,27 @@ namespace videogfx {
     bool SkipToImage(int nr);
     void ReadImage(Image<Pixel>&);
 
+
+    // plugin handling
+
+    static void RegisterPlugin(const FileIOFactory*);
+
   private:
-    static const int s_max_loader_plugins;
-    static FileIOFactory* s_plugins[s_max_loader_plugins];
+    LoaderPlugin* d_loader_pipeline;
+    Colorspace    d_colorspace;
+    ChromaFormat  d_chroma;
+
+    static const FileIOFactory* s_plugins[MAX_LOADER_PLUGINS];
+    static int s_nplugins;
   };
 
+
+  char* ExtractNextOption(const char* spec); // returned memory has to be freed with delete[]
+  bool MatchOption(const char* spec,const char* option);
+  bool CheckSuffix(const char* spec,const char* suffix);
+  void RemoveOption(char* spec);
+  bool ExtractSize(char* spec,int& w,int& h);
+  void ExtractSize(char* spec,int& w,int& h,int default_w,int default_h);
 }
 
 #endif
