@@ -10,10 +10,13 @@ libvideogfx_graphics_fileio_includedir = \
 if LINUX
 linux_sources = \
 	v4l.cc	\
-	v4l.hh
+	v4l.hh	\
+	mplayer.hh \
+	mplayer.cc
 
 linux_headers = \
-	v4l.hh
+	v4l.hh \
+	mplayer.hh
 else
 linux_sources =
 linux_headers =
