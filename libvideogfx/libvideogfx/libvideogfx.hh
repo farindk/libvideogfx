@@ -27,6 +27,7 @@
 #include <libvideogfx/graphics/fileio/uyvy.hh>
 #include <libvideogfx/graphics/fileio/yuv.hh>
 #include <libvideogfx/graphics/fileio/yuv_vqeg.hh>
+#include <libvideogfx/graphics/fileio/imagesink.hh>
 //#include <libvideogfx/graphics/fileio/avi/aviformat.hh>
 #include <libvideogfx/graphics/filters/linear.hh>
 //#include <libvideogfx/graphics/filters/nonlin.hh>
