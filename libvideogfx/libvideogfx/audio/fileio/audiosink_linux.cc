@@ -212,7 +212,7 @@ namespace videogfx {
 	if (truncatelength>d_buffer.AskLength()) truncatelength = d_buffer.AskLength();
 	truncatelength &= ~3;
 
-	cout << "truncate: " << truncatelength << endl;
+	//cout << "truncate: " << truncatelength << endl;
 	d_total_bytes_sent_to_dma += truncatelength;
 	d_buffer.TruncateBufferAtFront(truncatelength);
       }

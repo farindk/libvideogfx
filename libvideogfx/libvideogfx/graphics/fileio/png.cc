@@ -21,7 +21,7 @@
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <fstream.h>
+#include <fstream>
 
 #ifdef HAVE_LIBPNG
 extern "C" {
