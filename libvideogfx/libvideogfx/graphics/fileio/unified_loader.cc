@@ -108,12 +108,8 @@ namespace videogfx {
 
 	    // recursive expansion
 
-	    cout << "expands to : " << option << endl;
-
 	    char* recurs = ExpandMacros(option);
-	    cout << "del\n";
 	    delete[] option;
-	    cout << "=\n";
 	    option = recurs;
 	  }
 
