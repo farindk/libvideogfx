@@ -193,6 +193,9 @@ namespace videogfx {
      */
     const Pel*const* AskFrame() const;
 
+    const Pel* operator[](int y) const { return AskFrame()[y]; }
+          Pel* operator[](int y)       { return AskFrame()[y]; }
+
     /// Return true iff the bitmap data is also used by another Bitmap object.
     bool IsShared() const
     {
