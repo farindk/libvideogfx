@@ -496,6 +496,8 @@ namespace videogfx {
       if (CheckSuffix(*spec, "vdr") ||
 	  CheckSuffix(*spec, "avi") ||
 	  CheckSuffix(*spec, "mpg") ||
+	  CheckSuffix(*spec, "m1v") ||
+	  CheckSuffix(*spec, "m2v") ||
 	  CheckSuffix(*spec, "mpeg") ||
 	  CheckSuffix(*spec, "wmf"))
 	{
@@ -642,7 +644,19 @@ namespace videogfx {
   };
 
 
-  static void ScanForSize(const char* str, ImageParam& spec)
+  static bool ScanForSizeAbbrev(const char* str, ImageParam& spec)
+  {
+    for (int s=0;str[s];s++)
+      {
+	if (strncasecmp(&str[s],"qcif",4)==0) { spec.width = 176; spec.height = 144; return true; }
+	if (strncasecmp(&str[s],"cif" ,3)==0) { spec.width = 352; spec.height = 288; return true; }
+	if (strncasecmp(&str[s],"sif" ,3)==0) { spec.width = 352; spec.height = 240; return true; }
+      }
+
+    return false;
+  }
+
+  static bool ScanForSize(const char* str, ImageParam& spec)
   {
     for (int s=0;str[s];s++)
       {
@@ -673,8 +687,10 @@ namespace videogfx {
 	spec.height = h;
 
 	//cerr << "found size: " << w << "x" << h << endl;
-	return;
+	return true;
       }
+
+    return false;
   }
 
   class FileIOFactory_YUV1 : public FileIOFactory
@@ -693,7 +709,8 @@ namespace videogfx {
 	  param.chroma=Chroma_420;
 	  param.width=352;
 	  param.height=288;
-	  ScanForSize(name,param);
+	  if (!ScanForSize(name,param))
+	    ScanForSizeAbbrev(name,param);
 	  RemoveOption(*spec);
 
 	  pl->SetYUVParams(name,param);
