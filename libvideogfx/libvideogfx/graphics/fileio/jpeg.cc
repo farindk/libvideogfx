@@ -73,8 +73,8 @@ void ReadImage_JPEG(Image<Pixel>& img,const char* filename)
   img.Create(spec);
 
   Pixel*const* py  = img.AskFrameY();
-  Pixel*const* pcb = img.AskFrameCr();   // Fix me: something surely goes wrong here...
-  Pixel*const* pcr = img.AskFrameCb();
+  Pixel*const* pcb = img.AskFrameCb();
+  Pixel*const* pcr = img.AskFrameCr();
 
 
   // read the image
