@@ -5,7 +5,7 @@
 #
 
 if HAVE_X11
-x11progs = x11test chromaspaces drawingtest copytest filedisplay imagetest viewfile
+x11progs = x11test chromaspaces drawingtest copytest filedisplay imagetest viewfile median
 else
 x11progs =
 endif
@@ -102,6 +102,12 @@ viewfile_CFLAGS = $(X_CFLAGS)
 viewfile_LDFLAGS = -g $(X_LDFLAGS)
 viewfile_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs) $(png_libs)
 viewfile_SOURCES = viewfile.cc
+
+median_DEPENDENCIES = ../libvideogfx/libvideogfx.la
+median_CFLAGS = $(X_CFLAGS)
+median_LDFLAGS = -g $(X_LDFLAGS)
+median_LDADD = ../libvideogfx/libvideogfx.la -lstdc++ $(X_LIBS) $(jpeg_libs) $(png_libs)
+median_SOURCES = median.cc
 
 filedisplay_DEPENDENCIES = ../libvideogfx/libvideogfx.la
 filedisplay_CFLAGS = $(X_CFLAGS)

@@ -18,12 +18,15 @@ endif
 libvideogfx_graphics_filters_la_SOURCES = \
 	linear.cc	\
 	linear.hh	\
+	median.cc	\
+	median.hh	\
 	binomial.cc	\
 	binomial.hh	\
 	$(mmx_sources)
 
 libvideogfx_graphics_filters_include_HEADERS = \
 	linear.hh	\
+	median.hh	\
 	binomial.hh	\
 	$(mmx_headers)
 

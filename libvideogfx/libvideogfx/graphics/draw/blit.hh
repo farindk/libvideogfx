@@ -65,6 +65,12 @@ namespace videogfx {
   template <class Pel> void Copy(Image<Pel>& dst,       int dstx0,int dsty0,
 				 const Image<Pel>& src, int srcx0,int srcy0, int w,int h);
 
+  /* Copy the outer 'border' rows and columns of the src into the destination image.
+     Useful for transfering the border when filters are not applied at the border area.
+  */
+  template <class Pel> void CopyBorder(Bitmap<Pel>& dst,const Bitmap<Pel>& src,int border);
+
+
   /* Copy the image content at the border lines into the border area.
    */
   template <class Pel> void ExtrudeIntoBorder(Bitmap<Pel>&);
@@ -158,6 +164,28 @@ namespace videogfx {
 	     src.AskBitmap(b),  param.ChromaScaleH(b,srcx0),param.ChromaScaleV(b,srcy0),
 	     param.ChromaScaleH(b,w), param.ChromaScaleV(b,h));
       }
+  }
+
+
+  template <class Pel> void CopyBorder(Bitmap<Pel>& dst,const Bitmap<Pel>& src,int border)
+  {
+    int w=src.AskWidth(), h=src.AskHeight();
+    const Pel*const* sp = src.AskFrame();
+    Pel*const* dp = dst.AskFrame();
+
+    for (int y=0;y<border;y++)
+      for (int x=0;x<w;x++)
+	{
+	  dp[y][x] = sp[y][x];
+	  dp[h-1-y][x] = sp[h-1-y][x];
+	}
+
+    for (int y=border;y<h-border;y++)
+      for (int x=0;x<border;x++)
+	{
+	  dp[y][x] = sp[y][x];
+	  dp[y][w-1-x] = sp[y][w-1-x];
+	}
   }
 
 
