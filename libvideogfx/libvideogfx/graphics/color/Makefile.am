@@ -21,6 +21,7 @@ libvideogfx_graphics_color_la_SOURCES = \
 	internal_yuv2rgb_scalar.cc	\
 	internal_rgb2rgb_scalar.hh	\
 	internal_rgb2rgb_scalar.cc	\
+	internal_img2raw.hh	\
 	colorspace.cc	\
 	colorspace.hh	\
 	$(mmx_sources)

@@ -9,13 +9,28 @@
   to do:
 
   author(s):
-   - Dirk Farin, farin@ti.uni-mannheim.de
-     University Mannheim, Dept. Circuitry and Simulation
-     B 6,26 EG, room 0.10 / D-68131 Mannheim / Germany
+   - Dirk Farin, dirk.farin@gmx.de
 
   modifications:
     04/Jul/2000 - Dirk Farin - bitmap format conversion and helpers
- *********************************************************************/
+ ********************************************************************************
+    LibVideoGfx - video processing library
+    Copyright (C) 2002  Dirk Farin
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ ********************************************************************************/
 
 #ifndef LIBVIDEOGFX_GRAPHICS_DRAW_SCALE_HH
 #define LIBVIDEOGFX_GRAPHICS_DRAW_SCALE_HH
@@ -40,6 +55,12 @@ namespace videogfx {
 				       const Bitmap<Pel>& src, int srcx0,int srcy0, int sw,int sh);
   template <class Pel> void CopyScaled(Image<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
 				       const Image<Pel>& src, int srcx0,int srcy0, int sw,int sh);
+
+  // Same as above, complete image/bitmap is inserted.
+  template <class Pel> void CopyScaled(Bitmap<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
+				       const Bitmap<Pel>& src);
+  template <class Pel> void CopyScaled(Image<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
+				       const Image<Pel>& src);
 
 
   // ------------------------------- implementation -----------------------------------
@@ -236,6 +257,18 @@ namespace videogfx {
       }
   }
 
+  template <class Pel> void CopyScaled(Bitmap<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
+				       const Bitmap<Pel>& src)
+  {
+    CopyScaled(dst,dstx0,dsty0,dw,dh, src,0,0,src.AskWidth(),src.AskHeight());
+	       }
+
+  template <class Pel> void CopyScaled(Image<Pel>& dst,       int dstx0,int dsty0, int dw,int dh,
+				       const Image<Pel>& src)
+  {
+    CopyScaled(dst,dstx0,dsty0,dw,dh, src,0,0,src.AskWidth(),src.AskHeight());
+  }
 }
+
 
 #endif

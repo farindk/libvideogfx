@@ -36,14 +36,30 @@
    15/Jul/99 - Dirk Farin - complete rewrite, interleaved output,
                             greyscale output, greyscale input
    25/May/99 - Dirk Farin - first implementation
- *********************************************************************/
+ ********************************************************************************
+    LibVideoGfx - video processing library
+    Copyright (C) 2002  Dirk Farin
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ ********************************************************************************/
 
 #ifndef LIBVIDEOGFX_GRAPHICS_FILEIO_YUV_HH
 #define LIBVIDEOGFX_GRAPHICS_FILEIO_YUV_HH
 
 #include <fstream>
 #include <iostream>
-using namespace std;
 
 #include <libvideogfx/graphics/datatypes/image.hh>
 
@@ -57,11 +73,11 @@ namespace videogfx {
 
     // initialization
 
-    void SetYUVStream  (istream& yuvstream)   { d_yuvstr = &yuvstream; d_initialized=false; }
-    void SetAlphaStream(istream& alphastream) { d_alphastr = &alphastream; d_initialized=false; }
+    void SetYUVStream  (std::istream& yuvstream)   { d_yuvstr = &yuvstream; d_initialized=false; }
+    void SetAlphaStream(std::istream& alphastream) { d_alphastr = &alphastream; d_initialized=false; }
 
     void SetImageParam(const ImageParam& spec) { d_spec = spec; d_initialized=false; }
-    void SetInterleavedUV(bool flag=true)    { d_interleavedUV = flag; d_initialized=false; }
+    void SetInterleavedChroma(bool flag=true)  { d_interleavedUV = flag; d_initialized=false; }
     void SetInputIsGreyscale(bool flag=true) { d_greyscale_input = flag; d_initialized=false; }
 
     // usage
@@ -73,8 +89,8 @@ namespace videogfx {
     void ReadImage(Image<Pixel>&);
 
   private:
-    istream* d_yuvstr;
-    istream* d_alphastr;
+    std::istream* d_yuvstr;
+    std::istream* d_alphastr;
 
     ImageParam d_spec;
 
@@ -97,8 +113,8 @@ namespace videogfx {
     FileWriter_YUV1();
     ~FileWriter_YUV1() { }
 
-    void SetYUVStream(ostream& str)   { d_yuvstr   = &str; }
-    void SetAlphaStream(ostream& str) { d_alphastr = &str; }
+    void SetYUVStream(std::ostream& str)   { d_yuvstr   = &str; }
+    void SetAlphaStream(std::ostream& str) { d_alphastr = &str; }
 
     void SetWriteGreyscaleAsColor(bool flag=true) { d_write_greyscale_as_color=flag; }
     void SetWriteColorAsGreyscale(bool flag=true) { d_write_color_as_greyscale=flag; }
@@ -107,8 +123,8 @@ namespace videogfx {
     void WriteImage(const Image<Pixel>&);
 
   private:
-    ostream* d_yuvstr;
-    ostream* d_alphastr;
+    std::ostream* d_yuvstr;
+    std::ostream* d_alphastr;
 
     bool d_write_greyscale_as_color;
     bool d_write_color_as_greyscale;

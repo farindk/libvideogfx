@@ -39,7 +39,7 @@ int main()
 
   buf.Flush();
 
-  ShowBuffer(buf.AskBuffer(),buf.AskBufferSize());
+  ShowBuffer(buf.AskBuffer(),buf.AskLengthInBytes());
 
   return 0;
 }

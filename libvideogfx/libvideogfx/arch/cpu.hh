@@ -15,23 +15,21 @@
   modifications:
     09/Nov/1999 - Dirk Farin - First revision
  ********************************************************************************
-    Copyright (C) 1999  Dirk Farin
+    LibVideoGfx - video processing library
+    Copyright (C) 2002  Dirk Farin
 
-    This program is distributed under GNU Public License (GPL) as
-    outlined in the COPYING file that comes with the source distribution.
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
+    This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ********************************************************************************/
 
@@ -59,8 +57,8 @@ namespace videogfx {
     virtual ~CPU_Capabilities() { }
 
     virtual void GetCPUInfo(char* buf,int maxChars,bool long_description=false);
-    virtual CPU_Architecture GetArchitecture() const { return CPUArch_Unknown; }
-    const char* GetArchitectureName() const { return ArchName(GetArchitecture()); }
+    virtual CPU_Architecture AskArchitecture() const { return CPUArch_Unknown; }
+    const char* GetArchitectureName() const { return ArchName(AskArchitecture()); }
     static const char* ArchName(CPU_Architecture arch);
 
 

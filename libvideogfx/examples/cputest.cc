@@ -19,7 +19,7 @@ main(int argc,char** argv)
       cout << "CPU    : " << buf << endl;
       cout << "Arch   : " << cpu->GetArchitectureName() << endl;
 
-      if (cpu->GetArchitecture() == CPUArch_X86)
+      if (cpu->AskArchitecture() == CPUArch_X86)
 	{
 	  cout << "MMX    : " << (cpu->HasMMX() ? "yes" : "no") << endl;
 	  cout << "MMX-ext: " << (cpu->HasMMX2() ? "yes" : "no") << endl;
@@ -29,9 +29,8 @@ main(int argc,char** argv)
 	  cout << "FPU    : " << (cpu->HasFPU() ? "yes" : "no") << endl;
 	}
     }
-  catch(const Excpt_Base& e)
+  catch(const Excpt_Base& b)
     {
-      MessageDisplay::Show(e);
+      MessageDisplay::Show(b);
     }
 }
-

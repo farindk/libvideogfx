@@ -1,9 +1,9 @@
 ## Makefile.am for libvideogfx/libvideogfx
 
 if HAVE_X11
-SUBDIRS = arch utility graphics containers x11 # postscript
+SUBDIRS = arch audio utility graphics containers x11 # postscript
 else
-SUBDIRS = arch containers graphics utility # postscript
+SUBDIRS = arch audio utility graphics containers # x11 postscript
 endif
 
 INCLUDES = \
@@ -43,6 +43,7 @@ libvideogfx_la_LIBADD = \
 	graphics/measure/libvideogfx-graphics-measure.la	\
 	graphics/filters/libvideogfx-graphics-filters.la	\
 	graphics/visualize/libvideogfx-graphics-visualize.la	\
+	audio/fileio/libvideogfx-audio-fileio.la		\
 	utility/bitstream/libvideogfx-utility-bitstream.la	\
 	utility/libvideogfx-utility.la				\
 	$(x11_sources)

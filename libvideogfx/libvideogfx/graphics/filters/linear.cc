@@ -1,12 +1,27 @@
-/*
- *  linear.cc
- */
+/********************************************************************************
+    LibVideoGfx - video processing library
+    Copyright (C) 2002  Dirk Farin
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ ********************************************************************************/
+
+#include "libvideogfx/graphics/filters/linear.hh"
 
 #include <math.h>
 #include <iostream>
 using namespace std;
-
-#include "linear.hh"
 
 namespace videogfx {
 
@@ -260,6 +275,8 @@ namespace videogfx {
 
     for (int i=i0;i<=i1;i++)
       sum += f[i];
+
+    AssertDescr(sum != 0.0, "Filter cannot be normalized since coefficients sum to zero.");
 
     const double fact = 1.0/sum;
 

@@ -14,24 +14,22 @@
   modifications:
    27/Sep/2000 - Dirk Farin
      - first implementation, based on ideas seen in "mpeg2dec"
- ********************************************************************************
-    Copyright (C) 1999  Dirk Farin
+/********************************************************************************
+    LibVideoGfx - video processing library
+    Copyright (C) 2002  Dirk Farin
 
-    This program is distributed under GNU Public License (GPL) as
-    outlined in the COPYING file that comes with the source distribution.
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
+    This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ********************************************************************************/
 
@@ -39,20 +37,6 @@
 #define LIBVIDEOGFX_UTILITY_BITSTREAM_FASTBITBUF_HH
 
 #include "libvideogfx/types.hh"
-
-//#include <iostream>
-//using namespace std;
-
-/*
-inline void ShowBits(uint32 bits,int nbits)
-{
-  for (int i=nbits-1;i>=0;i--)
-    {
-      if ((1<<i) & bits) cout << '1'; else cout << '0';
-    }
-}
-*/
-
 
 namespace videogfx {
 
@@ -264,8 +248,9 @@ do {                                    \
       return AskBitsLeft() <= 0;
     }
 
-    inline int    Position() const { return (d_ptr-d_start)*8 -(16-d_freebits); }
-    inline const uint8* Data() const { return d_start; }
+    inline int   AskPosition() const { return (d_ptr-d_start)*8 -(16-d_freebits); }
+    inline const uint8* AskData() const { return d_start; }
+
   public:
     uint32 d_buffer;
     int    d_freebits; // number of invalid bits in top 16 bits of buffer

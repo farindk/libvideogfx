@@ -1,10 +1,28 @@
+/********************************************************************************
+    LibVideoGfx - video processing library
+    Copyright (C) 2002  Dirk Farin
 
-#include <stdlib.h>
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ ********************************************************************************/
+
 #include "libvideogfx/graphics/visualize/regions.hh"
+#include <stdlib.h>
 
 namespace videogfx {
 
-  void DrawRegionBoundaries(Bitmap<Pixel>& bm,const Bitmap<int>& regionmap)
+  void DrawRegionBoundaries(Bitmap<Pixel>& bm,const Bitmap<int>& regionmap, bool draw_border)
   {
     const int*const* sp = regionmap.AskFrame();
 
@@ -17,30 +35,33 @@ namespace videogfx {
     for (int y=0;y<h-1;y++)
       for (int x=0;x<w-1;x++)
 	{
-	  if      (sp[y][x] != sp[y+1][x]) dp[y][x]=0;
-	  else if (sp[y][x] != sp[y][x+1]) dp[y][x]=0; else dp[y][x]=255;
+	  if      (sp[y][x] != sp[y+1][x]) dp[y][x]=BoolPixel_Set;
+	  else if (sp[y][x] != sp[y][x+1]) dp[y][x]=BoolPixel_Set; else dp[y][x]=BoolPixel_Clear;
 	}
 
     int x,y;
     x=w-1;
     for (y=0;y<h-1;y++)
       {
-	if (sp[y][x] != sp[y+1][x]) dp[y][x]=0; else dp[y][x]=255;
+	if (sp[y][x] != sp[y+1][x]) dp[y][x]=BoolPixel_Set; else dp[y][x]=BoolPixel_Clear;
       }
   
     y=h-1;
     for (int x=0;x<w-1;x++)
       {
-	if (sp[y][x] != sp[y][x+1]) dp[y][x]=0; else dp[y][x]=255;
+	if (sp[y][x] != sp[y][x+1]) dp[y][x]=BoolPixel_Set; else dp[y][x]=BoolPixel_Clear;
       }
 
 
     // draw image border
 
-    for (int x=0;x<w;x++)
-      dp[0][x]=dp[h-1][x]=0;
-    for (int y=0;y<h;y++)
-      dp[y][0]=dp[y][w-1]=0;
+    if (draw_border)
+      {
+	for (int x=0;x<w;x++)
+	  dp[0][x]=dp[h-1][x]=BoolPixel_Set;
+	for (int y=0;y<h;y++)
+	  dp[y][0]=dp[y][w-1]=BoolPixel_Set;
+      }
   }
 
 
