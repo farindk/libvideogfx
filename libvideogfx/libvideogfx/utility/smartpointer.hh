@@ -78,7 +78,9 @@ namespace videogfx {
 
     SP<T>& operator=(const SP<T>& s)
     {
-      if (s.counter) (*s.counter)++;
+      if (&s == this) return *this;  // without this, things go wrong because Decouple() sets 'counter' AND ALSO 's.counter' to NULL
+
+      if (s.counter) (*(s.counter))++;
       Decouple();
 
       counter = s.counter;
@@ -98,8 +100,9 @@ namespace videogfx {
     }
 
     bool IsNULL() const { return counter==NULL; }
-    operator T*()   { AssertDescr(counter,"smart pointer is NULL"); return pointer; }
-    T& operator()() { AssertDescr(counter,"smart pointer is NULL"); return *pointer; }
+    T* operator->()  { AssertDescr(counter,"smart pointer is NULL"); return pointer; }
+    operator T*()    { AssertDescr(counter,"smart pointer is NULL"); return pointer; }
+    T& operator()()  { AssertDescr(counter,"smart pointer is NULL"); return *pointer; }
 
     void Decouple()
     {
