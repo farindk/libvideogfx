@@ -489,6 +489,7 @@ namespace videogfx {
     {
       if (CheckSuffix(*spec, "vdr") ||
 	  CheckSuffix(*spec, "avi") ||
+	  CheckSuffix(*spec, "wmv") ||
 	  CheckSuffix(*spec, "mpg") ||
 	  CheckSuffix(*spec, "m1v") ||
 	  CheckSuffix(*spec, "m2v") ||
@@ -725,6 +726,24 @@ namespace videogfx {
   // ------------------------------------------------------------------------------
 
 
+  static void DownscaleBitmap2H(Bitmap<Pixel>& bm, const Bitmap<Pixel>& src)
+  {
+    int w=bm.AskWidth(), h=bm.AskHeight();
+    const Pixel*const* sp = src.AskFrame();
+    Pixel*const* dp = bm.AskFrame();
+
+    for (int y=0;y<h;y++)
+      {
+	dp[y][0] = (sp[y][0]+sp[y][1])/2;
+
+	for (int x=1;x<w-1;x++)
+	  {
+	    dp[y][x] = (sp[y][2*x-1] + 2*sp[y][2*x] + sp[y][2*x+1])/4;
+	  }
+
+	dp[y][w-1] = (sp[y][2*w-2]+sp[y][2*w-1])/2;
+      }
+  }
 
   class LoaderPlugin_Quarter : public LoaderPlugin
   {
@@ -747,7 +766,13 @@ namespace videogfx {
       spec.width /= 2;
       img.Create(spec);
 
-      CopyScaled(img,0,0,deinter.AskWidth()/2, deinter.AskHeight(), deinter);
+      //CopyScaled(img,0,0,deinter.AskWidth()/2, deinter.AskHeight(), deinter);
+
+      for (int i=0;i<4;i++)
+	if (!img.AskBitmap((BitmapChannel)i).IsEmpty())
+	  {
+	    DownscaleBitmap2H(img.AskBitmap((BitmapChannel)i), deinter.AskBitmap((BitmapChannel)i));
+	  }
     }
   };
 
