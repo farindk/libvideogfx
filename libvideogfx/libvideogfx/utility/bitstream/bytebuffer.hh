@@ -90,6 +90,7 @@ namespace videogfx {
     unsigned char* GetPtrToAppendToBuffer(unsigned int len); // see note 1)
 
     void TruncateBuffer(unsigned int nBytes); // Throw away last 'nBytes' bytes of buffer.
+    void TruncateBufferAtFront(unsigned int nBytes); // Throw away first 'nBytes' bytes of buffer.
     void Clear() { d_len=0; }  // Clear buffer contents but do not free memory.
 
     unsigned char* AskData() const { return d_buf; }

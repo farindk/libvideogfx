@@ -234,6 +234,17 @@ namespace videogfx {
   }
 
 
+  void ByteBuffer::TruncateBufferAtFront(unsigned int nBytes)
+  {
+    Assert(nBytes <= d_len);
+
+    for (int i=0;i<d_len-nBytes;i++)
+      d_buf[i] = d_buf[i+nBytes];
+
+    d_len -= nBytes;
+  }
+
+
   void ByteBuffer::AppendBytes(unsigned char* mem,unsigned int len)
   {
     if (len>0)
