@@ -236,6 +236,9 @@ namespace videogfx {
 
   void ByteBuffer::TruncateBufferAtFront(unsigned int nBytes)
   {
+    if (nBytes==0)
+      return;
+
     Assert(nBytes <= d_len);
 
     for (int i=0;i<d_len-nBytes;i++)
