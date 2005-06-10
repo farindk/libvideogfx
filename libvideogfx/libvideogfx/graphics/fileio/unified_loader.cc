@@ -628,6 +628,7 @@ namespace videogfx {
       istr.open(filename);
       reader.SetYUVStream(istr);
       reader.SetImageParam(s);
+      reader.SetInputIsGreyscale(s.colorspace == Colorspace_Greyscale);
       spec=s;
     }
 
@@ -699,12 +700,13 @@ namespace videogfx {
     {
       LoaderPlugin_SglPictures::FileFormat f = LoaderPlugin_SglPictures::Format_Undefined;
 
-      if (CheckSuffix(*spec, "yuv"))
+      if (CheckSuffix(*spec, "yuv") || CheckSuffix(*spec, "grey"))
 	{
 	  LoaderPlugin_YUV1* pl = new LoaderPlugin_YUV1;
 	  char* name = ExtractNextOption(*spec);
 	  ImageParam param;
-	  param.colorspace=Colorspace_YUV;
+	  bool greyscale = CheckSuffix(*spec, "grey");
+	  param.colorspace= (greyscale ? Colorspace_Greyscale : Colorspace_YUV);
 	  param.chroma=Chroma_420;
 	  param.width=352;
 	  param.height=288;

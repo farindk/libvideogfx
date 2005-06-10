@@ -136,7 +136,11 @@ namespace videogfx {
       Init();
 
     d_spec.has_alpha = (d_alphastr != NULL);
-    d_spec.colorspace = Colorspace_YUV;
+
+    if (d_greyscale_input)
+      d_spec.colorspace = Colorspace_Greyscale;
+    else
+      d_spec.colorspace = Colorspace_YUV;
 
     img.Create(d_spec);
 
