@@ -107,7 +107,7 @@ namespace videogfx {
     int  AskFrameNr() const { return d_framenr; }
 
     void ReadImage(Image<Pixel>&);
-    void PeekImage(Image<Pixel>&);
+    void PeekImage(Image<Pixel>&);  // don't modify the image since it may still be used internally
 
     int  AskWidth() const;
     int  AskHeight() const;

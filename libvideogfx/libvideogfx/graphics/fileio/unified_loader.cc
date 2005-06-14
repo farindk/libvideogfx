@@ -1077,24 +1077,27 @@ namespace videogfx {
   class LoaderPlugin_Start : public LoaderPlugin
   {
   public:
-    LoaderPlugin_Start() : first(true) { d_start=0; }
+    LoaderPlugin_Start() { d_start=0; d_startupread=0; }
 
-    void SetStartFrame(int s) { d_start=s; }
+    void SetStartFrame(int s) { d_start=s; d_startupread=s; }
 
     int  AskNFrames() const { Assert(prev); return prev->AskNFrames()-d_start; }
     bool IsEOF() const { Assert(prev); return prev->IsEOF(); }
 
-    bool SkipToImage(int nr) { Assert(prev); return prev->SkipToImage(nr+d_start); }
+    bool SkipToImage(int nr) { Assert(prev); d_startupread=0; return prev->SkipToImage(nr+d_start); }
     void ReadImage(Image<Pixel>& img)
     {
-      if (first)
-	{ prev->SkipToImage(d_start); first=false; }
+      while (d_startupread)
+	{
+	  prev->ReadImage(img);
+	  d_startupread--;
+	}
 
       prev->ReadImage(img);
     }
 
   private:
-    bool first;
+    int d_startupread;
     int d_start;
   };
 
