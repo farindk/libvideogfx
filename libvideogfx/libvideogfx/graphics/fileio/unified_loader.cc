@@ -211,8 +211,12 @@ namespace videogfx {
 
   bool UnifiedImageLoader::SkipToImage(int nr)
   {
+    if (d_framenr==nr)
+      return true;
+
     Assert(d_loader_pipeline);
     d_framenr = nr;
+    d_preload.Release();
     return d_loader_pipeline->SkipToImage(nr);
   }
 
