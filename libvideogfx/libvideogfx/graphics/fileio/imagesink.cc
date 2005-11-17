@@ -64,7 +64,7 @@ namespace videogfx {
   {
     if (d_filename_template) delete[] d_filename_template;
 
-    int len = strlen(tmpl+(autosuffix ? 4 : 0)+1);
+    int len = strlen(tmpl)+(autosuffix ? 4 : 0)+1;
     d_filename_template = new char[len];
 
     strcpy(d_filename_template,tmpl);
