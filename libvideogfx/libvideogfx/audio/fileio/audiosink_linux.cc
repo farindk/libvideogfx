@@ -67,9 +67,10 @@ namespace videogfx {
 	close(d_fd);
       }
 
-    const char* SOUND_DEVICE = "/dev/audio";
+    const char* SOUND_DEVICE = "/dev/dsp";
       
     if ( (d_fd = open(SOUND_DEVICE, O_WRONLY|O_NONBLOCK, 0)) == -1) { 
+      printf("%s\n",SOUND_DEVICE);
       perror("Cannot open sound device"); exit(0); 
     }
 
