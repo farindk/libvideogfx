@@ -73,7 +73,7 @@ esac
 
 if test -z "$ACLOCAL_FLAGS"; then
 
-	acdir=`aclocal-1.8 --print-ac-dir`
+	acdir=`aclocal --print-ac-dir`
         m4list=""
 
 	for file in $m4list
@@ -96,7 +96,7 @@ for i in $autogen_dirs; do
         echo "Processing $i..."
 
         cd $i
-        aclocal-1.8 $ACLOCAL_FLAGS
+        aclocal $ACLOCAL_FLAGS
 
         # optionally feature autoheader
         if grep AM_CONFIG_HEADER configure.in >/dev/null ; then

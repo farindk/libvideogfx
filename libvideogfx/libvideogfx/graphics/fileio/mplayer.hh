@@ -36,7 +36,7 @@ namespace videogfx
   class FileReader_MPlayer
   {
   public:
-    FileReader_MPlayer() : mplayer_pid(0), framenr(0), d_filedescr(NULL) { }
+    FileReader_MPlayer() : d_filedescr(NULL), mplayer_pid(0), framenr(0) { }
     ~FileReader_MPlayer();
 
     void Open(const char* filedescr);

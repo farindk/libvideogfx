@@ -90,8 +90,8 @@ namespace videogfx {
   class UnifiedImageLoader
   {
   public:
-    UnifiedImageLoader() : d_loader_pipeline(NULL), d_colorspace(Colorspace_Invalid), d_chroma(Chroma_Invalid),
-			   d_framenr(0) { width=height=0; }
+    UnifiedImageLoader() : d_framenr(0), d_loader_pipeline(NULL),
+			   d_colorspace(Colorspace_Invalid), d_chroma(Chroma_Invalid) { width=height=0; }
     ~UnifiedImageLoader() { if (d_loader_pipeline) delete d_loader_pipeline; }
 
     bool SetInput(const char* input_specification);
