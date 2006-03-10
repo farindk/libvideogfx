@@ -52,7 +52,7 @@
 #include <libvideogfx/graphics/fileio/yuv.hh>
 #include <libvideogfx/graphics/fileio/yuv4mpeg.hh>
 #include <libvideogfx/graphics/fileio/yuv_vqeg.hh>
-#include <libvideogfx/graphics/fileio/mplayer.hh>
+@LINUX_COMMENT@#include <libvideogfx/graphics/fileio/mplayer.hh>
 #include <libvideogfx/graphics/fileio/imagesink.hh>
 #include <libvideogfx/graphics/fileio/unified_loader.hh>
 #include <libvideogfx/graphics/filters/linear.hh>

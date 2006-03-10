@@ -22,7 +22,9 @@
 #endif
 
 #include "libvideogfx/graphics/fileio/unified_loader.hh"
-#include "libvideogfx/graphics/fileio/mplayer.hh"
+#if LINUX
+#  include "libvideogfx/graphics/fileio/mplayer.hh"
+#endif
 #include "libvideogfx/graphics/fileio/png.hh"
 #include "libvideogfx/graphics/fileio/ppm.hh"
 #include "libvideogfx/graphics/fileio/uyvy.hh"
@@ -472,7 +474,7 @@ namespace videogfx {
   // ------------------------------------------------------------------------------
 
 
-
+#if LINUX
   class LoaderPlugin_MPlayer : public LoaderPlugin
   {
   public:
@@ -520,7 +522,7 @@ namespace videogfx {
     const char* Name() const { return "loader: mplayer pipe"; }
 
   } singleton_mplayer;
-
+#endif
 
 
   // ------------------------------------------------------------------------------
