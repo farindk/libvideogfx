@@ -20,6 +20,9 @@
 #include "libvideogfx/graphics/color/internal_yuv2rgb_mmx.hh"
 using namespace videogfx;  // for "uint64" declaration
 
+#include <iostream>
+using namespace std;
+
 
 /* There is a very strange bug (most probably in the dynamic linker) which causes
    a seg-fault at program start when the following variables are declared static.
@@ -343,6 +346,12 @@ namespace videogfx {
     if (param.chroma !=Chroma_420) return false;
 
     int w = (param.width+7) & ~7;
+    if (w != param.width) return false; /* TODO: If input is not a multiple of 8, do not use MMX.
+					   We could be more efficient here. */
+
+    //cout << "w: " << param.width << " -> " << w << endl;
+    //cout << "bpl: " << spec.bytes_per_line << " (4w = " << 4*w << ")" << endl;
+
     if (spec.bytes_per_line < 4*w) return false;
 
     return true;
