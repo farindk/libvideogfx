@@ -96,7 +96,7 @@ namespace videogfx {
   // YUV/Greyscale
 
   void YUV2Greyscale(Image<Pixel>& dst, const Image<Pixel>& src);
-  void Greyscale2YUV(Image<Pixel>& dst, const Image<Pixel>& src);
+  void Greyscale2YUV(Image<Pixel>& dst, const Image<Pixel>& src, ChromaFormat chroma);
 
 }
 

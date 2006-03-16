@@ -206,7 +206,7 @@ namespace videogfx {
 	  }
 	else if (colorspace==Colorspace_YUV)
 	  {
-	    Greyscale2YUV(dst, src);
+	    Greyscale2YUV(dst, src, chroma);
 	    did_convert=true;
 	  }
       }
@@ -667,12 +667,13 @@ namespace videogfx {
   }
 
 
-  void Greyscale2YUV(Image<Pixel>& dst, const Image<Pixel>& src)
+  void Greyscale2YUV(Image<Pixel>& dst, const Image<Pixel>& src, ChromaFormat chroma)
   {
     // Create destination image
 
     ImageParam param = dst.AskParam();
     param.colorspace = Colorspace_YUV;
+    param.chroma     = chroma;
     param.width  = src.AskWidth();
     param.height = src.AskHeight();
     dst.Create(param);
