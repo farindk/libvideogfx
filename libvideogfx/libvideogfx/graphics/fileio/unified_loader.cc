@@ -21,6 +21,7 @@
 #define _GNU_SOURCE
 #endif
 
+#include "config.h"
 #include "libvideogfx/graphics/fileio/unified_loader.hh"
 #if LINUX
 #  include "libvideogfx/graphics/fileio/mplayer.hh"
