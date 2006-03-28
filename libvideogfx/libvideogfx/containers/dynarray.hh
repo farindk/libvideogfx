@@ -56,7 +56,8 @@ namespace videogfx {
 
     /* Insert the element at the specified position. */
     void Insert(int pos,const T& t);
-    T    RemoveEntry(int n);
+    T    ReturnAndRemoveEntry(int n);
+    void RemoveEntry(int n);
     int  AskSize() const { return d_nentries; }
 
     void SetEmptyValue(const T& e) { d_empty_value=e; d_empty_val_set=true; }
@@ -181,9 +182,19 @@ namespace videogfx {
   }
 
 
-  template <class T> T DynArray<T>::RemoveEntry(int n)
+  template <class T> T DynArray<T>::ReturnAndRemoveEntry(int n)
   {
+    assert(n>=0 && n<d_nentries);
+
     T e = d_array[n];
+    RemoveEntry(n);
+
+    return e;
+  }
+
+  template <class T> void DynArray<T>::RemoveEntry(int n)
+  {
+    assert(n>=0 && n<d_nentries);
 
     d_nentries--;
     for (int i=n;i<d_nentries;i++)
@@ -191,8 +202,6 @@ namespace videogfx {
 
     if (d_empty_val_set)
       d_array[d_nentries] = d_empty_value;
-
-    return e;
   }
 
   template <class T> const DynArray<T> DynArray<T>::operator=(const DynArray<T>& t)

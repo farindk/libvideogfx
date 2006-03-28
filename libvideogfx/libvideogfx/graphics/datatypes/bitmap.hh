@@ -789,7 +789,7 @@ namespace videogfx {
       return;
 
     int dx = x0-d_xoffset;
-    int dy = y0-d_yoffset;
+    //int dy = y0-d_yoffset;  // not used...
 
     if (dx != 0)
       {
