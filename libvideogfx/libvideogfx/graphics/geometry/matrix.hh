@@ -78,10 +78,6 @@ namespace videogfx {
 
   double FrobeniusNorm(const Matrix4G&, const Matrix4G&);
 
-  Matrix4G GivensRotationX(double angle,int dim=3);
-  Matrix4G GivensRotationY(double angle,int dim=3);
-  Matrix4G GivensRotationZ(double angle,int dim=3);
-
   Matrix4G CWRotationX(double angle,int dim=3); // clockwise when looking to positive axis direction
   Matrix4G CWRotationY(double angle,int dim=3); // clockwise when looking to positive axis direction
   Matrix4G CWRotationZ(double angle,int dim=3); // clockwise when looking to positive axis direction

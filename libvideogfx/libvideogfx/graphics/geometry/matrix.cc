@@ -322,10 +322,6 @@ namespace videogfx {
     return mat;
   }
 
-  Matrix4G GivensRotationX(double angle,int dim) { cerr << "use of GivensRotationX is deprecated\n"; return GivensRotation(1,2,angle,dim); }
-  Matrix4G GivensRotationY(double angle,int dim) { cerr << "use of GivensRotationY is deprecated\n"; return GivensRotation(2,0,angle,dim); }
-  Matrix4G GivensRotationZ(double angle,int dim) { cerr << "use of GivensRotationZ is deprecated\n"; return GivensRotation(0,1,angle,dim); }
-
   Matrix4G CCWRotationX(double angle,int dim) { return GivensRotation(1,2,angle,dim); }
   Matrix4G CCWRotationY(double angle,int dim) { return GivensRotation(2,0,angle,dim); }
   Matrix4G CCWRotationZ(double angle,int dim) { return GivensRotation(0,1,angle,dim); }
