@@ -42,6 +42,7 @@ libvideogfx_la_LIBADD = \
 	graphics/fileio/libvideogfx-graphics-fileio.la		\
 	graphics/color/libvideogfx-graphics-color.la		\
 	graphics/draw/libvideogfx-graphics-draw.la		\
+	graphics/geometry/libvideogfx-graphics-geometry.la	\
 	graphics/measure/libvideogfx-graphics-measure.la	\
 	graphics/filters/libvideogfx-graphics-filters.la	\
 	graphics/visualize/libvideogfx-graphics-visualize.la	\

@@ -44,6 +44,8 @@
 #include <libvideogfx/graphics/draw/format.hh>
 #include <libvideogfx/graphics/draw/pixelops.hh>
 #include <libvideogfx/graphics/draw/scale.hh>
+#include <libvideogfx/graphics/geometry/matrix.hh>
+#include <libvideogfx/graphics/geometry/transform.hh>
 #include <libvideogfx/graphics/fileio/jpeg.hh>
 #include <libvideogfx/graphics/fileio/png.hh>
 #include <libvideogfx/graphics/fileio/mpeg.hh>

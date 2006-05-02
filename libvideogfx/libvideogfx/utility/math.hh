@@ -38,6 +38,7 @@ namespace videogfx {
 
   int AlignUp(int val,int align);
   int LeastCommonMultiple(int a,int b);
+  void GetUniqueRandomNumbers(int* output, int number, int range);
 }
 
 #endif

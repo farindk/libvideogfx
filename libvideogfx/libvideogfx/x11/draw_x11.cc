@@ -132,4 +132,19 @@ namespace videogfx {
     XUnloadFont(display,font);
   }
 
+  void WriteText_X11(Image<Pixel>& img,const char* txt,int x,int y,
+		     Color<Pixel> front,Color<Pixel> back,
+		     const char* x11fontname,
+		     HTextAlign halign,VTextAlign valign,
+		     TextDrawMode mode)
+  {
+    for (int i=0;i<4;i++)
+      {
+	BitmapChannel b = (BitmapChannel)i;
+	if (!img.AskBitmap(b).IsEmpty())
+	  WriteText_X11(img.AskBitmapR(),txt,x,y,
+			front.c[i], back.c[i],
+			x11fontname, halign, valign, mode);
+      }
+  }
 }

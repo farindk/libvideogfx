@@ -256,6 +256,7 @@ libvideogfx/graphics/datatypes/Makefile
 libvideogfx/graphics/draw/Makefile
 libvideogfx/graphics/fileio/Makefile
 libvideogfx/graphics/filters/Makefile
+libvideogfx/graphics/geometry/Makefile
 libvideogfx/graphics/visualize/Makefile
 libvideogfx/graphics/measure/Makefile
 libvideogfx/audio/Makefile

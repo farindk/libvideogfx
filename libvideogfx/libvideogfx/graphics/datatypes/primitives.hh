@@ -46,12 +46,15 @@ namespace videogfx {
 
     Point2D<T> operator*(double scale) const { return Point2D<T>(x*scale,y*scale); }
 
+    bool operator==(const Point2D<T>& p) const { return p.x==x && p.y==y; }
+    bool operator!=(const Point2D<T>& p) const { return p.x!=x || p.y!=y; }
+
     T x,y;
   };
 
   template <class T> T SquaredDistance(const Point2D<T>& p1,const Point2D<T>& p2)
   {
-    return (p1.x-p2.x)*(p1.x-p2.x) + (p1.y-p2.y)*(p1.y-p2.y);
+    return hypot(p1.x-p2.x, p1.y-p2.y);
   }
 
   template <class T> struct Vector2D

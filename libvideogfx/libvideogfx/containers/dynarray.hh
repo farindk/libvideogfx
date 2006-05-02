@@ -37,6 +37,7 @@
 #define LIBVIDEOGFX_CONTAINERS_DYNARRAY_HH
 
 #include "libvideogfx/types.hh"
+#include <assert.h>
 
 namespace videogfx {
 
