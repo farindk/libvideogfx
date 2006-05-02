@@ -253,12 +253,32 @@ namespace videogfx {
   }
 
 
+  Matrix4G Matrix4G::PseudoInverse() const
+  {
+    Matrix4G T = Transpose();
+    return (T*(*this)).Inverse() * T;
+  }
+
+
   void Matrix4G::Threshold(double t)
   {
     for (int i=0;i<d_rows;i++)
       for (int j=0;j<d_columns;j++)
 	if (d_mat[i][j]>-t && d_mat[i][j]<t)
 	  d_mat[i][j]=0.0;
+  }
+
+  double Matrix4G::Norm() const
+  {
+    double sum = 0.0;
+    
+    for (int i=0;i<d_rows;i++)
+      for (int j=0;j<d_columns;j++)
+	{
+	  sum += d_mat[i][j] * d_mat[i][j];
+	}
+
+    return sqrt(sum);
   }
 
   void Matrix4G::DeleteColumn(int column)
@@ -279,23 +299,29 @@ namespace videogfx {
 	d_mat[i][j] = d_mat[i+1][j];
   }
 
-
-  double FrobeniusNorm(const Matrix4G& m1, const Matrix4G& m2)
+  void Matrix4G::AddColumn()
   {
-    assert(m1.AskRows() == m2.AskRows());
-    assert(m1.AskColumns() == m2.AskColumns());
-
-    double sum = 0.0;
-    
-    for (int i=0;i<m1.AskRows();i++)
-      for (int j=0;j<m1.AskColumns();j++)
-	{
-	  double d = m1[i][j] - m2[i][j];
-	  sum += d*d;
-	}
-
-    return sum;
+    assert(d_columns<4);
+    d_columns++;
   }
+
+  void Matrix4G::AddRow()
+  {
+    assert(d_rows<4);
+    d_rows++;
+  }
+
+  Matrix4G Matrix4G::SubMatrix(int row0,int col0, int h,int w) const
+  {
+    Matrix4G sub(w,h);
+
+    for (int r=0;r<h;h++)
+      for (int c=0;c<w;c++)
+	sub[r][c]=d_mat[r+row0][c+col0];
+
+    return sub;
+  }
+
 
   Matrix4G CrossProductMatrix(const Matrix4G& v)
   {

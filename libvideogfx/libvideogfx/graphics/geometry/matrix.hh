@@ -63,20 +63,25 @@ namespace videogfx {
 
     Matrix4G Transpose() const;
     Matrix4G Inverse() const;
+    Matrix4G PseudoInverse() const;
 
     double Det() const;
     double Trace() const;
+    double Norm() const; // L_2 norm / Frobenius norm
 
     void Threshold(double t=0.000001); /* set all entries to zero for which |value|<t */
+
     void DeleteColumn(int column);
     void DeleteRow(int row);
+    void AddRow();
+    void AddColumn();
+
+    Matrix4G SubMatrix(int row0,int col0, int h,int w) const;
 
   private:
     int d_rows,d_columns;
     double d_mat[4][4];
   };
-
-  double FrobeniusNorm(const Matrix4G&, const Matrix4G&);
 
   Matrix4G CWRotationX(double angle,int dim=3); // clockwise when looking to positive axis direction
   Matrix4G CWRotationY(double angle,int dim=3); // clockwise when looking to positive axis direction
