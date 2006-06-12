@@ -1,8 +1,8 @@
 // ./median filename filterradius
 
-#include "libvideogfx/x11/imgwin.hh"
-#include "libvideogfx/graphics/fileio/unified_loader.hh"
-#include "libvideogfx/graphics/filters/median.hh"
+#include "../libvideogfx/x11/imgwin.hh"
+#include "../libvideogfx/graphics/fileio/unified_loader.hh"
+#include "../libvideogfx/graphics/filters/median.hh"
 
 #include <unistd.h>
 #include <iostream>

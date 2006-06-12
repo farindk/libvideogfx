@@ -1,6 +1,6 @@
 
-#include "libvideogfx/types.hh"
-#include "libvideogfx/graphics/datatypes/bitmap.hh"
+#include "../libvideogfx/types.hh"
+#include "../libvideogfx/graphics/datatypes/bitmap.hh"
 
 #include <unistd.h>
 #include <iostream>

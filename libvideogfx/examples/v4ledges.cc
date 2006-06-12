@@ -1,9 +1,9 @@
 
-#include "libvideogfx/graphics/fileio/v4l.hh"
-#include "libvideogfx/graphics/draw/pixelops.hh"
-#include "libvideogfx/graphics/draw/format.hh"
-#include "libvideogfx/graphics/filters/linear.hh"
-#include "libvideogfx/x11/imgwin.hh"
+#include "../libvideogfx/graphics/fileio/v4l.hh"
+#include "../libvideogfx/graphics/draw/pixelops.hh"
+#include "../libvideogfx/graphics/draw/format.hh"
+#include "../libvideogfx/graphics/filters/linear.hh"
+#include "../libvideogfx/x11/imgwin.hh"
 
 #include <stdio.h>
 

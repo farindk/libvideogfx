@@ -1,6 +1,6 @@
 
-#include "libvideogfx/graphics/fileio/v4l.hh"
-#include "libvideogfx/graphics/fileio/jpeg.hh"
+#include "../libvideogfx/graphics/fileio/v4l.hh"
+#include "../libvideogfx/graphics/fileio/jpeg.hh"
 
 #include <stdio.h>
 

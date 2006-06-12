@@ -1,5 +1,5 @@
 
-#include "libvideogfx/arch/cpu.hh"
+#include "../libvideogfx/arch/cpu.hh"
 
 #include <unistd.h>
 #include <iostream>

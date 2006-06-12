@@ -1,8 +1,8 @@
 
-#include "libvideogfx/types.hh"
-#include "libvideogfx/graphics/datatypes/bitmap.hh"
-#include "libvideogfx/graphics/filters/linear.hh"
-#include "libvideogfx/graphics/draw/blit.hh"
+#include "../libvideogfx/types.hh"
+#include "../libvideogfx/graphics/datatypes/bitmap.hh"
+#include "../libvideogfx/graphics/filters/linear.hh"
+#include "../libvideogfx/graphics/draw/blit.hh"
 
 #include <unistd.h>
 #include <iostream>

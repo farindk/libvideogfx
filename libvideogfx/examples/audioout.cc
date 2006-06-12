@@ -1,7 +1,7 @@
 
 #include <math.h>
 #include <iostream>
-#include "libvideogfx/libvideogfx.hh"
+#include "../libvideogfx/libvideogfx.hh"
 #include <unistd.h>
 
 using namespace std;

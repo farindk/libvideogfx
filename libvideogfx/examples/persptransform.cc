@@ -3,7 +3,7 @@
   The superimposed line shows the horizont line (the image of the line at infinity).
  */
 
-#include "libvideogfx/libvideogfx.hh"
+#include "../libvideogfx/libvideogfx.hh"
 #include <iostream>
 
 #include <unistd.h>

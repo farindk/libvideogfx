@@ -1,7 +1,7 @@
 // use option -xv to open image with Xv extension
 
-#include "libvideogfx/x11/imgwin.hh"
-#include "libvideogfx/x11/draw_x11.hh"
+#include "../libvideogfx/x11/imgwin.hh"
+#include "../libvideogfx/x11/draw_x11.hh"
 #include <iostream>
 
 using namespace videogfx;

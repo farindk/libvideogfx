@@ -1,5 +1,5 @@
 
-#include "libvideogfx/graphics/color/colorspace.hh"
+#include "../libvideogfx/graphics/color/colorspace.hh"
 
 #include <iostream>
 #include <iomanip>

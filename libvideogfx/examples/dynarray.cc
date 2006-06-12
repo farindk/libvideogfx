@@ -1,5 +1,5 @@
 
-#include "libvideogfx/libvideogfx.hh"
+#include "../libvideogfx/libvideogfx.hh"
 #include <iostream>
 
 using namespace videogfx;

@@ -313,9 +313,9 @@ namespace videogfx {
 
   Matrix4G Matrix4G::SubMatrix(int row0,int col0, int h,int w) const
   {
-    Matrix4G sub(w,h);
+    Matrix4G sub(h,w);
 
-    for (int r=0;r<h;h++)
+    for (int r=0;r<h;r++)
       for (int c=0;c<w;c++)
 	sub[r][c]=d_mat[r+row0][c+col0];
 
@@ -433,7 +433,7 @@ namespace videogfx {
       {
 	for (int j=0;j<mat.AskColumns();j++)
 	  {
-	    ostr << setprecision(3) << setw(6) << mat[i][j] << ' ';
+	    ostr << setw(6) << mat[i][j] << ' ';
 	  }
 
 	ostr << endl;

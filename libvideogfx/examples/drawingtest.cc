@@ -1,7 +1,7 @@
 
-#include "libvideogfx/x11/imgwin.hh"
-#include "libvideogfx/graphics/draw/draw.hh"
-#include "libvideogfx/graphics/draw/pixelops.hh"
+#include "../libvideogfx/x11/imgwin.hh"
+#include "../libvideogfx/graphics/draw/draw.hh"
+#include "../libvideogfx/graphics/draw/pixelops.hh"
 using namespace videogfx;
 
 #include <unistd.h>

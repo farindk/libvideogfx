@@ -24,6 +24,8 @@ noinst_PROGRAMS = test-libvideogfx bitstream_output cputest pixmaptest filtertes
 	ppmflip chromatest smartpointer dynarray symmatrix \
 	$(linuxprogs) $(audioprogs) $(x11progs) # ppm2avi
 
+INCLUDES = -I..
+
 test_libvideogfx_DEPENDENCIES = ../libvideogfx/libvideogfx.la
 test_libvideogfx_CFLAGS = $(X_CFLAGS)
 test_libvideogfx_LDFLAGS = -g $(X_LDFLAGS)

@@ -1,5 +1,5 @@
 
-#include "libvideogfx/graphics/fileio/ppm.hh"
+#include "../libvideogfx/graphics/fileio/ppm.hh"
 
 #include <fstream>
 #include <algorithm>

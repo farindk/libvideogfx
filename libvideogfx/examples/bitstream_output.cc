@@ -1,6 +1,7 @@
 
-#include "libvideogfx/utility/bitstream/bitbuffer.hh"
+#include "../libvideogfx/utility/bitstream/bitbuffer.hh"
 #include <iostream>
+
 using namespace std;
 using namespace videogfx;
 

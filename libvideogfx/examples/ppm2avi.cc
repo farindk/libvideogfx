@@ -1,6 +1,6 @@
 
-#include "libvideogfx/graphics/fileio/rw_ppm.hh"
-#include "libvideogfx/graphics/fileio/avi/aviformat.hh"
+#include "../libvideogfx/graphics/fileio/rw_ppm.hh"
+#include "../libvideogfx/graphics/fileio/avi/aviformat.hh"
 
 #include <fstream>
 using namespace std;

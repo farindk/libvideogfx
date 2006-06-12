@@ -1,8 +1,8 @@
 // use option -xv to open image with Xv extension
 
-#include "libvideogfx/x11/imgwin.cc"
-#include "libvideogfx/graphics/color/colorspace.hh"
-#include "libvideogfx/graphics/draw/draw.hh"
+#include "../libvideogfx/x11/imgwin.hh"
+#include "../libvideogfx/graphics/color/colorspace.hh"
+#include "../libvideogfx/graphics/draw/draw.hh"
 #include <unistd.h>
 using namespace videogfx;
 
