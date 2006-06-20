@@ -142,7 +142,7 @@ namespace videogfx {
       {
 	BitmapChannel b = (BitmapChannel)i;
 	if (!img.AskBitmap(b).IsEmpty())
-	  WriteText_X11(img.AskBitmapR(),txt,x,y,
+	  WriteText_X11(img.AskBitmap(b),txt,x,y,
 			front.c[i], back.c[i],
 			x11fontname, halign, valign, mode);
       }
