@@ -226,7 +226,9 @@ namespace videogfx {
       {
 	// calculate crossings of scanline with quadrilateral
 
-	double xcut[4]; int xcutidx=0;
+	int xmincut = INT_MAX;
+	int xmaxcut = INT_MIN;
+	int xcutidx=0;
 	for (int i=0;i<4;i++)
 	  {
 	    double y0 = dp[i].y;
@@ -239,16 +241,18 @@ namespace videogfx {
 	      {
 		double x0 = dp[i].x;
 		double x1 = dp[(i+1)%4].x;
-		xcut[xcutidx++] = a*x0+(1.0-a)*x1;
+		int cut = a*x0+(1.0-a)*x1;
+		xmincut = min(xmincut, cut);
+		xmaxcut = max(xmaxcut, cut);
+		xcutidx++;
 	      }
 	  }
-	assert(xcutidx==2 || xcutidx==0);
 
 	if (xcutidx==0)
 	  continue;
 
-	int xstart = (int)std::min(xcut[0],xcut[1])       - safety_border;
-	int xend   = (int)ceil(std::max(xcut[0],xcut[1])) + safety_border;
+	int xstart = (int)xmincut - safety_border;
+	int xend   = (int)xmaxcut + safety_border;
 
 	if (xstart<0) xstart=0;
 	if (xend>=dest.AskWidth()) xend=dest.AskWidth()-1;
