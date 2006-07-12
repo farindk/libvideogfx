@@ -374,6 +374,81 @@ namespace videogfx {
   }
 
 
+  void LaplOfGauss3x3_014(Bitmap<short>& dst,const Bitmap<Pixel>& src)
+  {
+    int w=src.AskWidth(), h=src.AskHeight();
+    dst.Create(w,h);
+
+    /* */ short*const* dp = dst.AskFrame();
+    const Pixel*const* sp = src.AskFrame();
+
+    for (int y=1;y<h-1;y++)
+      for (int x=1;x<w-1;x++)
+	{
+	  dp[y][x] = (sp[y  ][x  ]* -4 +
+		      sp[y-1][x  ] +
+		      sp[y+1][x  ] +
+		      sp[y  ][x-1] +
+		      sp[y  ][x+1]);
+	}
+
+    for (int y=0;y<h;y++) dp[y][0]=dp[y][w-1]=0;
+    for (int x=0;x<w;x++) dp[0][x]=dp[h-1][x]=0;
+  }
+
+  void LaplOfGauss3x3_118(Bitmap<short>& dst,const Bitmap<Pixel>& src)
+  {
+    int w=src.AskWidth(), h=src.AskHeight();
+    dst.Create(w,h);
+
+    /* */ short*const* dp = dst.AskFrame();
+    const Pixel*const* sp = src.AskFrame();
+
+    for (int y=1;y<h-1;y++)
+      for (int x=1;x<w-1;x++)
+	{
+	  dp[y][x] = (sp[y  ][x  ]* -8 +
+		      sp[y-1][x  ] +
+		      sp[y+1][x  ] +
+		      sp[y  ][x-1] +
+		      sp[y  ][x+1] +
+		      sp[y-1][x-1] +
+		      sp[y-1][x+1] +
+		      sp[y+1][x-1] +
+		      sp[y+1][x+1]);
+	}
+
+    for (int y=0;y<h;y++) dp[y][0]=dp[y][w-1]=0;
+    for (int x=0;x<w;x++) dp[0][x]=dp[h-1][x]=0;
+  }
+
+  void LaplOfGauss3x3_124(Bitmap<short>& dst,const Bitmap<Pixel>& src)
+  {
+    int w=src.AskWidth(), h=src.AskHeight();
+    dst.Create(w,h);
+
+    /* */ short*const* dp = dst.AskFrame();
+    const Pixel*const* sp = src.AskFrame();
+
+    for (int y=1;y<h-1;y++)
+      for (int x=1;x<w-1;x++)
+	{
+	  dp[y][x] = (sp[y  ][x  ]* -4 +
+		      sp[y-1][x  ]*  2 +
+		      sp[y+1][x  ]*  2 +
+		      sp[y  ][x-1]*  2 +
+		      sp[y  ][x+1]*  2 -
+		      sp[y-1][x-1] -
+		      sp[y-1][x+1] -
+		      sp[y+1][x-1] -
+		      sp[y+1][x+1]   );
+	}
+
+    for (int y=0;y<h;y++) dp[y][0]=dp[y][w-1]=0;
+    for (int x=0;x<w;x++) dp[0][x]=dp[h-1][x]=0;
+  }
+
+
 
   template void ConvolveH (Bitmap<Pixel>&,const Bitmap<Pixel>&,const Array<double>&);
   template void ConvolveV (Bitmap<Pixel>&,const Bitmap<Pixel>&,const Array<double>&);

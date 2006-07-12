@@ -40,7 +40,8 @@
 #include <libvideogfx/graphics/datatypes/image.hh>
 #include <libvideogfx/graphics/draw/blit.hh>
 #include <libvideogfx/containers/array.hh>
-
+#include <libvideogfx/containers/array2.hh>
+#include <algorithm>
 
 namespace videogfx {
 
@@ -59,6 +60,13 @@ namespace videogfx {
   template <class PelIn,class PelOut> void Prewitt_Ver(Bitmap<PelOut>& dst,const Bitmap<PelIn>& src);
   template <class PelIn,class PelOut> void Sobel_Hor  (Bitmap<PelOut>& dst,const Bitmap<PelIn>& src);
   template <class PelIn,class PelOut> void Sobel_Ver  (Bitmap<PelOut>& dst,const Bitmap<PelIn>& src);
+
+  /* 3x3 filters for "laplacian of gaussian"
+     The 3-digit number specifies the filter. First digit is coefficient in the corner,
+     second digit, is coefficient in the middle of the sides, and last digit is coefficient in the center. */
+  void LaplOfGauss3x3_014(Bitmap<short>& dst,const Bitmap<Pixel>& src);
+  void LaplOfGauss3x3_118(Bitmap<short>& dst,const Bitmap<Pixel>& src);
+  void LaplOfGauss3x3_124(Bitmap<short>& dst,const Bitmap<Pixel>& src);
 
   /* Calculate a map of the gradient strength in the specified bitmap.
      Note: the result is scaled by a constant factor.
@@ -251,6 +259,40 @@ namespace videogfx {
     Bitmap<double> tmpbm;
     ConvolveH(tmpbm,src,filter);
     ConvolveV(dst,tmpbm,filter);
+  }
+
+
+  template <class PelIn,class PelOut> void Convolve(Bitmap<PelOut>& dst,const Bitmap<PelIn>& src,
+						    const Array2<double>& filter)
+  {
+    int r_left   = filter.AskXBase();
+    int r_right  = filter.AskWidth()-filter.AskXBase()-1;
+    int r_top    = filter.AskYBase();
+    int r_bottom = filter.AskHeight()-filter.AskYBase()-1;
+
+    // make a copy of the input with border to simplify computation
+    int border = std::max(std::max(r_left,r_right),std::max(r_top,r_bottom));
+    Bitmap<PelIn> bordsrc = src.Clone(border);
+    ExtrudeIntoBorder(bordsrc);
+
+
+    int w=src.AskWidth(), h=src.AskHeight();
+    dst.Create(w,h);
+
+    /* */ PelOut*const* dp =     dst.AskFrame();
+    const PelIn* const* sp = bordsrc.AskFrame();
+
+    for (int y=0;y<h;y++)
+      for (int x=0;x<w;x++)
+	{
+	  double sum = 0.0;
+
+	  for (int fy=-r_top;fy<=r_bottom;fy++)
+	    for (int fx=-r_left;fx<=r_right;fx++)
+	      sum += filter[fy][fx] * sp[y+fy][x+fx];
+
+	  dp[y][x] = (PelOut)sum;
+	}
   }
 
 
