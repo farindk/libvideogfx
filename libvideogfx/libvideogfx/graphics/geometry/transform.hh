@@ -49,8 +49,8 @@ namespace videogfx {
   Matrix4G AffineFrom3PointCorrespondences(const Point2D<double>* start, // array of 3 points
 					   const Point2D<double>* end);  // array of 3 points
 
-  /* If an alpha-bitmap is given, the bitmap is overlayed such that alpha=0 means completely transparent and
-     alpha=255 means completely opaque.
+  /* If an alpha-bitmap input is given, the bitmap is overlayed such that alpha=0 means completely
+     transparent and alpha=255 means completely opaque.
      If 'truncate' is true, bilinear interpolation is switched off, which is approximately 20% faster.
   */
   void TransformBitmap(Bitmap<Pixel>& dest, const Bitmap<Pixel>& src, const Matrix4G& homography_dest2src,
