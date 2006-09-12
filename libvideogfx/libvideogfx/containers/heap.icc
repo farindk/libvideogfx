@@ -55,14 +55,14 @@ template <class T> void Heap<T>::Insert(const T& e)
 
 template <class T> void Heap<T>::UpHeap(int i)
 {
-  while (i>1 && d_heap[i/2].AskValue() > d_heap[i].AskValue())
+  while (i>1 && d_heap[i] < d_heap[i/2])
     {
       swap(d_heap[i],d_heap[i/2]);
       i /= 2;
     }
 }
 
-template <class T> void Heap<T>::RemoveTop()
+template <class T> void Heap<T>::RemoveRoot()
 {
   d_heap[1] = d_heap[d_entries];
   d_entries--;
@@ -78,9 +78,9 @@ again1:
     return;
 
   if (i*2==d_entries ||
-      d_heap[i*2].AskValue() < d_heap[i*2+1].AskValue())
+      d_heap[i*2] < d_heap[i*2+1])
     {
-      if (d_heap[i].AskValue() > d_heap[i*2].AskValue())
+      if (d_heap[i*2] < d_heap[i])
         {
           swap(d_heap[i],d_heap[i*2]);
           i=i*2;
@@ -89,7 +89,7 @@ again1:
     }
   else
     {
-      if (d_heap[i].AskValue() > d_heap[i*2+1].AskValue())
+      if (d_heap[i*2+1] < d_heap[i])
         {
           swap(d_heap[i],d_heap[i*2+1]);
           i=i*2+1;

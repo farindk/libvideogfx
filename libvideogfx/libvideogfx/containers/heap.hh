@@ -42,6 +42,7 @@
 
 namespace videogfx {
 
+#if 0
   class HeapElement
   {
   public:
@@ -49,10 +50,13 @@ namespace videogfx {
 
     /* The value is used as the head ordering criterion. The smallest value
        will be at the top of the head. */
-    virtual int AskValue() const = 0;
+    //virtual int AskValue() const = 0;
+    virtual bool SmallerThan(const HeapElement& e) const = 0;
   };
+#endif
 
-
+  /* class T must have "operator<".
+   */
   template <class T> class Heap
   {
   public:
@@ -60,13 +64,15 @@ namespace videogfx {
     ~Heap();
 
     void Insert(const T&);
-    T&   AskTop() const { assert(d_entries>0); return d_heap[1]; }
-    void RemoveTop(); // Remove minimum element.
+    T&   AskRoot() const { assert(d_entries>0); return d_heap[1]; }
+    // T&   AskTop() const { assert(d_entries>0); return d_heap[1]; }   Deprecated: use AskRoot()
+    void RemoveRoot(); // Remove minimum element.
+    //void RemoveTop(); // Remove minimum element.    Deprecated: use RemoveRoot()
 
     bool   IsEmpty() const { return d_entries==0; }
     uint32 AskSize() const { return d_entries;    }
 
-    void SortHeap();
+    void SortHeap();  // TODO: without a function like FillHeap(), this function does not make sense
 
   private:
     T*  d_heap;
