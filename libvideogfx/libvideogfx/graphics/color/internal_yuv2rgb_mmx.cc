@@ -58,6 +58,8 @@ namespace videogfx {
     int w = (param.width+7) & ~7;
     if (spec.bytes_per_line < 2*w) return false;
 
+    if (param.height & 1) return false;
+
     return true;
   }
 
@@ -345,6 +347,7 @@ namespace videogfx {
     if (param.colorspace != Colorspace_YUV) return false;
     if (param.chroma !=Chroma_420) return false;
 
+
     int w = (param.width+7) & ~7;
     if (w != param.width) return false; /* TODO: If input is not a multiple of 8, do not use MMX.
 					   We could be more efficient here. */
@@ -353,6 +356,8 @@ namespace videogfx {
     //cout << "bpl: " << spec.bytes_per_line << " (4w = " << 4*w << ")" << endl;
 
     if (spec.bytes_per_line < 4*w) return false;
+
+    if (param.height & 1) return false;
 
     return true;
   }

@@ -40,15 +40,7 @@ namespace videogfx {
     if (param.colorspace == Colorspace_Greyscale)
       size = param.width * param.height;
     else
-      {
-	switch (param.chroma)
-	  {
-	  case Chroma_420:  size = param.width * param.height *3/2; break;
-	  case Chroma_422:  size = param.width * param.height *2;   break;
-	  case Chroma_444:  size = param.width * param.height *3;   break;
-	  default: assert(0); break;
-	  }
-      }
+      size = param.width * param.height + 2*param.AskChromaWidth()*param.AskChromaHeight();
 
     return size;
   }

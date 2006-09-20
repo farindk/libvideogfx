@@ -176,7 +176,7 @@ namespace videogfx {
     delete[] speccopy;
 
     d_loader_pipeline = NULL;
-
+    d_framenr=0; // reading is starting from the beginning
 
 
     while (*spec)
@@ -700,6 +700,18 @@ namespace videogfx {
     return false;
   }
 
+  // Yannick Morvan: This routine expects c444 or c420 or c422 in char*str
+  // I must say that not too much checking is made
+  static ChromaFormat ScanForChroma(const char* str)
+  {
+    if (strstr(str, "c444")) return Chroma_444;
+    if (strstr(str, "c422")) return Chroma_422;
+    if (strstr(str, "c420")) return Chroma_420;
+
+    return Chroma_420;
+  }
+
+
   class FileIOFactory_YUV1 : public FileIOFactory
   {
   public:
@@ -714,7 +726,7 @@ namespace videogfx {
 	  ImageParam param;
 	  bool greyscale = CheckSuffix(*spec, "grey");
 	  param.colorspace= (greyscale ? Colorspace_Greyscale : Colorspace_YUV);
-	  param.chroma=Chroma_420;
+	  param.chroma=ScanForChroma(name);
 	  param.width=352;
 	  param.height=288;
 	  if (!ScanForSize(name,param))

@@ -410,24 +410,27 @@ namespace videogfx {
 	    membuf8a[gpos] = green;
 	    membuf8a[bpos] = blue;
 	    membuf8a+=bytes_per_pixel;
+
+	    if (y != lastline)
+	      {
+		yy=(((int)*y1p++) -16)*298;
+		red   = (r0+yy)>>8; red  = clip_0_255[red];
+		green = (g0+yy)>>8; green= clip_0_255[green];
+		blue  = (b0+yy)>>8; blue = clip_0_255[blue];
+		membuf8b[rpos] = red;
+		membuf8b[gpos] = green;
+		membuf8b[bpos] = blue;
+		membuf8b+=bytes_per_pixel;
           
-	    yy=(((int)*y1p++) -16)*298;
-	    red   = (r0+yy)>>8; red  = clip_0_255[red];
-	    green = (g0+yy)>>8; green= clip_0_255[green];
-	    blue  = (b0+yy)>>8; blue = clip_0_255[blue];
-	    membuf8b[rpos] = red;
-	    membuf8b[gpos] = green;
-	    membuf8b[bpos] = blue;
-	    membuf8b+=bytes_per_pixel;
-          
-	    yy=(((int)*y1p++) -16)*298;
-	    red   = (r0+yy)>>8; red  = clip_0_255[red];
-	    green = (g0+yy)>>8; green= clip_0_255[green];
-	    blue  = (b0+yy)>>8; blue = clip_0_255[blue];
-	    membuf8b[rpos] = red;
-	    membuf8b[gpos] = green;
-	    membuf8b[bpos] = blue;
-	    membuf8b+=bytes_per_pixel;
+		yy=(((int)*y1p++) -16)*298;
+		red   = (r0+yy)>>8; red  = clip_0_255[red];
+		green = (g0+yy)>>8; green= clip_0_255[green];
+		blue  = (b0+yy)>>8; blue = clip_0_255[blue];
+		membuf8b[rpos] = red;
+		membuf8b[gpos] = green;
+		membuf8b[bpos] = blue;
+		membuf8b+=bytes_per_pixel;
+	      }
 	  }
       }
   }
