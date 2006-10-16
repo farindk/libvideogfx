@@ -175,6 +175,7 @@ namespace videogfx {
     char* spec = ExpandMacros(speccopy);
     delete[] speccopy;
 
+    if (d_loader_pipeline) delete d_loader_pipeline;
     d_loader_pipeline = NULL;
     d_framenr=0; // reading is starting from the beginning
 
