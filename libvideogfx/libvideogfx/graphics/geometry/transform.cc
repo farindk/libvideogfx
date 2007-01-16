@@ -19,7 +19,7 @@
 
 #include <libvideogfx/graphics/geometry/transform.hh>
 #include <libvideogfx/graphics/draw/draw.hh>
-#include <gsl/gsl_linalg.h>
+// #include <gsl/gsl_linalg.h>
 #include <algorithm>
 #include <iomanip>
 #include <math.h>
@@ -254,7 +254,7 @@ namespace videogfx {
 	int xstart = (int)xmincut - safety_border;
 	int xend   = (int)xmaxcut + safety_border;
 
-	if (xstart<0) xstart=0;
+	if (xstart<0) xstart=0;  // TODO: this should be the left offset, not zero
 	if (xend>=dest.AskWidth()) xend=dest.AskWidth()-1;
 
 	// now finally transform the scanline
