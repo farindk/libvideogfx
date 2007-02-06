@@ -110,6 +110,7 @@ namespace videogfx {
 
       // --- YUV -> raw RGB
 
+#if 0
 #if ENABLE_MMX
       if (cpu->HasMMX())
 	{
@@ -118,6 +119,7 @@ namespace videogfx {
 	  if (i2r_grey_32bit_mmx::s_CanConvert(img,d_spec)) { t = new i2r_grey_32bit_mmx; goto found; }
 	  if (i2r_grey_16bit_mmx::s_CanConvert(img,d_spec)) { t = new i2r_grey_16bit_mmx; goto found; }
 	}
+#endif
 #endif
 
       if (i2r_yuv_16bit   ::s_CanConvert(img,d_spec)) { t = new i2r_yuv_16bit;    goto found; }

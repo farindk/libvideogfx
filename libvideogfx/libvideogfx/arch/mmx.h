@@ -343,6 +343,16 @@ do { \
    cout << endl; \
 } while(0)
 
+#define PRINT_COMPACT_MMXREG(MSG, REG)\
+do { \
+   uint8 a[8]; \
+   movq_r2m(REG,a); \
+   cout << MSG << "0x"; \
+   for (int i = 0; i < 8; i++) \
+       cout << hex << (i ? "." : "") << int(a[i]); \
+   cout << endl; \
+} while(0)
+
 #define PRINT_MMXREG_EXIT(MSG, REG)\
    PRINT_MMXREG(MSG, REG); \
    exit(1)

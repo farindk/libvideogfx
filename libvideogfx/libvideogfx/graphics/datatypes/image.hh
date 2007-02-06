@@ -217,7 +217,7 @@ namespace videogfx {
 	for your application. This is not checked!
       
 	If you insert or remove (by replacing a bitmap by an empty one) an alpha bitmap,
-	the alphamask-flag in ImageParam will be set accordingly.
+	the alphamask-flag in ImageParam will be set accordingly.  [TODO ??? really]
     */
     void ReplaceBitmap(BitmapChannel id,const Bitmap<Pel>& bm)  { d_pm[id] = bm; }
 
