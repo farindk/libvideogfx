@@ -91,4 +91,29 @@ namespace videogfx {
       }
   }
 
+
+  void DrawTriangle(Image<Pixel>& img, const Point2D<double>* in_p, const Color<Pixel>* col)
+  {
+    ImageParam param = img.AskParam();
+    Pixel c[3];
+    Point2D<double> p[3];
+
+    for (int i=0;i<4;i++)
+      {
+	BitmapChannel b = (BitmapChannel)i;
+	if (!img.AskBitmap(b).IsEmpty())
+	  {
+	    for (int n=0;n<3;n++)
+	      {
+		c[n] = col[n].c[i];
+		p[n].x = param.ChromaScaleH(b,in_p[n].x);
+		p[n].y = param.ChromaScaleV(b,in_p[n].y);
+	      }
+
+	    DrawTriangle(img.AskBitmap(b), p, c);
+	  }
+      }
+  }
+
+
 }

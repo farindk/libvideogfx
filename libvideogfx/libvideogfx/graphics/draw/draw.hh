@@ -10,6 +10,8 @@
   author(s):
    - Dirk Farin, dirk.farin@gmx.de
    - Alexander Staller, alexander.staller@engineer.com
+   - Triangle rendering code based on the rasterization tutorial by
+     Mihail Ivanchev, Hans Thoernquist
 
   modifications:
     30/Jan/2002 - Dirk Farin - New line clipping routine
@@ -93,6 +95,10 @@ namespace videogfx {
   template <class T> void DrawCircle(Image<T>&  bm,const Point2D<int>& p, int radius,Color<T> color,bool fill=false);
   template <class T> void DrawCircle(Bitmap<T>& bm,const Point2D<double>& p, int radius,T color,bool fill=false);
   template <class T> void DrawCircle(Image<T>&  bm,const Point2D<double>& p, int radius,Color<T> color,bool fill=false);
+
+  /* DrawTriangle(bitmap, pts[3], vertex_values[3] */
+  template <class T> void DrawTriangle(Bitmap<T>& bm, const Point2D<double>* in_p, const T* c);
+  void DrawTriangle(Image<Pixel>& img, const Point2D<double>* in_p, const Color<Pixel>* col);
 
   /* This function draws a line and places a head on one (x1,y1) if bothends==false or
      both (if bothends==true) sides of the line. */
@@ -614,6 +620,203 @@ namespace videogfx {
 	  }
       }
   }
+
+
+  template <class T> void rasterize_triangle_scanline(T*const p,double* x, double* col)
+  {
+    const double FLT_EPSILON = 0.001;
+
+    // apply top-left fill-convention to scanline
+
+    int xs = (int)ceil(x[0]);
+    int xe = (int)ceil(x[1]) - 1;
+
+    if (xe < xs)
+      return;
+
+
+    // calculate slopes
+
+    double invDeltaX = x[1]-x[0];
+
+    if (invDeltaX < FLT_EPSILON) invDeltaX = 1.0f;
+    else invDeltaX = 1.0f / invDeltaX; 
+
+    double sub = (double)xs - x[0];
+
+    double slopecol = (col[1] - col[0]) * invDeltaX;
+    double colval = col[0];
+    colval += slopecol * sub;
+
+    // rasterize line
+
+    for(int x=xs; x<=xe; x++) {
+      p[x] = (T)colval;
+      colval += slopecol;
+    }
+  }
+
+
+  template <class T> void DrawTriangle(Bitmap<T>& bm, const Point2D<double>* in_p, const T* c)
+  {
+    const double FLT_EPSILON = 0.001;
+
+    Pixel*const* pbm = bm.AskFrame();
+
+    Point2D<double> p[3];
+    double col[3];
+    for (int i=0;i<3;i++) { p[i]=in_p[i]; col[i]=c[i]; }
+
+    // order points in increasing y order
+
+    if (p[0].y > p[1].y) { std::swap(p[0],p[1]); std::swap(col[0],col[1]); }
+    if (p[0].y > p[2].y) { std::swap(p[0],p[2]); std::swap(col[0],col[2]); }
+    if (p[1].y > p[2].y) { std::swap(p[1],p[2]); std::swap(col[1],col[2]); }
+
+    // calculate delta y of the edges
+
+    double invydelta[3]; // 0 - long edge / 1 - top sub-triangle / 2 - bottom sub-triangle
+
+    invydelta[0] = p[2].y - p[0].y;
+    if (invydelta[0] < FLT_EPSILON) return;
+
+    invydelta[1] = p[1].y - p[0].y;
+    invydelta[2] = p[2].y - p[1].y;
+
+    //cout << "y-deltas: " << invydelta[0] << " " << invydelta[1] << " " << invydelta[2] << endl; 
+
+    invydelta[0] = 1.0f / invydelta[0];
+    if (invydelta[1] > FLT_EPSILON) invydelta[1] = 1.0f / invydelta[1];
+    if (invydelta[2] > FLT_EPSILON) invydelta[2] = 1.0f / invydelta[2];
+
+    // find if the major edge is left or right aligned
+
+    int left;
+    double v1[2],v2[2];
+    v1[0] = p[0].x - p[2].x;
+    v1[1] = p[0].y - p[2].y;
+    v2[0] = p[1].x - p[0].x;
+    v2[1] = p[1].y - p[0].y;
+
+    if (v1[0] * v2[1] - v1[1] * v2[0] > 0) left = 0; else left = 1;
+    //cout << "left: " << left << endl;
+
+
+    // calculate slopes for the major edge
+
+    double slopex[2];
+    double xpos[2];
+    slopex[0] = (p[2].x-p[0].x) * invydelta[0];
+    xpos  [0] = p[0].x;
+
+    double slopecol[2];
+    double colval[2];
+    slopecol[0] = (col[2]-col[0]) * invydelta[0];
+    colval[0]   = col[0];
+    //cout << "main edge slope: " << slopecol[0] << endl;
+
+
+    // rasterize upper sub-triangle
+
+    if (invydelta[1] > FLT_EPSILON) {
+      // calculate slopes for top edge
+
+      slopex[1] = (p[1].x-p[0].x) * invydelta[1];
+      xpos  [1] = p[0].x;
+
+      slopecol[1] = (col[1]-col[0]) * invydelta[1];
+      colval  [1] = col[0];
+      //cout << "minor edge slope: " << slopecol[1] << endl;
+
+      int yStart= (int)ceil(p[0].y);
+      int yEnd  = (int)ceil(p[1].y) - 1;
+
+      double sub= (double)yStart - p[0].y;
+
+      xpos[0]  += slopex[0] * sub;
+      colval[0]+= slopecol[0] * sub;
+
+      xpos[1]  += slopex[1] * sub;
+      colval[1]+= slopecol[1] * sub;
+
+      // rasterize the edge scanlines
+
+      for(int y = yStart; y <= yEnd; y++) {
+	double pos[2];
+	pos[left]  = xpos[0];
+	pos[1-left]= xpos[1];
+
+	double color[2];
+	color[left]   = colval[0];
+	color[1-left] = colval[1];
+
+	// draw a scanline
+
+	rasterize_triangle_scanline(pbm[y],pos,color);
+
+	xpos[0]   += slopex[0];
+	colval[0] += slopecol[0];
+
+	xpos[1]   += slopex[1];
+	colval[1] += slopecol[1];
+      }
+    }
+
+    // rasterize lower sub-triangle
+
+    if(invydelta[2] > FLT_EPSILON) {
+      // advance major edge attirubtes to middle point (if we have process the other edge)
+
+      if(invydelta[1] > FLT_EPSILON) {
+	double dy = p[1].y - p[0].y;
+	xpos[0]   = p[0].x + slopex[0]*dy;
+	colval[0] = col[0] + slopecol[0]*dy;
+      }
+
+      // calculate slopes for bottom edge
+
+      slopex[1] = (p[2].x-p[1].x) * invydelta[2];
+      xpos  [1] = p[1].x;
+
+      slopecol[1] = (col[2]-col[1]) * invydelta[2];
+      colval[1]   = col[1];
+
+      int yStart= (int)ceil(p[1].y);
+      int yEnd  = (int)ceil(p[2].y) - 1;
+
+      double sub= (double)yStart - p[1].y;
+
+      xpos[0]  += slopex[0] * sub;
+      colval[0]+= slopecol[0] * sub;
+
+      xpos[1]  += slopex[1] * sub;
+      colval[1]+= slopecol[1] * sub;
+
+      // rasterize the edge scanlines
+
+      for (int y = yStart; y <= yEnd; y++) {
+	double pos[2];
+	pos[left]  = xpos[0];
+	pos[1-left]= xpos[1];
+
+	double color[2];
+	color[left]   = colval[0];
+	color[1-left] = colval[1];
+
+	// draw a scanline
+
+	rasterize_triangle_scanline(pbm[y],pos,color);
+
+	xpos[0] += slopex[0];
+	colval[0] += slopecol[0];
+
+	xpos[1]   += slopex[1];
+	colval[1] += slopecol[1];
+      }
+    }
+  }
+
+
 
 }
 
