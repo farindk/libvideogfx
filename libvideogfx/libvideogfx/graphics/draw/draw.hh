@@ -46,6 +46,9 @@
 #include <math.h>
 #include <algorithm>
 
+//#include <iostream>
+//using namespace std;
+
 #include <libvideogfx/graphics/datatypes/bitmap.hh>
 #include <libvideogfx/graphics/datatypes/image.hh>
 #include <libvideogfx/graphics/datatypes/primitives.hh>
@@ -622,9 +625,9 @@ namespace videogfx {
   }
 
 
-  template <class T> void rasterize_triangle_scanline(T*const p,double* x, double* col)
+  template <class T> void rasterize_triangle_scanline(T*const p,double* x, double* col,int w)
   {
-    const double FLT_EPSILON = 0.001;
+    const double FLT_EPSILON = 1e-8;
 
     // apply top-left fill-convention to scanline
 
@@ -650,6 +653,9 @@ namespace videogfx {
 
     // rasterize line
 
+    if (xs<0 ) { colval += -xs*slopecol; xs=0; }
+    if (xe>=w) xe=w-1;
+
     for(int x=xs; x<=xe; x++) {
       p[x] = (T)colval;
       colval += slopecol;
@@ -659,9 +665,10 @@ namespace videogfx {
 
   template <class T> void DrawTriangle(Bitmap<T>& bm, const Point2D<double>* in_p, const T* c)
   {
-    const double FLT_EPSILON = 0.001;
+    const double FLT_EPSILON = 1e-8;
 
     Pixel*const* pbm = bm.AskFrame();
+    int w=bm.AskWidth(), h=bm.AskHeight();
 
     Point2D<double> p[3];
     double col[3];
@@ -682,8 +689,6 @@ namespace videogfx {
 
     invydelta[1] = p[1].y - p[0].y;
     invydelta[2] = p[2].y - p[1].y;
-
-    //cout << "y-deltas: " << invydelta[0] << " " << invydelta[1] << " " << invydelta[2] << endl; 
 
     invydelta[0] = 1.0f / invydelta[0];
     if (invydelta[1] > FLT_EPSILON) invydelta[1] = 1.0f / invydelta[1];
@@ -752,7 +757,8 @@ namespace videogfx {
 
 	// draw a scanline
 
-	rasterize_triangle_scanline(pbm[y],pos,color);
+	if (y>=0 && y<h)
+	  rasterize_triangle_scanline(pbm[y],pos,color,w);
 
 	xpos[0]   += slopex[0];
 	colval[0] += slopecol[0];
@@ -805,7 +811,8 @@ namespace videogfx {
 
 	// draw a scanline
 
-	rasterize_triangle_scanline(pbm[y],pos,color);
+	if (y>=0 && y<h)
+	  rasterize_triangle_scanline(pbm[y],pos,color,w);
 
 	xpos[0] += slopex[0];
 	colval[0] += slopecol[0];
