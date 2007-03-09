@@ -291,7 +291,8 @@ namespace videogfx {
   Matrix4G Matrix4G::PseudoInverse() const
   {
     Matrix4G T = Transpose();
-    return (T*(*this)).Inverse() * T;
+    // return (T*(*this)).Inverse() * T;   // this one seems to be numerically unstable, probably both versions are
+    return T * ((*this)*T).Inverse();
   }
 
 
