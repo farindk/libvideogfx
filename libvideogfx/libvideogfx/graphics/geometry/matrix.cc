@@ -291,8 +291,15 @@ namespace videogfx {
   Matrix4G Matrix4G::PseudoInverse() const
   {
     Matrix4G T = Transpose();
-    // return (T*(*this)).Inverse() * T;   // this one seems to be numerically unstable, probably both versions are
-    return T * ((*this)*T).Inverse();
+
+    // There seems to be some numerical instability problem with the pseudo-inverse.
+    // According to http://robotics.caltech.edu/~jwb/courses/ME115/handouts/pseudo.pdf,
+    // the inverse should be computed depending on the matrix sizes.
+
+    if (d_rows<d_columns)
+      return T * ((*this)*T).Inverse();
+    else
+      return (T*(*this)).Inverse() * T;
   }
 
 
