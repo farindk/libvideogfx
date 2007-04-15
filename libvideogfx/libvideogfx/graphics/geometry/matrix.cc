@@ -227,7 +227,7 @@ namespace videogfx {
 	/*
 	  3x3 matrix inverse written with cross products:
 	  [ u v w ]^-1 = 1/(u*(vxw)) [ vxw | wxu | uxv ]^T
-	 */
+	*/
 	inv[0][0] = +(d_mat[1][1]*d_mat[2][2] - d_mat[1][2]*d_mat[2][1]);
 	inv[0][1] = -(d_mat[2][2]*d_mat[0][1] - d_mat[2][1]*d_mat[0][2]);
 	inv[0][2] = +(d_mat[1][2]*d_mat[0][1] - d_mat[1][1]*d_mat[0][2]);
@@ -414,6 +414,15 @@ namespace videogfx {
     t[0][2]=tx;
     t[1][2]=ty;
     return t;
+  }
+
+  Matrix4G Scale3D(double x,double y,double z)
+  {
+    Matrix4G mat(4,4);
+    mat[0][0] = x;
+    mat[1][1] = y;
+    mat[2][2] = z;
+    return mat;
   }
 
   Matrix4G CrossProduct(const Matrix4G& vec1, const Matrix4G& vec2)

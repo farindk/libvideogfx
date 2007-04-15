@@ -198,8 +198,8 @@ namespace videogfx {
       } while(buffer[0] == '#' || is_whiteline(buffer));
     maxval=atoi(buffer);
 
-    if (maxval != 255)
-      { throw Excpt_Text(ErrSev_Error,"cannot read PPM file with maximum pixel-value != 255"); }
+    if (maxval > 255)
+      { throw Excpt_Text(ErrSev_Error,"cannot read PPM file with maximum pixel-value > 255"); }
 
 
     ImageParam param = dest.AskParam();
@@ -246,6 +246,109 @@ namespace videogfx {
 
 	delete[] linebuf;
       }
+  }
+
+  static void swapbytes(uint16* linebuf, int n_shorts)
+  {
+    uint8* p8 = (uint8*)linebuf;
+    for (int i=0;i<n_shorts;i++)
+      {
+	swap(p8[0],p8[1]);
+	p8+=2;
+      }
+  }
+
+  void ReadImage_PPM(Image<uint16>& dest,std::istream& stream)
+  {
+    char buffer[100+1];
+    stream.getline(buffer,100);
+
+    if (strlen(buffer)!=2 || buffer[0]!='P')
+      { throw Excpt_Text(ErrSev_Error,"input is not a PPM format file"); }
+
+    bool greyscale;
+    if (buffer[1]=='5')
+      greyscale=true;
+    else if (buffer[1]=='6')
+      greyscale=false;
+    else
+      { throw Excpt_Text(ErrSev_Error,"input is not a type 5 or type 6 PPM format file"); }
+
+
+    int width,height,maxval;
+
+    do
+      {
+	stream.getline(buffer,100);
+      } while(buffer[0] == '#' || is_whiteline(buffer));
+    sscanf(buffer,"%d %d",&width,&height);
+    do
+      {
+	stream.getline(buffer,100);
+      } while(buffer[0] == '#' || is_whiteline(buffer));
+    maxval=atoi(buffer);
+
+    if (maxval > 65535)
+      { throw Excpt_Text(ErrSev_Error,"cannot read PPM file with maximum pixel-value > 65535"); }
+
+    ImageParam param = dest.AskParam();
+    param.width  = width;
+    param.height = height;
+
+    if (greyscale)
+      {
+	param.colorspace = Colorspace_Greyscale;
+	dest.Create(param);
+
+	uint16*const* Y = dest.AskFrameY();
+
+	for (int y=0;y<height;y++)
+	  {
+	    stream.read((char*)Y[y],width*2);
+#if !WORDS_BIGENDIAN
+	    swapbytes(Y[y], width);
+#endif
+	  }
+      }
+    else
+      {
+	param.colorspace = Colorspace_RGB;
+	dest.Create(param);
+
+	uint16* linebuf = new uint16[width * 3];
+
+	uint16*const* r = dest.AskFrameR();
+	uint16*const* g = dest.AskFrameG();
+	uint16*const* b = dest.AskFrameB();
+
+	for (int y=0;y<height;y++)
+	  {
+	    stream.read((char*)linebuf,width*2*3);
+#if !WORDS_BIGENDIAN
+	    swapbytes(linebuf, width*3);
+#endif
+
+	    uint16* p = linebuf;
+	    uint16* rp = r[y];
+	    uint16* gp = g[y];
+	    uint16* bp = b[y];
+
+	    for (int x=0;x<width;x++)
+	      {
+		*rp++ = *p++;
+		*gp++ = *p++;
+		*bp++ = *p++;
+	      }
+	  }
+
+	delete[] linebuf;
+      }
+  }
+
+  void ReadImage_PPM(Image<uint16>& dest,const char* filename)
+  {
+    ifstream istr(filename);
+    ReadImage_PPM(dest,istr);
   }
 
 }

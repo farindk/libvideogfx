@@ -93,6 +93,7 @@ namespace videogfx {
 
   Matrix4G Translation3D(double tx,double ty,double tz);
   Matrix4G Translation2D(double tx,double ty);
+  Matrix4G Scale3D(double x,double y,double z);
 
   // cross product of two 3x1 vectors
   Matrix4G CrossProduct(const Matrix4G& vec1, const Matrix4G& vec2);

@@ -59,6 +59,8 @@ namespace videogfx {
 
   void ReadImage_PPM(Image<Pixel>& dest,std::istream& stream);
   void ReadImage_PPM(Image<Pixel>& dest,const char* filename);
+  void ReadImage_PPM(Image<uint16>& dest,std::istream& stream);
+  void ReadImage_PPM(Image<uint16>& dest,const char* filename);
 
 
   /* Write RGB image into PPM P6-type file.
