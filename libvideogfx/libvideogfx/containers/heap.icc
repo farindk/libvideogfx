@@ -19,6 +19,9 @@
 
 #define INITIAL_HEAP_SIZE 50
 
+#include <algorithm>
+
+
 template <class T> Heap<T>::Heap()
   : d_heap(NULL), d_size(0), d_entries(0)
 {
@@ -57,7 +60,7 @@ template <class T> void Heap<T>::UpHeap(int i)
 {
   while (i>1 && d_heap[i] < d_heap[i/2])
     {
-      swap(d_heap[i],d_heap[i/2]);
+      std::swap(d_heap[i],d_heap[i/2]);
       i /= 2;
     }
 }
@@ -73,7 +76,7 @@ template <class T> void Heap<T>::DownHeap(int i)
 {
 again1:
 
-  // Element ist am unteren Rand.
+  // element is at the bottom
   if (i*2 > d_entries)
     return;
 
@@ -82,7 +85,7 @@ again1:
     {
       if (d_heap[i*2] < d_heap[i])
         {
-          swap(d_heap[i],d_heap[i*2]);
+          std::swap(d_heap[i],d_heap[i*2]);
           i=i*2;
           goto again1;
         }
@@ -91,7 +94,7 @@ again1:
     {
       if (d_heap[i*2+1] < d_heap[i])
         {
-          swap(d_heap[i],d_heap[i*2+1]);
+          std::swap(d_heap[i],d_heap[i*2+1]);
           i=i*2+1;
           goto again1;
         }

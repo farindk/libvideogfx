@@ -68,6 +68,7 @@ namespace videogfx {
     // T&   AskTop() const { assert(d_entries>0); return d_heap[1]; }   Deprecated: use AskRoot()
     void RemoveRoot(); // Remove minimum element.
     //void RemoveTop(); // Remove minimum element.    Deprecated: use RemoveRoot()
+    void Reset() { d_entries=0; } // Remove all elements.
 
     bool   IsEmpty() const { return d_entries==0; }
     uint32 AskSize() const { return d_entries;    }
