@@ -438,4 +438,12 @@ namespace videogfx {
     return -1;
   }
 
+  void DisplayX11(const Image<Pixel>& img)
+  {
+    int w=img.AskWidth(), h=img.AskHeight();
+    ImageWindow_Autorefresh_X11 win;
+    win.Create(w,h,"libvideogfx (c) Dirk Farin");
+    win.Display(img);
+    win.WaitForKeypress();
+  }
 }

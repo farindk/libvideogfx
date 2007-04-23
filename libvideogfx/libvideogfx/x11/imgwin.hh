@@ -119,6 +119,7 @@ namespace videogfx {
   */
   int MultiWindowRefresh(ImageWindow_Autorefresh_X11*const*,int nWindows);
 
+  void DisplayX11(const Image<Pixel>&);
 }
 
 #endif
