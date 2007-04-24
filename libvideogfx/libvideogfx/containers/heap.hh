@@ -75,6 +75,9 @@ namespace videogfx {
 
     void SortHeap();  // TODO: without a function like FillHeap(), this function does not make sense
 
+    /* */ T& operator[](int idx)       { return d_heap[idx+1]; }
+    const T& operator[](int idx) const { return d_heap[idx+1]; }
+
   private:
     T*  d_heap;
     int d_size; // Size of heap excluding the first (dummy) element
