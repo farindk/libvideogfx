@@ -42,19 +42,6 @@
 
 namespace videogfx {
 
-#if 0
-  class HeapElement
-  {
-  public:
-    virtual ~HeapElement() { }
-
-    /* The value is used as the head ordering criterion. The smallest value
-       will be at the top of the head. */
-    //virtual int AskValue() const = 0;
-    virtual bool SmallerThan(const HeapElement& e) const = 0;
-  };
-#endif
-
   /* class T must have "operator<".
    */
   template <class T> class Heap
@@ -75,6 +62,9 @@ namespace videogfx {
 
     void SortHeap();  // TODO: without a function like FillHeap(), this function does not make sense
 
+    /* The []-operator is only meant to iterate through all heap elements.
+       There is no implicit ordering implied. Hence i<j does not imply that also [i]<=[j].
+    */
     /* */ T& operator[](int idx)       { return d_heap[idx+1]; }
     const T& operator[](int idx) const { return d_heap[idx+1]; }
 
