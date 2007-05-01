@@ -119,7 +119,7 @@ namespace videogfx {
   */
   int MultiWindowRefresh(ImageWindow_Autorefresh_X11*const*,int nWindows);
 
-  void DisplayX11(const Image<Pixel>&);
+  void DisplayX11(const Image<Pixel>&, int wait_usecs=0); // 0 -> wait for keypress
 }
 
 #endif

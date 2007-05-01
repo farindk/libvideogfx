@@ -107,6 +107,8 @@ namespace videogfx {
      both (if bothends==true) sides of the line. */
   template <class T> void DrawArrow(Bitmap<T>& bm,int x0,int y0,int x1, int y1,T color,
 				    double alpha=20.0,int len=7,bool bothends = false);
+  template <class T> void DrawArrow(Image<T>& img,int x0,int y0,int x1, int y1,const Color<T>& color,
+				    double alpha=20.0,int len=7,bool bothends = false);
 
 
   /* A PolylinePainter helps to draw polygons.
@@ -624,6 +626,27 @@ namespace videogfx {
       }
   }
 
+  template <class T> void DrawArrow(Image<T>& img,int x0,int y0,int x1, int y1, const Color<T>& color,
+				    double alpha,int l,bool bothends)
+  {
+    ImageParam param = img.AskParam();
+
+    if (param.colorspace == Colorspace_YUV)
+      {
+	AssertDescr(param.chroma == Chroma_420 ||
+		    param.chroma == Chroma_444,"cannot draw circle because chroma pixels are not square");
+      }
+
+    for (int i=0;i<4;i++)
+      {
+	BitmapChannel b = (BitmapChannel)i;
+	if (!img.AskBitmap(b).IsEmpty())
+	  DrawArrow(img.AskBitmap(b),
+		    param.ChromaScaleH(b,x0), param.ChromaScaleV(b,y0),
+		    param.ChromaScaleH(b,x1), param.ChromaScaleV(b,y1),
+		    color.c[i], alpha,l,bothends);
+      }
+  }
 
   template <class T> void rasterize_triangle_scanline(T*const p,double* x, double* col,int w)
   {
