@@ -347,7 +347,12 @@ namespace videogfx {
 
 	d_data->d_ShmSegInfo.shmid    = shmget(IPC_PRIVATE,memory_size, IPC_CREAT|0604);
 	if (d_data->d_ShmSegInfo.shmid==-1)
-	  { perror("shmget failed: "); assert(0); } // throw Excpt_Base(ErrSev_Error,"shmget failed"); }
+	  {
+	    perror("shmget failed: ");
+	    d_data->d_UseShmExt = false;
+	    goto tryagain;
+	    //assert(0);
+	  } // throw Excpt_Base(ErrSev_Error,"shmget failed"); }
 
 	d_data->d_ShmSegInfo.shmaddr  = (char*)shmat(d_data->d_ShmSegInfo.shmid,0,0);
 	uint8* mem = (uint8*)d_data->d_ShmSegInfo.shmaddr;
