@@ -288,8 +288,8 @@ namespace videogfx {
       } while(buffer[0] == '#' || is_whiteline(buffer));
     maxval=atoi(buffer);
 
-    if (maxval > 65535)
-      { throw Excpt_Text(ErrSev_Error,"cannot read PPM file with maximum pixel-value > 65535"); }
+    if (maxval > 65535 || maxval<=255 )
+      { throw Excpt_Text(ErrSev_Error,"cannot read PPM file with maximum pixel-value > 65535 or < 256"); }
 
     ImageParam param = dest.AskParam();
     param.width  = width;
