@@ -258,7 +258,7 @@ namespace videogfx {
       }
   }
 
-  void ReadImage_PPM(Image<uint16>& dest,std::istream& stream)
+  int ReadImage_PPM(Image<uint16>& dest,std::istream& stream)
   {
     char buffer[100+1];
     stream.getline(buffer,100);
@@ -288,67 +288,132 @@ namespace videogfx {
       } while(buffer[0] == '#' || is_whiteline(buffer));
     maxval=atoi(buffer);
 
-    if (maxval > 65535 || maxval<=255 )
-      { throw Excpt_Text(ErrSev_Error,"cannot read PPM file with maximum pixel-value > 65535 or < 256"); }
+    if (maxval > 65535)
+      { throw Excpt_Text(ErrSev_Error,"cannot read PPM file with maximum pixel-value > 65535"); }
+
+    int nbytes_per_pixel=1;
+    if (maxval>255) nbytes_per_pixel=2;
 
     ImageParam param = dest.AskParam();
     param.width  = width;
     param.height = height;
 
-    if (greyscale)
+    if (nbytes_per_pixel==2)
       {
-	param.colorspace = Colorspace_Greyscale;
-	dest.Create(param);
-
-	uint16*const* Y = dest.AskFrameY();
-
-	for (int y=0;y<height;y++)
+	if (greyscale)
 	  {
-	    stream.read((char*)Y[y],width*2);
-#if !WORDS_BIGENDIAN
-	    swapbytes(Y[y], width);
-#endif
-	  }
-      }
-    else
-      {
-	param.colorspace = Colorspace_RGB;
-	dest.Create(param);
+	    param.colorspace = Colorspace_Greyscale;
+	    dest.Create(param);
 
-	uint16* linebuf = new uint16[width * 3];
+	    uint16*const* Y = dest.AskFrameY();
 
-	uint16*const* r = dest.AskFrameR();
-	uint16*const* g = dest.AskFrameG();
-	uint16*const* b = dest.AskFrameB();
-
-	for (int y=0;y<height;y++)
-	  {
-	    stream.read((char*)linebuf,width*2*3);
-#if !WORDS_BIGENDIAN
-	    swapbytes(linebuf, width*3);
-#endif
-
-	    uint16* p = linebuf;
-	    uint16* rp = r[y];
-	    uint16* gp = g[y];
-	    uint16* bp = b[y];
-
-	    for (int x=0;x<width;x++)
+	    for (int y=0;y<height;y++)
 	      {
-		*rp++ = *p++;
-		*gp++ = *p++;
-		*bp++ = *p++;
+		stream.read((char*)Y[y],width*2);
+#if !WORDS_BIGENDIAN
+		swapbytes(Y[y], width);
+#endif
 	      }
 	  }
+	else
+	  {
+	    param.colorspace = Colorspace_RGB;
+	    dest.Create(param);
 
-	delete[] linebuf;
+	    uint16* linebuf = new uint16[width * 3];
+
+	    uint16*const* r = dest.AskFrameR();
+	    uint16*const* g = dest.AskFrameG();
+	    uint16*const* b = dest.AskFrameB();
+
+	    for (int y=0;y<height;y++)
+	      {
+		stream.read((char*)linebuf,width*2*3);
+#if !WORDS_BIGENDIAN
+		swapbytes(linebuf, width*3);
+#endif
+
+		uint16* p = linebuf;
+		uint16* rp = r[y];
+		uint16* gp = g[y];
+		uint16* bp = b[y];
+
+		for (int x=0;x<width;x++)
+		  {
+		    *rp++ = *p++;
+		    *gp++ = *p++;
+		    *bp++ = *p++;
+		  }
+	      }
+
+	    delete[] linebuf;
+	  }
       }
+    else // nbytes_per_pixel==1
+      {
+	if (greyscale)
+	  {
+	    param.colorspace = Colorspace_Greyscale;
+	    dest.Create(param);
+
+	    uint16*const* Y = dest.AskFrameY();
+
+	    uint8* linebuf = new uint8[width];
+
+	    for (int y=0;y<height;y++)
+	      {
+		uint8* p = linebuf;
+		uint16* yp = Y[y];
+
+		stream.read((char*)linebuf,width);
+
+		for (int x=0;x<width;x++)
+		  {
+		    *yp++ = *p++;
+		  }
+	      }
+
+	    delete[] linebuf;
+	  }
+	else
+	  {
+	    param.colorspace = Colorspace_RGB;
+	    dest.Create(param);
+
+	    uint8* linebuf = new uint8[width * 3];
+
+	    uint16*const* r = dest.AskFrameR();
+	    uint16*const* g = dest.AskFrameG();
+	    uint16*const* b = dest.AskFrameB();
+
+	    for (int y=0;y<height;y++)
+	      {
+		stream.read((char*)linebuf,width*3);
+
+		uint8* p = linebuf;
+		uint16* rp = r[y];
+		uint16* gp = g[y];
+		uint16* bp = b[y];
+
+		for (int x=0;x<width;x++)
+		  {
+		    *rp++ = *p++;
+		    *gp++ = *p++;
+		    *bp++ = *p++;
+		  }
+	      }
+
+	    delete[] linebuf;
+	  }
+      }
+
+    return maxval;
   }
 
-  void ReadImage_PPM(Image<uint16>& dest,const char* filename)
+  int ReadImage_PPM(Image<uint16>& dest,const char* filename)
   {
     ifstream istr(filename);
-    ReadImage_PPM(dest,istr);
+    return ReadImage_PPM(dest,istr);
   }
 
 }
