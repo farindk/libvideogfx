@@ -83,6 +83,13 @@ namespace videogfx {
     double d_mat[4][4];
   };
 
+  Matrix4G ColumnVector(double a,double b);
+  Matrix4G ColumnVector(double a,double b,double c);
+  Matrix4G ColumnVector(double a,double b,double c,double d);
+  Matrix4G RowVector(double a,double b);
+  Matrix4G RowVector(double a,double b,double c);
+  Matrix4G RowVector(double a,double b,double c,double d);
+
   Matrix4G CWRotationX(double angle,int dim=3); // clockwise when looking to positive axis direction
   Matrix4G CWRotationY(double angle,int dim=3); // clockwise when looking to positive axis direction
   Matrix4G CWRotationZ(double angle,int dim=3); // clockwise when looking to positive axis direction
