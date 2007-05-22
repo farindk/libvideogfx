@@ -444,6 +444,6 @@ namespace videogfx {
     ImageWindow_Autorefresh_X11 win;
     win.Create(w,h,"libvideogfx (c) Dirk Farin");
     win.Display(img);
-    if (wait_usecs) usleep(wait_usecs); else win.WaitForKeypress();
+    if (wait_usecs) usleep(wait_usecs); else while (win.WaitForKeypress() != 'q') { }
   }
 }
