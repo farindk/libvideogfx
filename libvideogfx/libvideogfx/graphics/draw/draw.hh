@@ -650,7 +650,7 @@ namespace videogfx {
 
   template <class T> void rasterize_triangle_scanline(T*const p,double* x, double* col,int w)
   {
-    const double FLT_EPSILON = 1e-8;
+    const double FLT_SMALL_EPSILON = 1e-8;
 
     // apply top-left fill-convention to scanline
 
@@ -665,7 +665,7 @@ namespace videogfx {
 
     double invDeltaX = x[1]-x[0];
 
-    if (invDeltaX < FLT_EPSILON) invDeltaX = 1.0f;
+    if (invDeltaX < FLT_SMALL_EPSILON) invDeltaX = 1.0f;
     else invDeltaX = 1.0f / invDeltaX; 
 
     double sub = (double)xs - x[0];
@@ -688,7 +688,7 @@ namespace videogfx {
 
   template <class T> void DrawTriangle(Bitmap<T>& bm, const Point2D<double>* in_p, const T* c)
   {
-    const double FLT_EPSILON = 1e-8;
+    const double FLT_SMALL_EPSILON = 1e-8;
 
     Pixel*const* pbm = bm.AskFrame();
     int w=bm.AskWidth(), h=bm.AskHeight();
@@ -708,14 +708,14 @@ namespace videogfx {
     double invydelta[3]; // 0 - long edge / 1 - top sub-triangle / 2 - bottom sub-triangle
 
     invydelta[0] = p[2].y - p[0].y;
-    if (invydelta[0] < FLT_EPSILON) return;
+    if (invydelta[0] < FLT_SMALL_EPSILON) return;
 
     invydelta[1] = p[1].y - p[0].y;
     invydelta[2] = p[2].y - p[1].y;
 
     invydelta[0] = 1.0f / invydelta[0];
-    if (invydelta[1] > FLT_EPSILON) invydelta[1] = 1.0f / invydelta[1];
-    if (invydelta[2] > FLT_EPSILON) invydelta[2] = 1.0f / invydelta[2];
+    if (invydelta[1] > FLT_SMALL_EPSILON) invydelta[1] = 1.0f / invydelta[1];
+    if (invydelta[2] > FLT_SMALL_EPSILON) invydelta[2] = 1.0f / invydelta[2];
 
     // find if the major edge is left or right aligned
 
@@ -746,7 +746,7 @@ namespace videogfx {
 
     // rasterize upper sub-triangle
 
-    if (invydelta[1] > FLT_EPSILON) {
+    if (invydelta[1] > FLT_SMALL_EPSILON) {
       // calculate slopes for top edge
 
       slopex[1] = (p[1].x-p[0].x) * invydelta[1];
@@ -793,10 +793,10 @@ namespace videogfx {
 
     // rasterize lower sub-triangle
 
-    if(invydelta[2] > FLT_EPSILON) {
+    if(invydelta[2] > FLT_SMALL_EPSILON) {
       // advance major edge attirubtes to middle point (if we have process the other edge)
 
-      if(invydelta[1] > FLT_EPSILON) {
+      if(invydelta[1] > FLT_SMALL_EPSILON) {
 	double dy = p[1].y - p[0].y;
 	xpos[0]   = p[0].x + slopex[0]*dy;
 	colval[0] = col[0] + slopecol[0]*dy;
