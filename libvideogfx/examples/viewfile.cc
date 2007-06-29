@@ -1,7 +1,7 @@
 // use option -xv to open image with Xv extension
 
 #include "../libvideogfx/x11/imgwin.hh"
-#include "../libvideogfx/graphics/fileio/unified_loader.hh"
+#include "../libvideogfx/graphics/fileio/unified_reader.hh"
 
 #include <unistd.h>
 #include <iostream>

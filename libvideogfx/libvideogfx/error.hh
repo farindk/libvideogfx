@@ -135,14 +135,17 @@ namespace videogfx {
 
 }
 
+#define OLDASSERT 1
+
 #ifdef NDEBUG
 #  define Assert(expr)
 #  define AssertDescr(expr,descr)
 #else
 #  if defined(__ASSERT_FUNCTION) && defined(__STRING)
 #    ifdef  OLDASSERT
+#      include <stdio.h>
 #      define Assert(expr) assert(expr)
-#      define AssertDescr(expr,descr) assert(expr)
+#      define AssertDescr(expr,descr) do { if (!(expr)) { fprintf(stderr,"%s\n",descr); assert(expr); } } while(0)
 #    else
 #      define Assert(expr) \
   (void)(expr ? 0 : (throw Excpt_Assertion(__STRING(expr),__FILE__,__ASSERT_FUNCTION,__LINE__),1) );

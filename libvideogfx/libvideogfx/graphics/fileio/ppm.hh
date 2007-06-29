@@ -68,8 +68,20 @@ namespace videogfx {
   /* Write luminance part of YUV image into PPM P5-type file.
    * NOTE: the chrominance will simply be ignored.
    */
-  void WriteImage_PPM(const Image<Pixel>&,std::ostream& stream);
-  void WriteImage_PPM(const Image<Pixel>&,const char* filename);
+  void WriteImage_PPM(std::ostream& stream, const Image<Pixel>&);
+  void WriteImage_PPM(const char* filename, const Image<Pixel>&);
+
+  // next two are obsolete
+  inline void WriteImage_PPM(const Image<Pixel>& img, std::ostream& stream)
+  {
+    std::cerr << "you're using the old syntax of libvideogfx::WriteImage_PPM()\n";
+    WriteImage_PPM(stream,img);
+  }
+  inline void WriteImage_PPM(const Image<Pixel>& img, const char* filename)
+  {
+    std::cerr << "you're using the old syntax of libvideogfx::WriteImage_PPM()\n";
+    WriteImage_PPM(filename,img);
+  }
 
 
   void WritePPM6(const Bitmap<Pixel>& r, const Bitmap<Pixel>& g, const Bitmap<Pixel>& b, std::ostream&);

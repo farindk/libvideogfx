@@ -46,24 +46,25 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ********************************************************************************/
 
-#include <libvideogfx/unified_reader.hh>
-
-
-#if 0
-#ifndef LIBVIDEOGFX_GRAPHICS_FILEIO_UNIFIED_LOADER_HH
-#define LIBVIDEOGFX_GRAPHICS_FILEIO_UNIFIED_LOADER_HH
+#ifndef LIBVIDEOGFX_GRAPHICS_FILEIO_UNIFIED_READER_HH
+#define LIBVIDEOGFX_GRAPHICS_FILEIO_UNIFIED_READER_HH
 
 #include <libvideogfx/graphics/datatypes/image.hh>
+#include <libvideogfx/graphics/fileio/base.hh>
 
 namespace videogfx {
 
-  class LoaderPlugin
+  /* A ReaderStage implements a file loader or an image filter.
+   * ReaderStages can be concatenated to a chain of filters vis SetPrevious().
+   */
+  class ReaderStage
   {
   public:
-    LoaderPlugin() : prev(NULL) { }
-    virtual ~LoaderPlugin() { if (prev) delete prev; }
+    ReaderStage() : prev(NULL) { }
+    virtual ~ReaderStage() { if (prev) delete prev; }
 
-    void SetPrevious(LoaderPlugin* previous);
+    /* Set the stage that generates the input for the current stage. */
+    void SetPrevious(ReaderStage* previous);
 
     virtual int  AskNFrames() const = 0;
     virtual bool IsEOF() const = 0;
@@ -72,31 +73,45 @@ namespace videogfx {
     virtual void ReadImage(Image<Pixel>&) = 0;
 
   protected:
-    LoaderPlugin* prev;
+    ReaderStage* prev;
   };
 
 
-  class FileIOFactory
+  /* Allocate and configure a ReaderStage based on a specification string.
+     If the ReaderStageFactory object recognizes the first option in the
+     specification string, it removes these options and returns a
+     corresponding ReaderStage. Otherwise, it returns NULL and leaves
+     the specification string unmodified.
+
+     The Factory is a singleton class. Derived classes should not be exported
+     and exactly one object should be allocated. This object will register
+     itself as plugin.
+  */
+  class ReaderStageFactory
   {
   public:
-    FileIOFactory();
-    virtual ~FileIOFactory() { }
+    ReaderStageFactory();
+    virtual ~ReaderStageFactory() { }
 
     /* Parse the specification. If the loader factory can handle it, it removes
        the option from the specification and appends it to the plugin pipeline. */
-    virtual LoaderPlugin* ParseSpec(char** spec) const = 0;
-    virtual const char* Name() const { return "noname"; }
+    virtual ReaderStage* ParseSpec(char** spec) const = 0;
+    virtual const char* AskName() const { return "noname"; }
   };
 
 
-#define MAX_LOADER_PLUGINS 100
+#define MAX_READER_PLUGINS 100
+#define UnifiedImageLoader UnifiedImageReader
 
-  class UnifiedImageLoader
+  /* A universal loader that uses a specification string to build a loader pipeline.
+     The available loaders can be extended with plugins that implement a ReaderStageFactory.
+   */
+  class UnifiedImageReader : public ImageReader
   {
   public:
-    UnifiedImageLoader() : d_framenr(0), d_loader_pipeline(NULL),
-			   d_colorspace(Colorspace_Invalid), d_chroma(Chroma_Invalid) { width=height=0; }
-    ~UnifiedImageLoader() { if (d_loader_pipeline) delete d_loader_pipeline; }
+    UnifiedImageReader() : d_loader_pipeline(NULL), d_colorspace(Colorspace_Invalid), d_chroma(Chroma_Invalid),
+			   d_framenr(0) { width=height=0; }
+    ~UnifiedImageReader() { if (d_loader_pipeline) delete d_loader_pipeline; }
 
     bool SetInput(const char* input_specification);
     void SetTargetColorspace(Colorspace c = Colorspace_Invalid) { d_colorspace=c; }   // invalid -> keep input colorspace
@@ -107,28 +122,32 @@ namespace videogfx {
     int  AskNFrames() const;
     bool IsEOF() const;
 
-    bool SkipToImage(int nr);
+    void SkipToImage(int nr);
     int  AskFrameNr() const { return d_framenr; }
 
     void ReadImage(Image<Pixel>&);
-    void PeekImage(Image<Pixel>&);  // don't modify the image since it may still be used internally
+    void PeekImage(Image<Pixel>&);
 
+    ImageParam AskImageParam() const;
     int  AskWidth() const;
     int  AskHeight() const;
 
     // plugin handling
 
-    static void RegisterPlugin(const FileIOFactory*);
+    static const char* AskPluginName(int idx); // returns name of plugin or NULL if idx exceeds the number of plugins
 
   private:
+    friend class ReaderStageFactory;
+    static void RegisterPlugin(const ReaderStageFactory*);
+
     Image<Pixel> d_preload;
     int          d_framenr;
 
-    LoaderPlugin* d_loader_pipeline;
+    ReaderStage* d_loader_pipeline;
     Colorspace    d_colorspace;
     ChromaFormat  d_chroma;
 
-    static const FileIOFactory* s_plugins[MAX_LOADER_PLUGINS];
+    static const ReaderStageFactory* s_plugins[MAX_READER_PLUGINS];
     static int s_nplugins;
 
     int width,height;
@@ -136,13 +155,14 @@ namespace videogfx {
 
 
   char* ExtractNextOption(const char* spec); // returned memory has to be freed with delete[]
-  int  ExtractNextNumber(const char* spec);
-  bool MatchOption(const char* spec,const char* option);
-  bool CheckSuffix(const char* spec,const char* suffix);
-  void RemoveOption(char* spec);
-  bool ExtractSize(char* spec,int& w,int& h);
-  void ExtractSize(char* spec,int& w,int& h,int default_w,int default_h);
+  int   ExtractNextNumber(const char* spec);
+  bool  MatchOption(const char* spec,const char* option);
+  bool  CheckSuffix(const char* spec,const char* suffix);
+  void  RemoveOption(char* spec);
+  bool  ExtractSize(char* spec,int& w,int& h);
+  void  ExtractSize(char* spec,int& w,int& h,int default_w,int default_h);
+
+  char* ExpandMacros(char* spec);
 }
 
-#endif
 #endif

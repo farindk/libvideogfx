@@ -12,6 +12,8 @@ FILE=libvideogfx/init.hh
 
 DIE=0
 
+libtoolize --force
+
 (autoconf --version) < /dev/null > /dev/null 2>&1 || {
 	echo
 	echo "You must have autoconf installed to compile $PROJECT."

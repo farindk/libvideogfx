@@ -23,6 +23,7 @@ linux_headers =
 endif
 
 libvideogfx_graphics_fileio_la_SOURCES = \
+	base.hh \
 	jpeg.cc	\
 	jpeg.hh	\
 	png.cc	\
@@ -41,11 +42,14 @@ libvideogfx_graphics_fileio_la_SOURCES = \
 	yuv_vqeg.hh	\
 	imagesink.hh	\
 	imagesink.cc	\
-	unified_loader.hh \
-	unified_loader.cc \
+	unified_reader.hh \
+	unified_reader.cc \
+	unified_writer.hh \
+	unified_writer.cc \
 	$(linux_sources)
 
 libvideogfx_graphics_fileio_include_HEADERS = \
+	base.hh \
         uyvy.hh	\
 	jpeg.hh	\
 	png.hh	\
@@ -55,7 +59,8 @@ libvideogfx_graphics_fileio_include_HEADERS = \
 	yuv4mpeg.hh	\
 	yuv_vqeg.hh	\
 	imagesink.hh	\
-	unified_loader.hh \
+	unified_reader.hh \
+	unified_writer.hh \
 	$(linux_headers)
 
 INCLUDES = \

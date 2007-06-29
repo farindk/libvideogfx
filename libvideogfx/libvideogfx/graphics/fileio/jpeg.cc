@@ -43,7 +43,7 @@ namespace videogfx {
     AssertDescr(false,"JPEG support has not been compiled into libvideogfx.\n");
   }
 
-  void WriteImage_JPEG(const Image<Pixel>& img,const char* filename)
+  void WriteImage_JPEG(const char* filename,const Image<Pixel>& img)
   {
     AssertDescr(false,"JPEG support has not been compiled into libvideogfx.\n");
   }
@@ -142,7 +142,7 @@ namespace videogfx {
 
 
 
-  void WriteImage_JPEG(const Image<Pixel>& img,const char* filename)
+  void WriteImage_JPEG(const char* filename, const Image<Pixel>& img)
   {
     Assert(img.AskParam().colorspace == Colorspace_YUV);
 

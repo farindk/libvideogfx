@@ -48,7 +48,14 @@ namespace videogfx {
   bool CheckFileSize_UYVY(std::ifstream& istr,int w,int h);
 
   void ReadImage_UYVY (Image<Pixel>&,std::ifstream& istr,int w,int h);
-  void WriteImage_UYVY(const Image<Pixel>&,std::ofstream& ostr);
+  void WriteImage_UYVY(std::ofstream& ostr, const Image<Pixel>&);
+
+  // obsolete
+  inline void WriteImage_UYVY(const Image<Pixel>& img,std::ofstream& ostr)
+  {
+    std::cerr << "you're using the old syntax of libvideogfx::WriteImage_UYVY()\n";
+    WriteImage_UYVY(ostr,img);
+  }
 
 }
 

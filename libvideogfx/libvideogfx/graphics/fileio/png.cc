@@ -44,7 +44,7 @@ namespace videogfx {
     AssertDescr(false,"PNG support has not been compiled into libvideogfx.\n");
   }
 
-  void WriteImage_PNG(const Image<Pixel>& img, ostream& stream)
+  void WriteImage_PNG(ostream& stream, const Image<Pixel>& img)
   {
     AssertDescr(false,"PNG support has not been compiled into libvideogfx.\n");
   }
@@ -292,7 +292,7 @@ namespace videogfx {
     delete[] row_pointers;
   }
     
-  void WriteImage_PNG(const Image<Pixel>& img, ostream& os)
+  void WriteImage_PNG(ostream& os, const Image<Pixel>& img)
   {
     /* Create and initialize the png_struct with the desired error handler
      * functions.  If you want to use the default stderr and longjump method,
@@ -443,7 +443,7 @@ namespace videogfx {
     ReadImage_PNG(img, ifs);
   }
 
-  void WriteImage_PNG(const Image<Pixel>& img, const char* filename)
+  void WriteImage_PNG(const char* filename, const Image<Pixel>& img)
   {
     ofstream ofs(filename, ios::out | ios::binary);
     Assert(ofs);

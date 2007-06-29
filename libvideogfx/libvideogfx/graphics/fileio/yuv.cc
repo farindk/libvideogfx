@@ -23,7 +23,7 @@
 namespace videogfx {
   using namespace std;
 
-  FileReader_YUV1::FileReader_YUV1()
+  ImageReader_YUV1::ImageReader_YUV1()
     : d_yuvstr(NULL), d_alphastr(NULL),
       d_interleavedUV(false),
       d_greyscale_input(false),
@@ -46,7 +46,7 @@ namespace videogfx {
   }
 
 
-  void FileReader_YUV1::Init()
+  void ImageReader_YUV1::Init()
   {
     if (d_initialized)
       return;
@@ -85,20 +85,20 @@ namespace videogfx {
 
 
 
-  int FileReader_YUV1::AskNFrames() const
+  int ImageReader_YUV1::AskNFrames() const
   {
     if (d_initialized)
       return d_nFrames;
 
-    (const_cast<FileReader_YUV1*>(this))->Init();
+    (const_cast<ImageReader_YUV1*>(this))->Init();
     return d_nFrames;
   }
 
 
 
-  bool FileReader_YUV1::IsEOF() const
+  bool ImageReader_YUV1::IsEOF() const
   {
-    (const_cast<FileReader_YUV1*>(this))->Init();
+    (const_cast<ImageReader_YUV1*>(this))->Init();
     if (d_yuvstr->eof())
       return true;
 
@@ -107,7 +107,7 @@ namespace videogfx {
 
 
 
-  void FileReader_YUV1::SkipToImage(int nr)
+  void ImageReader_YUV1::SkipToImage(int nr)
   {
     if (!d_initialized)
       Init();
@@ -122,7 +122,7 @@ namespace videogfx {
 
 
 
-  void FileReader_YUV1::ReadImage(Image<Pixel>& img)
+  void ImageReader_YUV1::ReadImage(Image<Pixel>& img)
   {
     if (!d_initialized)
       Init();
@@ -198,7 +198,7 @@ namespace videogfx {
 
 
 
-  FileWriter_YUV1::FileWriter_YUV1()
+  ImageWriter_YUV1::ImageWriter_YUV1()
     : d_yuvstr(NULL),
       d_alphastr(NULL),
       d_write_greyscale_as_color(false),
@@ -208,14 +208,14 @@ namespace videogfx {
   }
 
 
-  void FileWriter_YUV1::SkipToImage(int nr, const ImageParam& param)
+  void ImageWriter_YUV1::SkipToImage(int nr, const ImageParam& param)
   {
     d_yuvstr->seekp(nr*YUVFileFrameSize(param),ios::beg);
     if (d_alphastr) d_alphastr->seekp(nr * param.width * param.height , ios::beg);
   }
 
 
-  void FileWriter_YUV1::WriteImage(const Image<Pixel>& img)
+  void ImageWriter_YUV1::WriteImage(const Image<Pixel>& img)
   {
     ImageParam param = img.AskParam();
 

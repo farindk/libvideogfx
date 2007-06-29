@@ -36,13 +36,21 @@
 #define LIBVIDEOGFX_GRAPHICS_FILEIO_JPEG_HH
 
 #include <libvideogfx/graphics/datatypes/image.hh>
+#include <iostream>
 
 namespace videogfx {
 
   bool JPEG_Supported();
 
   void ReadImage_JPEG(Image<Pixel>&,const char* filename);
-  void WriteImage_JPEG(const Image<Pixel>&,const char* filename);
+  void WriteImage_JPEG(const char* filename,const Image<Pixel>&);
+
+  // obsolete
+  inline void WriteImage_JPEG(const Image<Pixel>& img,const char* filename)
+  {
+    std::cerr << "you're using the old syntax of libvideogfx::WriteImage_JPEG()\n";
+    WriteImage_JPEG(filename,img);
+  }
 
 }
 

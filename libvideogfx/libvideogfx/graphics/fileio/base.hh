@@ -1,21 +1,14 @@
 /*********************************************************************
-  png.hh
+  libvideogfx/graphics/fileio/base.hh
 
   purpose:
-    PNG file access routines.
-
-  notes:
 
   to do:
-   - handling of 16 bit data
-   - handling of YUV files
 
   author(s):
-   - Gerald Kuehne kuehne@informatik.uni-mannheim.de
+   - Dirk Farin, dirk.farin@gmx.de
 
   modifications:
-   03/May/2002 - Dirk Farin - added alpha channel support
-   02/May/2002 - Gerald Kuehne - first implementation
  ********************************************************************************
     LibVideoGfx - video processing library
     Copyright (C) 2002  Dirk Farin
@@ -35,32 +28,42 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ********************************************************************************/
 
-#ifndef LIBVIDEOGFX_GRAPHICS_FILEIO_PNG_HH
-#define LIBVIDEOGFX_GRAPHICS_FILEIO_PNG_HH
+#ifndef LIBVIDEOGFX_GRAPHICS_FILEIO_BASE_HH
+#define LIBVIDEOGFX_GRAPHICS_FILEIO_BASE_HH
+
+#include <fstream>
+#include <iostream>
 
 #include <libvideogfx/graphics/datatypes/image.hh>
-#include <iostream>
 
 namespace videogfx {
 
-  bool PNG_Supported();
 
-  void ReadImage_PNG(Image<Pixel>& img, std::istream& stream);
-  void WriteImage_PNG(std::ostream& stream,const Image<Pixel>& img);
-  void ReadImage_PNG(Image<Pixel>& img, const char* filename);
-  void WriteImage_PNG(const char* filename,const Image<Pixel>& img);
+  class ImageReader
+  {
+  public:
+    virtual ~ImageReader() { }
 
-  // obsolete
-  inline void WriteImage_PNG(const Image<Pixel>& img, std::ostream& stream)
+    virtual ImageParam AskImageParam() const = 0;
+    virtual int  AskNFrames() const { return INT_MAX; } // endless stream
+    virtual bool IsEOF() const { return false; } // endless stream
+
+    virtual void ReadImage(Image<Pixel>&) = 0;
+    virtual void SkipToImage(int nr)
+    { AssertDescr(false, "frame-skipping not implemented"); }
+
+  };
+
+
+
+  class ImageWriter
   {
-    std::cerr << "you're using the old syntax of libvideogfx::WriteImage_PNG()\n";
-    WriteImage_PNG(stream,img);
-  }
-  inline void WriteImage_PNG(const Image<Pixel>& img, const char* filename)
-  {
-    std::cerr << "you're using the old syntax of libvideogfx::WriteImage_PNG()\n";
-    WriteImage_PNG(filename,img);
-  }
+  public:
+    virtual ~ImageWriter() { }
+
+    virtual void WriteImage(const Image<Pixel>&) = 0;
+  };
+
 }
 
 #endif

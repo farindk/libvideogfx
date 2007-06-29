@@ -1,6 +1,3 @@
-
-#if 0
-
 /********************************************************************************
     LibVideoGfx - video processing library
     Copyright (C) 2004  Dirk Farin
@@ -24,11 +21,8 @@
 #define _GNU_SOURCE
 #endif
 
-#include "config.h"
-#include "libvideogfx/graphics/fileio/unified_loader.hh"
-#if LINUX
-#  include "libvideogfx/graphics/fileio/mplayer.hh"
-#endif
+#include "libvideogfx/graphics/fileio/unified_reader.hh"
+#include "libvideogfx/graphics/fileio/mplayer.hh"
 #include "libvideogfx/graphics/fileio/png.hh"
 #include "libvideogfx/graphics/fileio/ppm.hh"
 #include "libvideogfx/graphics/fileio/uyvy.hh"
@@ -50,14 +44,16 @@
 namespace videogfx {
   using namespace std;
 
-  const FileIOFactory* UnifiedImageLoader::s_plugins[MAX_LOADER_PLUGINS];
-  int UnifiedImageLoader::s_nplugins;
+  const ReaderStageFactory* UnifiedImageReader::s_plugins[MAX_READER_PLUGINS];
+  int UnifiedImageReader::s_nplugins;
+
+  static const char* configuration_file = "%s/.libvideogfxrc";
 
 
   static char* ExtractNextMacroOption(const char* spec,char& nextc);
   static void RemoveMacroOption(char* spec);
 
-  static char* ExpandMacros(char* spec)
+  char* ExpandMacros(char* spec)
   {
     //cout << "----------- start (" << spec << ") -------------\n";
 
@@ -75,8 +71,9 @@ namespace videogfx {
 
 	if (option[0]=='=') // is a macro
 	  {
-	    char buf[1000];
-	    sprintf(buf,"%s/.libvideogfxrc",getenv("HOME"));
+#define MAX_RCPATH_LEN 500
+	    char buf[MAX_RCPATH_LEN];
+	    snprintf(buf,MAX_RCPATH_LEN,configuration_file,getenv("HOME"));
 
 	    FILE* fh = fopen(buf,"r");
 	    if (!fh)
@@ -157,20 +154,28 @@ namespace videogfx {
 
 
 
-  void LoaderPlugin::SetPrevious(LoaderPlugin* previous)
+  void ReaderStage::SetPrevious(ReaderStage* previous)
   {
     if (prev) prev->SetPrevious(previous);
     else prev = previous;
   }
 
-  void UnifiedImageLoader::RegisterPlugin(const FileIOFactory* fact)
+  void UnifiedImageReader::RegisterPlugin(const ReaderStageFactory* fact)
   {
-    Assert(s_nplugins < MAX_LOADER_PLUGINS);
+    Assert(s_nplugins < MAX_READER_PLUGINS);
     s_plugins[s_nplugins++] = fact;
   }
 
+  const char* UnifiedImageReader::AskPluginName(int idx)
+  {
+    if (idx >= s_nplugins)
+      return NULL;
+    else
+      return s_plugins[idx]->AskName();
+  }
 
-  bool UnifiedImageLoader::SetInput(const char* input_specification)
+
+  bool UnifiedImageReader::SetInput(const char* input_specification)
   {
     char* speccopy = new char[strlen(input_specification)+1];
     strcpy(speccopy,input_specification);
@@ -188,7 +193,7 @@ namespace videogfx {
 	bool found_one = false;
 	for (int i=0;i<s_nplugins;i++)
 	  {
-	    LoaderPlugin* newpipe = s_plugins[i]->ParseSpec(&spec);
+	    ReaderStage* newpipe = s_plugins[i]->ParseSpec(&spec);
 	    if (newpipe)
 	      {
 		newpipe->SetPrevious(d_loader_pipeline);
@@ -200,7 +205,7 @@ namespace videogfx {
 
 	if (!found_one)
 	  {
-	    delete d_loader_pipeline;
+	    if (d_loader_pipeline) delete d_loader_pipeline;
 	    d_loader_pipeline=NULL;
 	    delete[] spec;
 	    return false;
@@ -212,23 +217,27 @@ namespace videogfx {
   }
 
 
-  int  UnifiedImageLoader::AskNFrames() const { Assert(d_loader_pipeline); return d_loader_pipeline->AskNFrames(); }
-  bool UnifiedImageLoader::IsEOF() const { Assert(d_loader_pipeline); return d_loader_pipeline->IsEOF(); }
-
-
-  bool UnifiedImageLoader::SkipToImage(int nr)
+  ImageParam UnifiedImageReader::AskImageParam() const
   {
-    if (d_framenr==nr)
-      return true;
+    Image<Pixel> img;
+    const_cast<UnifiedImageReader*>(this)->PeekImage(img);
+    return img.AskParam();
+  }
 
+  int  UnifiedImageReader::AskNFrames() const { Assert(d_loader_pipeline); return d_loader_pipeline->AskNFrames(); }
+  bool UnifiedImageReader::IsEOF() const { Assert(d_loader_pipeline); return d_loader_pipeline->IsEOF(); }
+
+
+  void UnifiedImageReader::SkipToImage(int nr)
+  {
     Assert(d_loader_pipeline);
     d_framenr = nr;
-    d_preload.Release();
-    return d_loader_pipeline->SkipToImage(nr);
+    bool success = d_loader_pipeline->SkipToImage(nr);
+    AssertDescr(success, "loader pipeline does not support skipping");
   }
 
 
-  void UnifiedImageLoader::ReadImage(Image<Pixel>& img)
+  void UnifiedImageReader::ReadImage(Image<Pixel>& img)
   {
     AssertDescr(d_loader_pipeline, "no loader specified");
 
@@ -255,7 +264,7 @@ namespace videogfx {
   }
 
 
-  void UnifiedImageLoader::PeekImage(Image<Pixel>& img)
+  void UnifiedImageReader::PeekImage(Image<Pixel>& img)
   {
     if (d_preload.IsEmpty())
       ReadImage(d_preload);
@@ -264,11 +273,11 @@ namespace videogfx {
   }
 
 
-  int  UnifiedImageLoader::AskWidth() const
+  int  UnifiedImageReader::AskWidth() const
   {
     if (width) return width;
 
-    UnifiedImageLoader* ncthis = const_cast<UnifiedImageLoader*>(this);
+    UnifiedImageReader* ncthis = const_cast<UnifiedImageReader*>(this);
 
     if (d_preload.IsEmpty())
       ncthis->ReadImage(ncthis->d_preload);
@@ -278,11 +287,11 @@ namespace videogfx {
   }
 
 
-  int  UnifiedImageLoader::AskHeight() const
+  int  UnifiedImageReader::AskHeight() const
   {
     if (height) return height;
 
-    UnifiedImageLoader* ncthis = const_cast<UnifiedImageLoader*>(this);
+    UnifiedImageReader* ncthis = const_cast<UnifiedImageReader*>(this);
 
     if (d_preload.IsEmpty())
       ncthis->ReadImage(ncthis->d_preload);
@@ -293,7 +302,7 @@ namespace videogfx {
 
 
 
-  FileIOFactory::FileIOFactory() { UnifiedImageLoader::RegisterPlugin(this); }
+  ReaderStageFactory::ReaderStageFactory() { UnifiedImageReader::RegisterPlugin(this); }
 
 
   char* ExtractNextOption(const char* spec)
@@ -426,12 +435,12 @@ namespace videogfx {
   // ------------------------------------------------------------------------------
 
 
-  class LoaderPlugin_RGB : public LoaderPlugin
+  class ReaderStage_RGB : public ReaderStage
   {
   public:
-    LoaderPlugin_RGB() { id=0; }
+    ReaderStage_RGB() { id=0; }
 
-    int  AskNFrames() const { return 9999999; }
+    int  AskNFrames() const { return INT_MAX; }
     bool IsEOF() const { return false; }
 
     bool SkipToImage(int nr) { id = (nr%3); }
@@ -451,10 +460,10 @@ namespace videogfx {
   };
 
 
-  class FileIOFactory_RGB : public FileIOFactory
+  static class ReaderStageFactory_RGB : public ReaderStageFactory
   {
   public:
-    LoaderPlugin* ParseSpec(char** spec) const
+    ReaderStage* ParseSpec(char** spec) const
     {
       if (MatchOption(*spec, "rgb"))
 	{
@@ -462,7 +471,7 @@ namespace videogfx {
 	  int w,h;
 	  ExtractSize(*spec,w,h,352,288);
 	  
-	  LoaderPlugin_RGB* pl = new LoaderPlugin_RGB;
+	  ReaderStage_RGB* pl = new ReaderStage_RGB;
 	  pl->SetSize(w,h);
 	  return pl;
 	}
@@ -479,11 +488,11 @@ namespace videogfx {
   // ------------------------------------------------------------------------------
 
 
-#if LINUX
-  class LoaderPlugin_MPlayer : public LoaderPlugin
+
+  class ReaderStage_MPlayer : public ReaderStage
   {
   public:
-    int  AskNFrames() const { return 999999; }
+    int  AskNFrames() const { return INT_MAX; }
     bool IsEOF() const { return reader.IsEOF(); }
 
     bool SkipToImage(int nr) { reader.SkipToImage(nr); return true; } // only forward seek
@@ -496,10 +505,10 @@ namespace videogfx {
   };
 
 
-  class FileIOFactory_MPlayer : public FileIOFactory
+  static class ReaderStageFactory_MPlayer : public ReaderStageFactory
   {
   public:
-    LoaderPlugin* ParseSpec(char** spec) const
+    ReaderStage* ParseSpec(char** spec) const
     {
       if (CheckSuffix(*spec, "vdr") ||
 	  CheckSuffix(*spec, "avi") ||
@@ -511,7 +520,7 @@ namespace videogfx {
 	  CheckSuffix(*spec, "mpeg") ||
 	  CheckSuffix(*spec, "wmf"))
 	{
-	  LoaderPlugin_MPlayer* pl = new LoaderPlugin_MPlayer;
+	  ReaderStage_MPlayer* pl = new ReaderStage_MPlayer;
 	  char* name = ExtractNextOption(*spec);
 	  pl->SetInput(name);
 
@@ -527,24 +536,25 @@ namespace videogfx {
     const char* Name() const { return "loader: mplayer pipe"; }
 
   } singleton_mplayer;
-#endif
+
 
 
   // ------------------------------------------------------------------------------
 
 
+#define MAX_FILENAME_LEN 1000
 
-  class LoaderPlugin_SglPictures : public LoaderPlugin
+  class ReaderStage_SglPictures : public ReaderStage
   {
   public:
-    LoaderPlugin_SglPictures() : d_next(0) { d_filename_template[0]=0; }
+    ReaderStage_SglPictures() : d_next(0) { d_filename_template[0]=0; }
 
     enum FileFormat { Format_Undefined, Format_JPEG, Format_PNG, Format_PPM, Format_UYVY };
 
-    void SetFilenameTemplate(const char* t) { Assert(strlen(t)<900); strcpy(d_filename_template,t); }
-    void SetFormat(LoaderPlugin_SglPictures::FileFormat f) { d_format=f; }
+    void SetFilenameTemplate(const char* t) { Assert(strlen(t)<MAX_FILENAME_LEN); strcpy(d_filename_template,t); }
+    void SetFormat(ReaderStage_SglPictures::FileFormat f) { d_format=f; }
 
-    int  AskNFrames() const { return 999999; }
+    int  AskNFrames() const { return INT_MAX; }
     bool IsEOF() const
     {
       GenerateFilename();
@@ -562,10 +572,10 @@ namespace videogfx {
 
       switch (d_format)
 	{
-	case LoaderPlugin_SglPictures::Format_JPEG: ReadImage_JPEG(img, d_filename); break;
-	case LoaderPlugin_SglPictures::Format_PNG:  ReadImage_PNG (img, d_filename); break;
-	case LoaderPlugin_SglPictures::Format_PPM:  ReadImage_PPM (img, d_filename); break;
-	case LoaderPlugin_SglPictures::Format_UYVY:
+	case ReaderStage_SglPictures::Format_JPEG: ReadImage_JPEG(img, d_filename); break;
+	case ReaderStage_SglPictures::Format_PNG:  ReadImage_PNG (img, d_filename); break;
+	case ReaderStage_SglPictures::Format_PPM:  ReadImage_PPM (img, d_filename); break;
+	case ReaderStage_SglPictures::Format_UYVY:
 	  {
 	    ifstream istr(d_filename);
 	    ReadImage_UYVY (img, istr, 704,568); // TODO
@@ -580,33 +590,36 @@ namespace videogfx {
     int d_next;
     FileFormat d_format;
 
-    char d_filename[1000];
-    char d_filename_template[1000];
+    char d_filename[MAX_FILENAME_LEN];
+    char d_filename_template[MAX_FILENAME_LEN];
 
     void GenerateFilename() const
-    { Assert(strlen(d_filename_template)<900); sprintf((char*)d_filename,d_filename_template,d_next); }
+    {
+      Assert(strlen(d_filename_template)<MAX_FILENAME_LEN);
+      snprintf((char*)d_filename,MAX_FILENAME_LEN,d_filename_template,d_next);
+    }
   };
 
 
-  class FileIOFactory_SglPictures : public FileIOFactory
+  static class ReaderStageFactory_SglPictures : public ReaderStageFactory
   {
   public:
-    LoaderPlugin* ParseSpec(char** spec) const
+    ReaderStage* ParseSpec(char** spec) const
     {
-      LoaderPlugin_SglPictures::FileFormat f = LoaderPlugin_SglPictures::Format_Undefined;
+      ReaderStage_SglPictures::FileFormat f = ReaderStage_SglPictures::Format_Undefined;
 
       if (CheckSuffix(*spec, "jpeg") || CheckSuffix(*spec, "jpg"))
-	f = LoaderPlugin_SglPictures::Format_JPEG;
+	f = ReaderStage_SglPictures::Format_JPEG;
       else if (CheckSuffix(*spec, "pgm") || CheckSuffix(*spec, "ppm"))
-	f = LoaderPlugin_SglPictures::Format_PPM;
+	f = ReaderStage_SglPictures::Format_PPM;
       else if (CheckSuffix(*spec, "png"))
-	f = LoaderPlugin_SglPictures::Format_PNG;
+	f = ReaderStage_SglPictures::Format_PNG;
       else if (CheckSuffix(*spec, "uyvy"))
-	f = LoaderPlugin_SglPictures::Format_UYVY;
+	f = ReaderStage_SglPictures::Format_UYVY;
 
-      if (f != LoaderPlugin_SglPictures::Format_Undefined)
+      if (f != ReaderStage_SglPictures::Format_Undefined)
 	{
-	  LoaderPlugin_SglPictures* pl = new LoaderPlugin_SglPictures;
+	  ReaderStage_SglPictures* pl = new ReaderStage_SglPictures;
 	  char* name = ExtractNextOption(*spec);
 	  pl->SetFilenameTemplate(name);
 	  pl->SetFormat(f);
@@ -629,10 +642,10 @@ namespace videogfx {
 
 
 
-  class LoaderPlugin_YUV1 : public LoaderPlugin
+  class ReaderStage_YUV1 : public ReaderStage
   {
   public:
-    LoaderPlugin_YUV1() { }
+    ReaderStage_YUV1() { }
 
     void SetYUVParams(const char* filename, const ImageParam& s)
     {
@@ -650,7 +663,7 @@ namespace videogfx {
 
   private:
     ifstream istr;
-    FileReader_YUV1 reader;
+    ImageReader_YUV1 reader;
     ImageParam spec;
   };
 
@@ -704,6 +717,7 @@ namespace videogfx {
     return false;
   }
 
+
   // Yannick Morvan: This routine expects c444 or c420 or c422 in char*str
   // I must say that not too much checking is made
   static ChromaFormat ScanForChroma(const char* str)
@@ -716,16 +730,16 @@ namespace videogfx {
   }
 
 
-  class FileIOFactory_YUV1 : public FileIOFactory
+  static class ReaderStageFactory_YUV1 : public ReaderStageFactory
   {
   public:
-    LoaderPlugin* ParseSpec(char** spec) const
+    ReaderStage* ParseSpec(char** spec) const
     {
-      LoaderPlugin_SglPictures::FileFormat f = LoaderPlugin_SglPictures::Format_Undefined;
+      ReaderStage_SglPictures::FileFormat f = ReaderStage_SglPictures::Format_Undefined;
 
       if (CheckSuffix(*spec, "yuv") || CheckSuffix(*spec, "grey"))
 	{
-	  LoaderPlugin_YUV1* pl = new LoaderPlugin_YUV1;
+	  ReaderStage_YUV1* pl = new ReaderStage_YUV1;
 	  char* name = ExtractNextOption(*spec);
 	  ImageParam param;
 	  bool greyscale = CheckSuffix(*spec, "grey");
@@ -774,7 +788,7 @@ namespace videogfx {
       }
   }
 
-  class LoaderPlugin_Quarter : public LoaderPlugin
+  class ReaderStage_Quarter : public ReaderStage
   {
   public:
     int  AskNFrames() const { Assert(prev); return prev->AskNFrames(); }
@@ -806,15 +820,15 @@ namespace videogfx {
   };
 
 
-  class FileIOFactory_Quarter : public FileIOFactory
+  static class ReaderStageFactory_Quarter : public ReaderStageFactory
   {
   public:
-    LoaderPlugin* ParseSpec(char** spec) const
+    ReaderStage* ParseSpec(char** spec) const
     {
       if (MatchOption(*spec, "quarter"))
 	{
 	  RemoveOption(*spec);
-	  return new LoaderPlugin_Quarter;
+	  return new ReaderStage_Quarter;
 	}
       else
 	return NULL;
@@ -830,10 +844,10 @@ namespace videogfx {
 
 
 
-  class LoaderPlugin_Crop : public LoaderPlugin
+  class ReaderStage_Crop : public ReaderStage
   {
   public:
-    LoaderPlugin_Crop() { l=r=t=b=0; }
+    ReaderStage_Crop() { l=r=t=b=0; }
 
     void SetParam(int ll,int rr,int tt,int bb) { l=ll; r=rr; t=tt; b=bb; }
 
@@ -856,15 +870,15 @@ namespace videogfx {
   };
 
 
-  class FileIOFactory_Crop : public FileIOFactory
+  static class ReaderStageFactory_Crop : public ReaderStageFactory
   {
   public:
-    LoaderPlugin* ParseSpec(char** spec) const
+    ReaderStage* ParseSpec(char** spec) const
     {
       if (MatchOption(*spec, "crop"))
 	{
 	  RemoveOption(*spec);
-	  LoaderPlugin_Crop* crop = new LoaderPlugin_Crop;
+	  ReaderStage_Crop* crop = new ReaderStage_Crop;
 	  int l = ExtractNextNumber(*spec); RemoveOption(*spec);
 	  int r = ExtractNextNumber(*spec); RemoveOption(*spec);
 	  int t = ExtractNextNumber(*spec); RemoveOption(*spec);
@@ -886,10 +900,10 @@ namespace videogfx {
 
 
 
-  class LoaderPlugin_Resize : public LoaderPlugin
+  class ReaderStage_Resize : public ReaderStage
   {
   public:
-    LoaderPlugin_Resize() { w=h=0; }
+    ReaderStage_Resize() { w=h=0; }
 
     void SetParam(int ww,int hh) { w=ww; h=hh; }
 
@@ -916,15 +930,15 @@ namespace videogfx {
   };
 
 
-  class FileIOFactory_Resize : public FileIOFactory
+  static class ReaderStageFactory_Resize : public ReaderStageFactory
   {
   public:
-    LoaderPlugin* ParseSpec(char** spec) const
+    ReaderStage* ParseSpec(char** spec) const
     {
       if (MatchOption(*spec, "resize"))
 	{
 	  RemoveOption(*spec);
-	  LoaderPlugin_Resize* resize = new LoaderPlugin_Resize;
+	  ReaderStage_Resize* resize = new ReaderStage_Resize;
 	  int w = ExtractNextNumber(*spec); RemoveOption(*spec);
 	  int h = ExtractNextNumber(*spec); RemoveOption(*spec);
 	  resize->SetParam(w,h);
@@ -943,21 +957,21 @@ namespace videogfx {
   // ------------------------------------------------------------------------------
 
 
-  class LoaderPlugin_SeekCache : public LoaderPlugin
+  class ReaderStage_SeekCache : public ReaderStage
   {
   public:
-    LoaderPlugin_SeekCache() : d_initialized(false) { }
-    ~LoaderPlugin_SeekCache() { unlink("cache.yuv"); }
+    ReaderStage_SeekCache() : d_initialized(false) { }
+    ~ReaderStage_SeekCache() { unlink("cache.yuv"); }
 
     int  AskNFrames() const
     {
-      const_cast<LoaderPlugin_SeekCache*>(this)->Initialize();
+      const_cast<ReaderStage_SeekCache*>(this)->Initialize();
       return d_reader.AskNFrames();
     }
 
     bool IsEOF() const
     {
-      const_cast<LoaderPlugin_SeekCache*>(this)->Initialize();
+      const_cast<ReaderStage_SeekCache*>(this)->Initialize();
       return d_reader.IsEOF();
     }
 
@@ -1018,20 +1032,20 @@ namespace videogfx {
     ImageParam d_spec;
 
     ifstream d_istr;
-    FileReader_YUV1 d_reader;
-    FileWriter_YUV1 d_writer;
+    ImageReader_YUV1 d_reader;
+    ImageWriter_YUV1 d_writer;
   };
 
 
-  class FileIOFactory_SeekCache : public FileIOFactory
+  static class ReaderStageFactory_SeekCache : public ReaderStageFactory
   {
   public:
-    LoaderPlugin* ParseSpec(char** spec) const
+    ReaderStage* ParseSpec(char** spec) const
     {
       if (MatchOption(*spec, "cache"))
 	{
 	  RemoveOption(*spec);
-	  LoaderPlugin_SeekCache* cache = new LoaderPlugin_SeekCache;
+	  ReaderStage_SeekCache* cache = new ReaderStage_SeekCache;
 	  //int f = ExtractNextNumber(*spec); RemoveOption(*spec);
 	  //decim->SetFactor(f);
 	  return cache;
@@ -1049,10 +1063,10 @@ namespace videogfx {
   // ------------------------------------------------------------------------------
 
 
-  class LoaderPlugin_Decimate : public LoaderPlugin
+  class ReaderStage_Decimate : public ReaderStage
   {
   public:
-    LoaderPlugin_Decimate() { d_factor=1; }
+    ReaderStage_Decimate() { d_factor=1; }
 
     void SetFactor(int f) { d_factor=f; }
 
@@ -1071,15 +1085,15 @@ namespace videogfx {
   };
 
 
-  class FileIOFactory_Decimate : public FileIOFactory
+  static class ReaderStageFactory_Decimate : public ReaderStageFactory
   {
   public:
-    LoaderPlugin* ParseSpec(char** spec) const
+    ReaderStage* ParseSpec(char** spec) const
     {
       if (MatchOption(*spec, "decimate"))
 	{
 	  RemoveOption(*spec);
-	  LoaderPlugin_Decimate* decim = new LoaderPlugin_Decimate;
+	  ReaderStage_Decimate* decim = new ReaderStage_Decimate;
 	  int f = ExtractNextNumber(*spec); RemoveOption(*spec);
 	  decim->SetFactor(f);
 	  return decim;
@@ -1097,10 +1111,10 @@ namespace videogfx {
   // ------------------------------------------------------------------------------
 
 
-  class LoaderPlugin_Start : public LoaderPlugin
+  class ReaderStage_Start : public ReaderStage
   {
   public:
-    LoaderPlugin_Start() { d_start=0; d_startupread=0; }
+    ReaderStage_Start() { d_start=0; d_startupread=0; }
 
     void SetStartFrame(int s) { d_start=s; d_startupread=s; }
 
@@ -1125,15 +1139,15 @@ namespace videogfx {
   };
 
 
-  class FileIOFactory_Start : public FileIOFactory
+  static class ReaderStageFactory_Start : public ReaderStageFactory
   {
   public:
-    LoaderPlugin* ParseSpec(char** spec) const
+    ReaderStage* ParseSpec(char** spec) const
     {
       if (MatchOption(*spec, "start"))
 	{
 	  RemoveOption(*spec);
-	  LoaderPlugin_Start* startf = new LoaderPlugin_Start;
+	  ReaderStage_Start* startf = new ReaderStage_Start;
 	  int f = ExtractNextNumber(*spec); RemoveOption(*spec);
 	  startf->SetStartFrame(f);
 	  return startf;
@@ -1151,10 +1165,10 @@ namespace videogfx {
   // ------------------------------------------------------------------------------
 
 
-  class LoaderPlugin_Length : public LoaderPlugin
+  class ReaderStage_Length : public ReaderStage
   {
   public:
-    LoaderPlugin_Length() { d_curr=0; d_len=999999; }
+    ReaderStage_Length() { d_curr=0; d_len=INT_MAX; }
 
     void SetSeqLength(int l) { d_len=l; }
 
@@ -1174,15 +1188,15 @@ namespace videogfx {
   };
 
 
-  class FileIOFactory_Length : public FileIOFactory
+  static class ReaderStageFactory_Length : public ReaderStageFactory
   {
   public:
-    LoaderPlugin* ParseSpec(char** spec) const
+    ReaderStage* ParseSpec(char** spec) const
     {
       if (MatchOption(*spec, "length"))
 	{
 	  RemoveOption(*spec);
-	  LoaderPlugin_Length* len = new LoaderPlugin_Length;
+	  ReaderStage_Length* len = new ReaderStage_Length;
 	  int f = ExtractNextNumber(*spec); RemoveOption(*spec);
 	  len->SetSeqLength(f);
 	  return len;
@@ -1196,16 +1210,16 @@ namespace videogfx {
   } singleton_seqlength;
 
 
-  class FileIOFactory_Range : public FileIOFactory
+  static class ReaderStageFactory_Range : public ReaderStageFactory
   {
   public:
-    LoaderPlugin* ParseSpec(char** spec) const
+    ReaderStage* ParseSpec(char** spec) const
     {
       if (MatchOption(*spec, "range"))
 	{
 	  RemoveOption(*spec);
-	  LoaderPlugin_Length* len   = new LoaderPlugin_Length;
-	  LoaderPlugin_Start*  start = new LoaderPlugin_Start;
+	  ReaderStage_Length* len   = new ReaderStage_Length;
+	  ReaderStage_Start*  start = new ReaderStage_Start;
 	  int s = ExtractNextNumber(*spec); RemoveOption(*spec);
 	  int e = ExtractNextNumber(*spec); RemoveOption(*spec);
 	  start->SetStartFrame(s);
@@ -1225,11 +1239,11 @@ namespace videogfx {
   // ------------------------------------------------------------------------------
 
 
-  class LoaderPlugin_Alpha : public LoaderPlugin
+  class ReaderStage_Alpha : public ReaderStage
   {
   public:
-    LoaderPlugin_Alpha() { d_framenr=0; fh=NULL; }
-    ~LoaderPlugin_Alpha() { if (fh) fclose(fh); }
+    ReaderStage_Alpha() { d_framenr=0; fh=NULL; }
+    ~ReaderStage_Alpha() { if (fh) fclose(fh); }
 
     void SetAlphaStream(const char* name) { fh=fopen(name,"rb"); }
 
@@ -1279,15 +1293,15 @@ namespace videogfx {
   };
 
 
-  class FileIOFactory_Alpha : public FileIOFactory
+  static class ReaderStageFactory_Alpha : public ReaderStageFactory
   {
   public:
-    LoaderPlugin* ParseSpec(char** spec) const
+    ReaderStage* ParseSpec(char** spec) const
     {
       if (MatchOption(*spec, "alpha"))
 	{
 	  RemoveOption(*spec);
-	  LoaderPlugin_Alpha* alpha = new LoaderPlugin_Alpha;
+	  ReaderStage_Alpha* alpha = new ReaderStage_Alpha;
 	  char* name = ExtractNextOption(*spec); RemoveOption(*spec);
 	  alpha->SetAlphaStream(name);
 	  delete[] name;
@@ -1304,4 +1318,4 @@ namespace videogfx {
 
 }
 
-#endif
+

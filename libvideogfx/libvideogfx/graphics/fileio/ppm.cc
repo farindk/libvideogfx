@@ -133,14 +133,14 @@ namespace videogfx {
 
   // --- convenience function for PPM writing
 
-  void WriteImage_PPM(const Image<Pixel>& img,ostream& stream)
+  void WriteImage_PPM(ostream& stream, const Image<Pixel>& img)
   {
     FileWriter_PPM writer;
     writer.Write(img,stream);
   }
 
 
-  void WriteImage_PPM(const Image<Pixel>& img,const char* filename)
+  void WriteImage_PPM(const char* filename, const Image<Pixel>& img)
   {
     FileWriter_PPM writer;
     writer.WriteYUVAsGreyscale(true);

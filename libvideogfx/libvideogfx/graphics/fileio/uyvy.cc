@@ -86,7 +86,7 @@ namespace videogfx {
 
 
 
-  void WriteImage_UYVY(const Image<Pixel>& img,ofstream& ostr)
+  void WriteImage_UYVY(ofstream& ostr, const Image<Pixel>& img)
   {
     ImageParam param = img.AskParam();
 

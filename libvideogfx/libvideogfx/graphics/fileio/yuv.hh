@@ -68,11 +68,13 @@ namespace videogfx {
   int YUVFileFrameSize(const ImageParam& param);
 
 
-  class FileReader_YUV1
+#define FileReader_YUV1 ImageReader_YUV1
+
+  class ImageReader_YUV1
   {
   public:
-    FileReader_YUV1();
-    ~FileReader_YUV1() { }
+    ImageReader_YUV1();
+    ~ImageReader_YUV1() { }
 
     // initialization
 
@@ -111,11 +113,13 @@ namespace videogfx {
 
 
 
-  class FileWriter_YUV1
+#define FileWriter_YUV1 ImageWriter_YUV1
+
+  class ImageWriter_YUV1
   {
   public:
-    FileWriter_YUV1();
-    ~FileWriter_YUV1() { }
+    ImageWriter_YUV1();
+    ~ImageWriter_YUV1() { }
 
     void SetYUVStream(std::ostream& str)   { d_yuvstr   = &str; }
     void SetAlphaStream(std::ostream& str) { d_alphastr = &str; }
