@@ -75,6 +75,8 @@ namespace videogfx {
   };
 
 
+#define X11Win ImageWindow_Autorefresh_X11
+
   /* Enhanced ImageWindow_X11-class that can accept an image and that watches
      X11 events to automatically redraw itself.
      To get fully automatic redrawing you have to create a new thread that
@@ -95,6 +97,8 @@ namespace videogfx {
     // --- user interaction ---
 
     bool CheckForMouseMove(int& x,int& y);
+    int  CheckForMouseButton(int& x,int& y);  /* Returns 1 for left, 2 for middle, 3 for right, 0 if no button was pressed.
+						 Returns negative values for release events. */
 
     char CheckForKeypress();
     char WaitForKeypress();    // Image will be refreshed while waiting for the keypress.

@@ -213,7 +213,8 @@ namespace videogfx {
     XSetWMProperties(d_x11data->d_display, d_x11data->d_win, &windowName, &iconName,
 		     glob_argv,glob_argc, sizeh, wm_hints, classhint);
   
-    XSelectInput(d_x11data->d_display, d_x11data->d_win, ExposureMask|KeyPressMask|PointerMotionMask);
+    XSelectInput(d_x11data->d_display, d_x11data->d_win, ExposureMask|KeyPressMask|PointerMotionMask|
+		 ButtonPressMask|ButtonReleaseMask);
     XMapWindow(d_x11data->d_display,d_x11data->d_win);
     XFlush(d_x11data->d_display);
 
@@ -359,6 +360,24 @@ namespace videogfx {
       return false;
   }
 
+  int  ImageWindow_Autorefresh_X11::CheckForMouseButton(int& x,int& y)
+  {
+    XEvent event;
+    if (XCheckWindowEvent(AskDisplay(),AskWindow(),ButtonPressMask,&event))
+      {
+	x = event.xbutton.x;
+	y = event.xbutton.y;
+	return event.xbutton.button;
+      }
+    else if (XCheckWindowEvent(AskDisplay(),AskWindow(),ButtonReleaseMask,&event))
+      {
+	x = event.xbutton.x;
+	y = event.xbutton.y;
+	return -event.xbutton.button;
+      }
+    else
+      return 0;
+  }
 
   char ImageWindow_Autorefresh_X11::CheckForKeypress()
   {
