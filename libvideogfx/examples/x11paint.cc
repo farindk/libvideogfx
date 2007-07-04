@@ -1,5 +1,7 @@
+
 #include <iostream>
-#include <libvideogfx.hh>
+#include "../libvideogfx/x11/imgwin.hh"
+#include "../libvideogfx/graphics/draw/draw.hh"
 
 using namespace std;
 using namespace videogfx;

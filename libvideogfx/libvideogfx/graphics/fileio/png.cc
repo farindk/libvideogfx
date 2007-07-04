@@ -447,6 +447,6 @@ namespace videogfx {
   {
     ofstream ofs(filename, ios::out | ios::binary);
     Assert(ofs);
-    WriteImage_PNG(img, ofs);
+    WriteImage_PNG(ofs, img);
   }
 }
