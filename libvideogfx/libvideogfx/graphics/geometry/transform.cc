@@ -27,127 +27,150 @@
 namespace videogfx {
   using namespace std;
 
+
+  static Matrix4G ZorinMatrix(const Matrix4G* pts)
+  {
+    Matrix4G p1 = CrossProduct(CrossProduct(pts[0],pts[2])  , CrossProduct(pts[1],pts[3]));
+    Matrix4G p2 = CrossProduct(CrossProduct(pts[0],pts[1])  , CrossProduct(pts[2],pts[3]));
+    Matrix4G p3 = CrossProduct(CrossProduct(pts[0],pts[3])  , CrossProduct(pts[2],pts[1]));
+
+    Matrix4G mat(3,3);
+    for (int y=0;y<3;y++)
+      {
+	mat[y][0] = p1[y][0];
+	mat[y][1] = p2[y][0];
+	mat[y][2] = p3[y][0];
+      }
+
+    return mat;
+  }
+
+
   Matrix4G PerspFrom4PointCorrespondences(const Point2D<double>* start,
 					  const Point2D<double>* end)
   {
-    AssertDescr(0, "Will be implemented when 4x4 matrix inverse is ready");
-#if 0
-    gsl_vector* rhs      = gsl_vector_alloc(8);
-    gsl_matrix* matrix   = gsl_matrix_alloc(8,8);
-    gsl_permutation* per = gsl_permutation_calloc(8);
 
-    // build linear equation system to be solved
+#if 0
+    /*
+      NOTE/TODO: This function seems to be wrong... It does not even work for the simplest case...
+      It should be checked how the correct formulas look like, since it will be more efficient.
+
+      This function is based on cut-and-paste code from the article:
+      Jim Blinn: "Inferring Transforms", IEEE Computer Graphics and Applications, 1999
+    */
+
+    double U0 = start[0].x;
+    double U1 = start[1].x;
+    double U2 = start[2].x;
+    double U3 = start[3].x;
+    double V0 = start[0].y;
+    double V1 = start[1].y;
+    double V2 = start[2].y;
+    double V3 = start[3].y;
+
+    double X0 = end[0].x;
+    double X1 = end[1].x;
+    double X2 = end[2].x;
+    double X3 = end[3].x;
+    double Y0 = end[0].y;
+    double Y1 = end[1].y;
+    double Y2 = end[2].y;
+    double Y3 = end[3].y;
+
+    //Calculate elements of matrix Mst
+    //From four coordinate pairs
+    // (Ui Vi), (Zi Yi)
+    double U03 = U0-U3; double V03 = V0-V3;
+    double U13 = U1-U3; double V13 = V1-V3;
+    double U23 = U2-U3; double V23 = V2-V3;
+    double w0 = U13*V23 - U23*V13;
+    double w1 = U23*V03 - U03*V23;
+    double w2 = U03*V13 - U13*V03;
+    double Sa00 = Y1-Y2; double Sa10 = X2-X1;
+    double Sa01 = Y2-Y0; double Sa02 = Y0-Y1;
+    double Sa11 = X0-X2; double Sa12 = X1-X0;
+    double Sa20 = X1*Y2 - X2*Y1;
+    double Sa21 = X2*Y0 - X0*Y2;
+    double Sa22 = X0*Y1 - X1*Y0;
+    double z1 = X3*Sa01 + Y3*Sa11 + Sa21;
+    double z2 = X3*Sa02 + Y3*Sa12 + Sa22;
+    double z0 = Sa20+Sa21+Sa22 - z1 - z2;
+    double d0 = w0*z1*z2;
+    double d1 = w1*z2*z0;
+    double d2 = w2*z0*z1;
+    Sa00*=d0; Sa10*=d0; Sa20*=d0;
+    Sa01*=d1; Sa11*=d1; Sa21*=d1;
+    Sa02*=d2; Sa12*=d2; Sa22*=d2;
+
+    Matrix4G mat(3,3);
+
+    mat[0][0] = Sa00*U0 + Sa01*U1 + Sa02*U2;
+    mat[1][0] = Sa10*U0 + Sa11*U1 + Sa12*U2;
+    mat[2][0] = Sa20*U0 + Sa21*U1 + Sa22*U2;
+    mat[0][1] = Sa01*V0 + Sa01*V1 + Sa02*V2;
+    mat[1][1] = Sa11*V0 + Sa11*V1 + Sa12*V2;
+    mat[2][1] = Sa21*V0 + Sa21*V1 + Sa22*V2;
+    mat[0][2] = Sa00 + Sa01 + Sa02;
+    mat[1][2] = Sa10 + Sa11 + Sa12;
+    mat[2][2] = Sa20 + Sa21 + Sa22;
+
+    return mat;
+#endif
+
+    Matrix4G mats[4], mate[4];
 
     for (int i=0;i<4;i++)
       {
-	gsl_matrix_set(matrix,2*i  ,0,start[i].x);
-	gsl_matrix_set(matrix,2*i  ,1,start[i].y);
-	gsl_matrix_set(matrix,2*i  ,2,1         );
-	gsl_matrix_set(matrix,2*i  ,3,0         );
-	gsl_matrix_set(matrix,2*i  ,4,0         );
-	gsl_matrix_set(matrix,2*i  ,5,0         );
-	gsl_matrix_set(matrix,2*i  ,6,-start[i].x * end[i].x);
-	gsl_matrix_set(matrix,2*i  ,7,-start[i].y * end[i].x);
+	mats[i] = Matrix4G(3,1);
+	mate[i] = Matrix4G(3,1);
 
-	gsl_vector_set(rhs,2*i  ,end[i].x);
-
-	gsl_matrix_set(matrix,2*i+1,0,0         );
-	gsl_matrix_set(matrix,2*i+1,1,0         );
-	gsl_matrix_set(matrix,2*i+1,2,0         );
-	gsl_matrix_set(matrix,2*i+1,3,start[i].x);
-	gsl_matrix_set(matrix,2*i+1,4,start[i].y);
-	gsl_matrix_set(matrix,2*i+1,5,1         );
-	gsl_matrix_set(matrix,2*i+1,6,-start[i].x * end[i].y);
-	gsl_matrix_set(matrix,2*i+1,7,-start[i].y * end[i].y);
-
-	gsl_vector_set(rhs,2*i+1,end[i].y);
+	mats[i][0][0] = start[i].x;
+	mats[i][1][0] = start[i].y;
+	mats[i][2][0] = 1.0;
+	mate[i][0][0] = end[i].x;
+	mate[i][1][0] = end[i].y;
+	mate[i][2][0] = 1.0;
       }
 
-    // solve the equation system using LU-decomposition
-
-    int signum=0;
-    gsl_linalg_LU_decomp(matrix,per,&signum);
-    gsl_linalg_LU_svx(matrix,per,rhs);
-
-    // fill the perspective transformation fields
-
-    PerspTransformation t;
-    t.a[0][0] = gsl_vector_get(rhs,0);
-    t.a[0][1] = gsl_vector_get(rhs,1);
-    t.tx      = gsl_vector_get(rhs,2);
-    t.a[1][0] = gsl_vector_get(rhs,3);
-    t.a[1][1] = gsl_vector_get(rhs,4);
-    t.ty      = gsl_vector_get(rhs,5);
-    t.px      = gsl_vector_get(rhs,6);
-    t.py      = gsl_vector_get(rhs,7);
-
-    // cleanup
-
-    gsl_vector_free(rhs);
-    gsl_permutation_free(per);
-    gsl_matrix_free(matrix);
-
-    return t;
-#endif
+    return ZorinMatrix(mate) * ZorinMatrix(mats).Inverse();
   }
 
 
   Matrix4G AffineFrom3PointCorrespondences(const Point2D<double>* start,
 					   const Point2D<double>* end)
   {
-    AssertDescr(0, "AffineFrom3PointCorrespondences will be implemented based on 3x3 matrix inverse");
-#if 0
-    gsl_vector* rhs      = gsl_vector_alloc(6);
-    gsl_matrix* matrix   = gsl_matrix_alloc(6,6);
-    gsl_permutation* per = gsl_permutation_calloc(6);
-
-    // build linear equation system to be solved
-
+    Matrix4G matx(3,3), maty(3,3);
+    Matrix4G vecx(3,1), vecy(3,1);
+    
     for (int i=0;i<3;i++)
       {
-	gsl_matrix_set(matrix,2*i  ,0,start[i].x);
-	gsl_matrix_set(matrix,2*i  ,1,start[i].y);
-	gsl_matrix_set(matrix,2*i  ,2,1         );
-	gsl_matrix_set(matrix,2*i  ,3,0         );
-	gsl_matrix_set(matrix,2*i  ,4,0         );
-	gsl_matrix_set(matrix,2*i  ,5,0         );
+	matx[i][0] = start[i].x;
+	matx[i][1] = start[i].y;
+	matx[i][2] = 1;
 
-	gsl_vector_set(rhs,2*i  ,end[i].x);
+	maty[i][0] = start[i].x;
+	maty[i][1] = start[i].y;
+	maty[i][2] = 1;
 
-	gsl_matrix_set(matrix,2*i+1,0,0         );
-	gsl_matrix_set(matrix,2*i+1,1,0         );
-	gsl_matrix_set(matrix,2*i+1,2,0         );
-	gsl_matrix_set(matrix,2*i+1,3,start[i].x);
-	gsl_matrix_set(matrix,2*i+1,4,start[i].y);
-	gsl_matrix_set(matrix,2*i+1,5,1         );
-
-	gsl_vector_set(rhs,2*i+1,end[i].y);
+	vecx[i][0] = end[i].x;
+	vecy[i][0] = end[i].y;
       }
 
-    // solve the equation system using LU-decomposition
+    matx = matx.Inverse();
+    maty = maty.Inverse();
 
-    int signum=0;
-    gsl_linalg_LU_decomp(matrix,per,&signum);
-    gsl_linalg_LU_svx(matrix,per,rhs);
+    vecx = matx*vecx;
+    vecy = maty*vecy;
 
-    // fill the affine transformation fields
+    Matrix4G mat(3,3);
+    mat[0][0] = vecx[0][0];
+    mat[0][1] = vecx[1][0];
+    mat[0][2] = vecx[2][0];
+    mat[1][0] = vecy[0][0];
+    mat[1][1] = vecy[1][0];
+    mat[1][2] = vecy[2][0];
 
-    AffineTransformation t;
-    t.a[0][0] = gsl_vector_get(rhs,0);
-    t.a[0][1] = gsl_vector_get(rhs,1);
-    t.tx      = gsl_vector_get(rhs,2);
-    t.a[1][0] = gsl_vector_get(rhs,3);
-    t.a[1][1] = gsl_vector_get(rhs,4);
-    t.ty      = gsl_vector_get(rhs,5);
-
-    // cleanup
-
-    gsl_vector_free(rhs);
-    gsl_permutation_free(per);
-    gsl_matrix_free(matrix);
-
-    return t;
-#endif
+    return mat;
   }
 
 
