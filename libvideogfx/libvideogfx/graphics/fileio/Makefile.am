@@ -34,6 +34,8 @@ libvideogfx_graphics_fileio_la_SOURCES = \
 	uyvy.hh	\
 	ppm.cc	\
 	ppm.hh  \
+	raw.hh  \
+	raw.cc  \
 	yuv.cc	\
 	yuv.hh	\
 	yuv4mpeg.cc	\
@@ -55,6 +57,7 @@ libvideogfx_graphics_fileio_include_HEADERS = \
 	png.hh	\
 	mpeg.hh	\
 	ppm.hh  \
+	raw.hh  \
 	yuv.hh	\
 	yuv4mpeg.hh	\
 	yuv_vqeg.hh	\

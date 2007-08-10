@@ -50,6 +50,7 @@
 #include <libvideogfx/graphics/fileio/png.hh>
 #include <libvideogfx/graphics/fileio/mpeg.hh>
 #include <libvideogfx/graphics/fileio/ppm.hh>
+#include <libvideogfx/graphics/fileio/raw.hh>
 #include <libvideogfx/graphics/fileio/uyvy.hh>
 #include <libvideogfx/graphics/fileio/yuv.hh>
 #include <libvideogfx/graphics/fileio/yuv4mpeg.hh>
