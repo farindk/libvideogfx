@@ -1111,6 +1111,71 @@ namespace videogfx {
   // ------------------------------------------------------------------------------
 
 
+  class ReaderStage_Duplicate : public ReaderStage
+  {
+  public:
+    ReaderStage_Duplicate() { d_factor=1; d_repeat=1; d_read_next=true; }
+
+    void SetFactor(int f) { d_factor=d_repeat=f; d_read_next=true; }
+
+    int  AskNFrames() const { Assert(prev); return prev->AskNFrames()*d_factor; }
+    bool IsEOF() const { Assert(prev); return d_repeat==0 && prev->IsEOF(); }
+
+    bool SkipToImage(int nr)
+    {
+      Assert(prev);
+      bool success = prev->SkipToImage(nr/d_factor);
+      if (success) { d_read_next=true; d_repeat=d_factor-(nr%d_factor); }
+      return success;
+    }
+
+    void ReadImage(Image<Pixel>& img)
+    {
+      if (d_read_next)
+	{
+	  prev->ReadImage(d_buf);
+	  d_read_next=false;
+	}
+
+      d_repeat--;
+      if (d_repeat==0) { d_repeat=d_factor; d_read_next=true; }
+      CopyToNew(img, d_buf);
+    }
+
+  private:
+    int d_factor;
+    int d_repeat;
+    bool d_read_next;
+    Image<Pixel> d_buf;
+  };
+
+
+  static class ReaderStageFactory_Duplicate : public ReaderStageFactory
+  {
+  public:
+    ReaderStage* ParseSpec(char** spec) const
+    {
+      if (MatchOption(*spec, "duplicate"))
+	{
+	  RemoveOption(*spec);
+	  ReaderStage_Duplicate* dupl = new ReaderStage_Duplicate;
+	  int f = ExtractNextNumber(*spec); RemoveOption(*spec);
+	  dupl->SetFactor(f);
+	  return dupl;
+	}
+      else
+	return NULL;
+    }
+
+    const char* Name() const { return "filter: duplicate frames"; }
+
+  } singleton_duplicate;
+
+
+
+  // ------------------------------------------------------------------------------
+
+
   class ReaderStage_Start : public ReaderStage
   {
   public:

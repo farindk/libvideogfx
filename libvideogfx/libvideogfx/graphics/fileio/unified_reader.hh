@@ -15,6 +15,7 @@
     length:l -- sequence length is 'l'
     start:s -- first frame at 's'
     decimate:f -- only show every f'th frame (f=3 -> 2,5,8,...)
+    duplicate:f -- show every frame f times
     resize:w:h -- resize image
     crop:l:r:t:b -- crop away image borders
     quarter -- resize to quarter size (especially useful to deinterlace to CIF)
