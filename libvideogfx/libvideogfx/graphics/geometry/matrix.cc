@@ -434,6 +434,15 @@ namespace videogfx {
     return t;
   }
 
+  Matrix4G Diag3(double x,double y,double z)
+  {
+    Matrix4G mat(3,3);
+    mat[0][0] = x;
+    mat[1][1] = y;
+    mat[2][2] = z;
+    return mat;
+  }
+
   Matrix4G Scale3D(double x,double y,double z)
   {
     Matrix4G mat(4,4);
