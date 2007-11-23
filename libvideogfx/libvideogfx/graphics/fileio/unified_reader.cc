@@ -228,12 +228,13 @@ namespace videogfx {
   bool UnifiedImageReader::IsEOF() const { Assert(d_loader_pipeline); return d_loader_pipeline->IsEOF(); }
 
 
-  void UnifiedImageReader::SkipToImage(int nr)
+  bool UnifiedImageReader::SkipToImage(int nr)
   {
     Assert(d_loader_pipeline);
     d_framenr = nr;
     bool success = d_loader_pipeline->SkipToImage(nr);
     AssertDescr(success, "loader pipeline does not support skipping");
+    return success;
   }
 
 

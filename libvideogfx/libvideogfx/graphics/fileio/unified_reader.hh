@@ -110,8 +110,8 @@ namespace videogfx {
   class UnifiedImageReader : public ImageReader
   {
   public:
-    UnifiedImageReader() : d_loader_pipeline(NULL), d_colorspace(Colorspace_Invalid), d_chroma(Chroma_Invalid),
-			   d_framenr(0) { width=height=0; }
+    UnifiedImageReader() : d_loader_pipeline(NULL), d_colorspace(Colorspace_Invalid),
+			   d_chroma(Chroma_Invalid) { width=height=0; d_framenr=0; }
     ~UnifiedImageReader() { if (d_loader_pipeline) delete d_loader_pipeline; }
 
     bool SetInput(const char* input_specification);
@@ -123,7 +123,7 @@ namespace videogfx {
     int  AskNFrames() const;
     bool IsEOF() const;
 
-    void SkipToImage(int nr);
+    bool SkipToImage(int nr);
     int  AskFrameNr() const { return d_framenr; }
 
     void ReadImage(Image<Pixel>&);

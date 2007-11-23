@@ -49,8 +49,8 @@ namespace videogfx {
     virtual bool IsEOF() const { return false; } // endless stream
 
     virtual void ReadImage(Image<Pixel>&) = 0;
-    virtual void SkipToImage(int nr)
-    { AssertDescr(false, "frame-skipping not implemented"); }
+    virtual bool SkipToImage(int nr)
+    { AssertDescr(false, "frame-skipping not implemented"); return false; }
 
   };
 
