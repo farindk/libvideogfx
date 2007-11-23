@@ -48,10 +48,10 @@ namespace videogfx {
   public:
     RawImageReader();
 
-    int  SetSize(int w,int h) { d_w=w; d_h=h; }
-    int  SetBitsPerPixels(int bpp) { d_bpp=bpp; }
-    int  SetHeaderSkip(int nbytes) { d_header_bytes=nbytes; }
-    bool SetLittleEndian(bool flag=true) { d_little_endian=flag; }
+    void SetSize(int w,int h) { d_w=w; d_h=h; }
+    void SetBitsPerPixels(int bpp) { d_bpp=bpp; }
+    void SetHeaderSkip(int nbytes) { d_header_bytes=nbytes; }
+    void SetLittleEndian(bool flag=true) { d_little_endian=flag; }
 
     void ReadImage(Image<uint16>&, std::ifstream&);
     void ReadImage(Image<uint16>&, const char* name);
