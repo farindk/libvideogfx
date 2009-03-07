@@ -64,22 +64,22 @@ namespace videogfx {
 
     // x86 architecture
 
-    virtual bool HasMMX()   const { AssertDescr(0,wrong_cpu_err); }
-    virtual bool HasMMX2()  const { AssertDescr(0,wrong_cpu_err); }
-    virtual bool Has3dNow() const { AssertDescr(0,wrong_cpu_err); }
-    virtual bool HasMTRR()  const { AssertDescr(0,wrong_cpu_err); }
-    virtual bool HasCMOV()  const { AssertDescr(0,wrong_cpu_err); }
-    virtual bool HasFPU()   const { AssertDescr(0,wrong_cpu_err); }
+    virtual bool HasMMX()   const { AssertDescr(0,wrong_cpu_err); return false; }
+    virtual bool HasMMX2()  const { AssertDescr(0,wrong_cpu_err); return false; }
+    virtual bool Has3dNow() const { AssertDescr(0,wrong_cpu_err); return false; }
+    virtual bool HasMTRR()  const { AssertDescr(0,wrong_cpu_err); return false; }
+    virtual bool HasCMOV()  const { AssertDescr(0,wrong_cpu_err); return false; }
+    virtual bool HasFPU()   const { AssertDescr(0,wrong_cpu_err); return false; }
 
 
     // ARM architecture
 
-    virtual bool HasXScale()  const { AssertDescr(0,wrong_cpu_err); }
+    virtual bool HasXScale()  const { AssertDescr(0,wrong_cpu_err); return false; }
 
 
     // SPARC architecture
 
-    virtual bool HasVIS()  const { AssertDescr(0,wrong_cpu_err); }
+    virtual bool HasVIS()  const { AssertDescr(0,wrong_cpu_err); return false; }
 
   private:
     static CPU_Capabilities* d_cpu;

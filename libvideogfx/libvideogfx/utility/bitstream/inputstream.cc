@@ -21,6 +21,7 @@
 #include <libvideogfx/error.hh>
 
 #include <algorithm>
+#include <string.h>
 
 namespace videogfx {
   using namespace std;

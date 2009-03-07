@@ -19,6 +19,7 @@
 
 #include "config.h"
 
+#include <sys/types.h>
 #include <time.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>

@@ -19,6 +19,7 @@
 
 #include <libvideogfx/graphics/geometry/transform.hh>
 #include <libvideogfx/graphics/draw/draw.hh>
+#include <limits.h>
 // #include <gsl/gsl_linalg.h>
 #include <algorithm>
 #include <iomanip>

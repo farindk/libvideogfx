@@ -51,7 +51,7 @@ namespace videogfx {
   public:
     SP()
     {
-      counter = NULL;
+      this->counter = NULL;
       pointer = NULL;
     }
 
