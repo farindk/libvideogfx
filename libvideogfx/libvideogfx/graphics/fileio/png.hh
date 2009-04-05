@@ -47,7 +47,7 @@ namespace videogfx {
 
   void ReadImage_PNG(Image<Pixel>& img, std::istream& stream);
   void WriteImage_PNG(std::ostream& stream,const Image<Pixel>& img);
-  void ReadImage_PNG(Image<Pixel>& img, const char* filename);
+  bool ReadImage_PNG(Image<Pixel>& img, const char* filename);
   void WriteImage_PNG(const char* filename,const Image<Pixel>& img);
 
   // obsolete

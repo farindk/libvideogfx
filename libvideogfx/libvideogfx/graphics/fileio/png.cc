@@ -436,11 +436,14 @@ namespace videogfx {
 #endif
 
 
-  void ReadImage_PNG(Image<Pixel>& img, const char* filename)
+  bool ReadImage_PNG(Image<Pixel>& img, const char* filename)
   {
     ifstream ifs(filename, ios::in | ios::binary);
-    Assert(ifs);
+    if (!ifs)
+      { return false; }
+
     ReadImage_PNG(img, ifs);
+    return true;
   }
 
   void WriteImage_PNG(const char* filename, const Image<Pixel>& img)
