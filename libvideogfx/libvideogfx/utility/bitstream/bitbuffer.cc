@@ -21,12 +21,13 @@
 #include "config.h"
 
 #include <assert.h>
+#include <string.h>
 
 namespace videogfx {
 
-  const int InitialBufferSize = 1000;  // has to be an integer multiple of d_tmpbuf size.
-  const int BitsPerEntry = 32;
-  const int BytesPerEntry = BitsPerEntry/8;
+  const int BytesPerEntry = sizeof(unsigned long);
+  const int BitsPerEntry = BytesPerEntry*8;
+  const int InitialBufferSize = 256*BytesPerEntry;  // has to be an integer multiple of d_tmpbuf size.
 
   BitBuffer::BitBuffer()
   {
@@ -37,7 +38,6 @@ namespace videogfx {
     d_tmpbuf     = 0;
 
     assert(BitsPerEntry%8 == 0);
-    assert(sizeof(d_tmpbuf)*8==BitsPerEntry);
     assert(InitialBufferSize%sizeof(d_tmpbuf)==0);
   }
 
@@ -58,7 +58,7 @@ namespace videogfx {
 
   void BitBuffer::WriteBitsMasked(uint32 bits,int nBits)
   {
-    uint32 mask=1;
+    uint32 long mask=1;
     mask<<=nBits;
     mask--;
 
@@ -75,8 +75,6 @@ namespace videogfx {
       uint32 mask=1;
       mask<<=nBits;
       mask--;
-      if (nBits==32)
-	mask = 0xFFFFFFFF;
 
       assert(bits == (bits & mask));
     }
@@ -96,9 +94,9 @@ namespace videogfx {
 
     if (d_freebits>=nBits)
       {
-	// Neue Bits passen komplett in das aktuelle Feld hinein.
+	// new bits fit completely into d_tempbuf
 
-	uint32 aligned = bits;
+	unsigned long aligned = bits;
 
 	int nShiftLeft = d_freebits - nBits;
 
@@ -120,14 +118,14 @@ namespace videogfx {
       }
     else
       {
-	// Neue Bits passen nicht mehr komplett in das aktuelle Feld.
-	// Sie werden folglich in zwei Teile geteilt.
+	// new bits have to be split in two parts, because they exceed the remaining
+	// space in d_tmpbuf
 
-	uint32 rightpart = bits;   // Der Teil, der noch in das aktuelle Feld passt.
-	uint32 leftpart  = bits;   // Der Rest, der in ein neues Feld kommt.
+	unsigned long rightpart = bits;   // the part that still fits
+	unsigned long leftpart  = bits;   // the part that will be filled into a new buffer
 
 	int nShiftRight = nBits - d_freebits;
-	if (nShiftRight != 0) rightpart >>= nShiftRight;
+	rightpart >>= nShiftRight;
 
 	d_tmpbuf |= rightpart;
 
@@ -161,7 +159,7 @@ namespace videogfx {
 
     EnlargeIfFull();
 
-    assert(d_bufferidx+4 <= d_buffersize);
+    assert(d_bufferidx+BytesPerEntry-d_freebits/8 <= d_buffersize);
 
     while (d_freebits<BitsPerEntry)
       {
@@ -178,7 +176,7 @@ namespace videogfx {
   {
     EnlargeIfFull();
 
-    assert(d_bufferidx+4 <= d_buffersize);
+    assert(d_bufferidx+BytesPerEntry <= d_buffersize);
   
 #ifdef WORDS_BIGENDIAN
     unsigned char* p = (unsigned char*)(&d_tmpbuf);
@@ -196,11 +194,10 @@ namespace videogfx {
   {
     assert(d_bufferidx <= d_buffersize);
 
-    if (d_bufferidx+4 >= d_buffersize)
+    if (d_bufferidx+BytesPerEntry >= d_buffersize)
       {
 	uint8* newbuf = new uint8[d_buffersize*2];
-	for (int i=0;i<d_buffersize;i++)
-	  newbuf[i]=d_buffer[i];
+	memcpy(newbuf, d_buffer, d_buffersize);
       
 	d_buffersize *= 2;
 

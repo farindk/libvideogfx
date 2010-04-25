@@ -50,7 +50,7 @@ namespace videogfx {
     void Flush(); // Fill 0-bits to next byte boundary and make all data available at the output buffer.
 
     uint8* AskBuffer() const { return d_buffer; }
-    uint32 AskBitsInBuffer() const { return d_bufferidx*8 + (32-d_freebits); }
+    uint32 AskBitsInBuffer() const { return d_bufferidx*8 + sizeof(unsigned long)*8-d_freebits; }
     int    AskLengthInBytes() const { return (AskBitsInBuffer()+7)/8; }
 
   private:
@@ -59,7 +59,7 @@ namespace videogfx {
 
     int    d_buffersize;
 
-    uint32 d_tmpbuf;
+    unsigned long d_tmpbuf;
     int    d_freebits;
 
     void TmpToBuffer();
