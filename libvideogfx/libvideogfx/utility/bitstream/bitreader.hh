@@ -71,7 +71,7 @@ namespace videogfx {
     inline int    AskPosition() const { return (d_ptr-d_start)*8 -d_bitsleft; }
 
   private:
-    uint64 d_buffer;
+    uint64 d_buffer;   // remaining bits are always left-aligned
     int    d_bitsleft;
 
     const uint8* d_start;
@@ -81,7 +81,7 @@ namespace videogfx {
     InputStream* d_istr;
     uint8*       d_filebuf;
 
-    void Refill();
+    void Refill32bits(); // read 32bits (or more) into the temporary buffer "d_buffer"
   };
 
 #include "bitreader.icc"

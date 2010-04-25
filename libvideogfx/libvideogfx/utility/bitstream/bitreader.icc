@@ -17,13 +17,17 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ********************************************************************************/
 
+namespace BITREADER {
+  const int BytesPerEntry = sizeof(uint64);
+  const int BitsPerEntry = BytesPerEntry*8;
+}
 
 inline uint32 BitReader::GetBits (int n)
 {
   if (n>d_bitsleft)
-    Refill();
+    Refill32bits();
 
-  uint32 val = d_buffer>>(64-n);
+  uint32 val = d_buffer>>(BITREADER::BitsPerEntry-n);
   d_buffer <<= n;
   d_bitsleft -= n;
 
@@ -34,9 +38,9 @@ inline uint32 BitReader::GetBits (int n)
 inline uint32 BitReader::PeekBits(int n)
 {
   if (n>d_bitsleft)
-    Refill();
+    Refill32bits();
 
-  uint32 val = d_buffer>>(64-n);
+  uint32 val = d_buffer>>(BITREADER::BitsPerEntry-n);
 
   return val;
 }
@@ -45,7 +49,7 @@ inline uint32 BitReader::PeekBits(int n)
 inline void   BitReader::SkipBits(int nbits)
 {
   if (nbits>d_bitsleft)
-    Refill();
+    Refill32bits();
 
   d_buffer<<=nbits;
   d_bitsleft-=nbits;
@@ -61,7 +65,7 @@ inline void   BitReader::SkipBitsFast(int nbits)
 inline void   BitReader::SkipToByteBoundary()
 {
   int nskip = (d_bitsleft & 7);
-  if (nskip) SkipBits(nskip);
+  SkipBitsFast(nskip);
 }
 
 inline bool   BitReader::IsEOF() const

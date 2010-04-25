@@ -25,8 +25,8 @@
 
 namespace videogfx {
 
-  // FILEBUF_SIZE must be a multiple of 4
-#define FILEBUF_SIZE 8000
+// FILEBUF_SIZE must be a multiple of uint32
+#define FILEBUF_SIZE 4096*sizeof(uint32)
 
 
   BitReader::BitReader(const uint8* buffer,uint32 len)
@@ -59,18 +59,20 @@ namespace videogfx {
   }
 
 
-  void BitReader::Refill()
+  void BitReader::Refill32bits()
   {
 #if WORDS_BIGENDIAN
+    assert(sizeof(uint32)==4);
     uint32 val = *((uint32*)d_ptr)++;
 
     uint64 val64 = val;
-    val64 <<= 64-32-d_bitsleft;
+    val64 <<= (64-d_bitsleft)-32;
     d_buffer |= val64;
     d_bitsleft += 32;
 #else
 
-#if CPU_x86
+#if 0 && CPU_x86
+    // disabled this code, because I feel unsure if this is portable between 32bit / 64bit systems
     uint32 val = *((uint32*)d_ptr);
     d_ptr+=4;
 
@@ -85,6 +87,8 @@ namespace videogfx {
 
     while (shiftval>=0)
       {
+	if (d_ptr==d_endptr) break;
+
 	uint64 newval = *d_ptr++;
 	newval <<= shiftval;
 	d_buffer |= newval;
