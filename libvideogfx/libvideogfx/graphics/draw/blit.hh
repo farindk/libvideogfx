@@ -1,4 +1,4 @@
-#/*********************************************************************
+/*********************************************************************
   libvideogfx/graphics/draw/blit.hh
 
   purpose:
@@ -37,6 +37,7 @@
 
 #include <libvideogfx/graphics/datatypes/bitmap.hh>
 #include <libvideogfx/graphics/datatypes/image.hh>
+#include <libvideogfx/graphics/datatypes/primitives.hh>
 #include <libvideogfx/error.hh>
 
 namespace videogfx {
@@ -74,10 +75,12 @@ namespace videogfx {
   /* Copy the image content at the border lines into the border area.
    */
   template <class Pel> void ExtrudeIntoBorder(Bitmap<Pel>&);
+  template <class Pel> void ExtrudeIntoBorder(Image<Pel>&);
 
   /* Fill the image border with constant value.
    */
   template <class Pel> void FillBorder(Bitmap<Pel>&, Pel value);
+  template <class Pel> void FillBorder(Image<Pel>&, Color<Pel> value);
 
 
   // ------------------------------- implementation -----------------------------------
@@ -213,6 +216,13 @@ namespace videogfx {
 	}
   }
 
+  template <class Pel> void ExtrudeIntoBorder(Image<Pel>& img)
+  {
+    for (int i=0;i<4;i++)
+      if (!img.AskBitmap(BitmapChannel(i)).IsEmpty())
+	ExtrudeIntoBorder(img.AskBitmap(BitmapChannel(i)));
+  }
+
   template <class Pel> void FillBorder(Bitmap<Pel>& bm, Pel value)
   {
     Pel*const* p = bm.AskFrame();
@@ -233,6 +243,13 @@ namespace videogfx {
 	{
 	  p[y][-b-xo] = p[y][w+b-1-xo] = value;
 	}
+  }
+
+  template <class Pel> void FillBorder(Image<Pel>& img, Color<Pel> value)
+  {
+    for (int i=0;i<4;i++)
+      if (!img.AskBitmap(i).IsEmpty())
+	FillBorder(img.AskBitmap(i), value.c[i]);
   }
 
 }

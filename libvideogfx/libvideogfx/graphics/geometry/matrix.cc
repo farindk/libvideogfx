@@ -162,6 +162,10 @@ namespace videogfx {
 		d_mat[0][1]*(d_mat[1][2]*d_mat[2][0] - d_mat[2][2]*d_mat[1][0]) +
 		d_mat[0][2]*(d_mat[1][0]*d_mat[2][1] - d_mat[2][0]*d_mat[1][1]));
       }
+    else if (d_rows==2 && d_columns==2)
+      {
+	return (d_mat[0][0]*d_mat[1][1]) - (d_mat[0][1]*d_mat[1][0]);
+      }
     else
       {
 	NotImplemented;

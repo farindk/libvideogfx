@@ -439,7 +439,7 @@ namespace videogfx {
 
     while (!refresh_occured)
       {
-	XMaskEvent(windows[0]->AskDisplay(),ExposureMask|KeyPressMask,&ev);
+	XMaskEvent(windows[0]->AskDisplay(),ExposureMask|KeyPressMask|PointerMotionMask,&ev);
 	for (int i=0;i<nWindows;i++)
 	  {
 	    if (ev.xany.window == windows[i]->AskWindow())
@@ -449,8 +449,12 @@ namespace videogfx {
 		    windows[i]->Redraw(ev.xexpose);
 		    refresh_occured=true;
 		  }
-		else if (ev.type == KeyPress)
-		  return i;
+		else
+		  {
+		    XPutBackEvent(windows[0]->AskDisplay(), &ev);
+		  }
+
+		return i;
 	      }
 	  }
       }

@@ -162,6 +162,12 @@ namespace videogfx {
     /// Scale the given vertical coordinate by the sub-sampling factor of the specified bitmap channel.
     double  ChromaScaleV(BitmapChannel b,double y) const
     { if ((b==1||b==2) && colorspace==Colorspace_YUV) return y/ChromaSubV(chroma); else return y; }
+
+    int nColorChannels() const
+    {
+      if (colorspace==Colorspace_Greyscale) return 1;
+      else                                  return 3;
+    }
   };
 
 
@@ -224,15 +230,23 @@ namespace videogfx {
 	for your application. This is not checked!
       
 	If you insert or remove (by replacing a bitmap by an empty one) an alpha bitmap,
-	the alphamask-flag in ImageParam will be set accordingly.  [TODO ??? really]
+	the alphamask-flag in ImageParam will be set accordingly.
     */
-    void ReplaceBitmap(BitmapChannel id,const Bitmap<Pel>& bm)  { d_pm[id] = bm; }
+    void ReplaceBitmap(BitmapChannel id,const Bitmap<Pel>& bm)
+    {
+      d_pm[id] = bm;
+
+      if (id==Bitmap_Alpha)
+	{
+	  d_param.has_alpha = !bm.IsEmpty();
+	}
+    }
 
     /// Set new image parameters.
     void SetParam(const ImageParam& param) { d_param=param; }
 
     /** Make an exact copy of the image to a new, independent memory area. */
-    Image<Pel> Clone() const;
+    Image<Pel> Clone(int border=-1) const;
 
     /// Create a sub-view image to a small region of the current image. The image data is shared.
     Image<Pel> CreateSubView  (int x0,int y0,int w,int h) const;
@@ -241,6 +255,18 @@ namespace videogfx {
 
     /// Checks if the image has been created already.
     bool IsEmpty() const { return d_pm[0].IsEmpty(); }
+
+    Pel& R(int x,int y) { return AskFrameR()[y][x]; }
+    Pel& G(int x,int y) { return AskFrameG()[y][x]; }
+    Pel& B(int x,int y) { return AskFrameB()[y][x]; }
+    Pel& A(int x,int y) { return AskFrameA()[y][x]; }
+    Pel& Y(int x,int y) { return AskFrameY()[y][x]; }
+
+    const Pel& R(int x,int y) const { return AskFrameR()[y][x]; }
+    const Pel& G(int x,int y) const { return AskFrameG()[y][x]; }
+    const Pel& B(int x,int y) const { return AskFrameB()[y][x]; }
+    const Pel& A(int x,int y) const { return AskFrameA()[y][x]; }
+    const Pel& Y(int x,int y) const { return AskFrameY()[y][x]; }
 
     Pel*const* AskFrameR()        { return d_pm[Bitmap_Red].AskFrame(); }
     const Pel*const* AskFrameR()  const { return d_pm[Bitmap_Red].AskFrame(); }
@@ -383,13 +409,19 @@ namespace videogfx {
     d_param.yoffset = y0;
   }
 
-  template <class Pel> Image<Pel> Image<Pel>::Clone() const
+  template <class Pel> Image<Pel> Image<Pel>::Clone(int border) const
   {
     Image<Pel> img;
     for (int i=0;i<4;i++)
-      img.d_pm[i] = d_pm[i].Clone();
+      img.d_pm[i] = d_pm[i].Clone(border);
 
     img.d_param = d_param;
+
+    if (border>=0)
+      {
+	img.d_param.border        = border;
+	img.d_param.chroma_border = border;
+      }
 
     return img;
   }
