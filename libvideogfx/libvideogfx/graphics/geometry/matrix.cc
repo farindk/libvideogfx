@@ -219,6 +219,8 @@ namespace videogfx {
     else if (d_rows==2)
       {
 	double det = d_mat[0][0]*d_mat[1][1] - d_mat[0][1]*d_mat[1][0];
+	assert(det != 0.0);
+
 	inv[0][0] =  d_mat[1][1]/det;
 	inv[0][1] = -d_mat[0][1]/det;
 	inv[1][0] = -d_mat[1][0]/det;
@@ -244,7 +246,9 @@ namespace videogfx {
 	inv[2][1] = -(d_mat[2][1]*d_mat[0][0] - d_mat[2][0]*d_mat[0][1]);
 	inv[2][2] = +(d_mat[1][1]*d_mat[0][0] - d_mat[1][0]*d_mat[0][1]);
 
-	return inv/Det();
+	double det = Det();
+	assert(det != 0.0);
+	return inv/det;
       }
     else if (d_rows==4)
       {

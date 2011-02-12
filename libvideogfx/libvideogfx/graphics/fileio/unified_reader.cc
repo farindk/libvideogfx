@@ -22,7 +22,8 @@
 #endif
 
 #include "libvideogfx/graphics/fileio/unified_reader.hh"
-#include "libvideogfx/graphics/fileio/mplayer.hh"
+//#include "libvideogfx/graphics/fileio/mplayer.hh"
+#include "libvideogfx/graphics/fileio/ffmpeg.hh"
 #include "libvideogfx/graphics/fileio/png.hh"
 #include "libvideogfx/graphics/fileio/ppm.hh"
 #include "libvideogfx/graphics/fileio/uyvy.hh"
@@ -489,7 +490,7 @@ namespace videogfx {
   // ------------------------------------------------------------------------------
 
 
-
+#if 0
   class ReaderStage_MPlayer : public ReaderStage
   {
   public:
@@ -537,6 +538,60 @@ namespace videogfx {
     const char* Name() const { return "loader: mplayer pipe"; }
 
   } singleton_mplayer;
+#endif
+
+
+  // ------------------------------------------------------------------------------
+
+
+
+  class ReaderStage_FFMPEG : public ReaderStage
+  {
+  public:
+    int  AskNFrames() const { return INT_MAX; }
+    bool IsEOF() const { return reader.IsEOF(); }
+
+    bool SkipToImage(int nr) { reader.SkipToImage(nr); return true; } // only forward seek
+    void ReadImage(Image<Pixel>& img) { reader.ReadImage(img); }
+
+    void SetInput(const char* name) { reader.Open(name); }
+
+  private:
+    FileReader_FFMPEG reader;
+  };
+
+
+  static class ReaderStageFactory_FFMPEG : public ReaderStageFactory
+  {
+  public:
+    ReaderStage* ParseSpec(char** spec) const
+    {
+      if (CheckSuffix(*spec, "vdr") ||
+	  CheckSuffix(*spec, "avi") ||
+	  CheckSuffix(*spec, "wmv") ||
+	  CheckSuffix(*spec, "mpg") ||
+	  CheckSuffix(*spec, "vob") ||
+	  CheckSuffix(*spec, "m1v") ||
+	  CheckSuffix(*spec, "m2v") ||
+	  CheckSuffix(*spec, "mpeg") ||
+	  CheckSuffix(*spec, "wmf"))
+	{
+	  ReaderStage_FFMPEG* pl = new ReaderStage_FFMPEG;
+	  char* name = ExtractNextOption(*spec);
+	  pl->SetInput(name);
+
+	  delete[] name;
+	  RemoveOption(*spec);
+
+	  return pl;
+	}
+      else
+	return NULL;
+    }
+
+    const char* Name() const { return "loader: ffmpeg pipe"; }
+
+  } singleton_ffmpeg;
 
 
 

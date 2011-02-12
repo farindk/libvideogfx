@@ -22,6 +22,14 @@ linux_sources =
 linux_headers =
 endif
 
+if HAVE_FFMPEG
+ffmpeg_sources = ffmpeg.cc
+ffmpeg_headers = ffmpeg.hh
+else
+ffmpeg_sources = 
+ffmpeg_headers = 
+endif
+
 libvideogfx_graphics_fileio_la_SOURCES = \
 	base.hh \
 	jpeg.cc	\
@@ -48,7 +56,8 @@ libvideogfx_graphics_fileio_la_SOURCES = \
 	unified_reader.cc \
 	unified_writer.hh \
 	unified_writer.cc \
-	$(linux_sources)
+	$(linux_sources) \
+	$(ffmpeg_sources)
 
 libvideogfx_graphics_fileio_include_HEADERS = \
 	base.hh \
@@ -64,7 +73,8 @@ libvideogfx_graphics_fileio_include_HEADERS = \
 	imagesink.hh	\
 	unified_reader.hh \
 	unified_writer.hh \
-	$(linux_headers)
+	$(linux_headers) \
+	$(ffmpeg_headers)
 
 INCLUDES = \
 	-I$(top_srcdir)

@@ -1,9 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(libvideogfx/init.hh)
 
-# Save this value here, since automake will set cflags later
-cflags_set=${CFLAGS+set}
-
 dnl we need to AC_DIVERT_PUSH/AC_DIVERT_POP these variable definitions so they
 dnl are available for $ac_help expansion (don't we all *love* autoconf?)
 dnl AC_DIVERT_PUSH(AC_DIVERSION_NOTICE)dnl
@@ -45,9 +42,6 @@ AC_SUBST(LT_AGE)
 # For automake.
 VERSION=$LIBVIDEOGFX_VERSION
 PACKAGE=libvideogfx
-
-# Save this value here, since automake will set cflags later
-cflags_set=${CFLAGS+set}
 
 # Sets more variables than AC_CANONICAL_HOST
 AC_CANONICAL_SYSTEM
@@ -221,6 +215,46 @@ else
 fi
 AC_SUBST(FEATURE_PNG)
   
+
+
+# Check for the FFMPEG library
+AC_ARG_WITH([ffmpeg], [AS_HELP_STRING([--with-ffmpeg], [support for ffmpeg-based video reader])], [], [with_ffmpeg=check])
+
+AS_IF([test "x$with_ffmpeg" = xno],
+  [
+   have_ffmpeg=no
+   AM_CONDITIONAL(HAVE_FFMPEG, false)
+  ],
+  [
+   have_ffmpeg=yes
+   AC_CHECK_HEADER([libavcodec/avcodec.h],   [], [have_ffmpeg=no])
+   AC_CHECK_HEADER([libavformat/avformat.h], [], [have_ffmpeg=no])
+   AC_CHECK_HEADER([libswscale/swscale.h],   [], [have_ffmpeg=no])
+   AC_CHECK_LIB(avcodec,  avcodec_decode_video, [], [have_ffmpeg=no])
+   AC_CHECK_LIB(avformat, av_open_input_file,   [], [have_ffmpeg=no], [-lavcodec])
+   AC_CHECK_LIB(swscale,  sws_scale,         [], [have_ffmpeg=no])
+
+   AS_IF([test x"$have_ffmpeg" = "xyes"],
+   	    [
+              AC_DEFINE(HAVE_FFMPEG,[1],[FFMPEG video library])
+	      AC_SUBST([FFMPEGFLAGS], ["-D__STDC_CONSTANT_MACROS"])
+              AM_CONDITIONAL(HAVE_FFMPEG, true)
+            ],
+            [
+	     # need double-quotes because of comma
+             AS_IF([test "x$with_ffmpeg" == xyes],
+                      AC_MSG_FAILURE([[--with-ffmpeg was given, but test for ffmpeg failed]]),
+                      AC_MSG_RESULT([*** ffmpeg libraries not found. FFMPEG loader will be disabled.]),
+                  )
+             AM_CONDITIONAL(HAVE_FFMPEG, false)
+	    ]
+        )
+         
+  ]
+)
+
+
+
 CFLAGS="$saved_cflags"
 LDFLAGS="$saved_ldflags"
 
