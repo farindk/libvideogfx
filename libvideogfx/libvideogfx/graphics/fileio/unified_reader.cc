@@ -42,6 +42,46 @@
 #include <stdio.h>
 #include <ctype.h>
 
+#ifndef strncasecmp
+inline int strncasecmp(const char* a, const char* b, int len)
+{
+  for (int i=0;i<len;i++)
+    {
+      if (tolower(a[i]) != tolower(b[i])) return false;
+      if (a[i]==0) return true;
+    }
+
+  return true;
+}
+#endif
+
+#ifndef getline
+ssize_t getline(char** lineptr, size_t* n, FILE* stream)
+{
+  if (*lineptr==0)
+    {
+      *lineptr = (char*)malloc(1000);
+      *n = 1000;
+    }
+
+  int i=0;
+  for (;;)
+    {
+      int c = fgetc(stream);
+      if (c==EOF) break;
+      assert(i+1 < *n);   // TODO: realloc line-buffer
+      (*lineptr)[i] = c;
+      if (c=='\n') break;
+      i++;
+    }
+
+  assert(i+1 < *n);   // TODO: realloc line-buffer
+  (*lineptr)[i]=0;
+
+  return i;
+}
+#endif
+
 namespace videogfx {
   using namespace std;
 
@@ -309,7 +349,7 @@ namespace videogfx {
 
   char* ExtractNextOption(const char* spec)
   {
-    const char* p = index(spec,':');
+    const char* p = strchr(spec,':');
     if (!p) p=spec+strlen(spec);
     int len = (p-spec);
 
@@ -351,7 +391,7 @@ namespace videogfx {
 
   bool MatchOption(const char* spec,const char* option)
   {
-    const char* p = index(spec,':');
+    const char* p = strchr(spec,':');
     if (!p) p=spec+strlen(spec);
     int len = (p-spec);
 
@@ -361,7 +401,7 @@ namespace videogfx {
 
   bool CheckSuffix(const char* spec,const char* suffix)
   {
-    const char* p = index(spec,':');
+    const char* p = strchr(spec,':');
     if (!p) p=spec+strlen(spec);
     int len = (p-spec);
 
@@ -378,7 +418,7 @@ namespace videogfx {
 
   void RemoveOption(char* spec)
   {
-    const char* p = index(spec,':');
+    const char* p = strchr(spec,':');
     if (!p) { *spec=0; return; }
 
     int len = (p-spec);
@@ -401,7 +441,7 @@ namespace videogfx {
   bool ExtractSize(char* spec,int& w,int& h)
   {
     char* s = ExtractNextOption(spec);
-    char* i = index(spec,'x');
+    char* i = strchr(spec,'x');
     if (!i) { delete[] s; w=h=0; return false; }
 
     // check size format (must be '1234x1234' or '1234X1234')

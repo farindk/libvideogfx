@@ -45,6 +45,7 @@
 
 #include <math.h>
 #include <algorithm>
+#include <vector>
 
 //#include <iostream>
 //using namespace std;
@@ -145,6 +146,17 @@ namespace videogfx {
     Point2D<int> d_start;
     Point2D<int> d_last;
   };
+
+
+
+  // utility
+
+  template <class T>
+  void drawPoints(Image<Pixel>& img, const std::vector<Point2D<T> >& pts, Color<Pixel> col)
+  {
+    for (int i=0;i<pts.size();i++)
+      DrawPoint(img, pts[i].x, pts[i].y, col);
+  }
 
 
   // ---------------------------- implementation -------------------------

@@ -28,7 +28,7 @@
  *      use movq_mi2r(srcPtr,mm0) (mi = memory indirect) instead
  */
 
-#ifdef _WIN32
+#ifndef __GNUC__
 /* Intel syntax (Visual C++) */
 
 #define	mmx_i2r(op,imm,reg) \

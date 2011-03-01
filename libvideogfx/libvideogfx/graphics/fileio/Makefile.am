@@ -36,8 +36,6 @@ libvideogfx_graphics_fileio_la_SOURCES = \
 	jpeg.hh	\
 	png.cc	\
 	png.hh	\
-	mpeg.cc	\
-	mpeg.hh	\
 	uyvy.cc	\
 	uyvy.hh	\
 	ppm.cc	\
