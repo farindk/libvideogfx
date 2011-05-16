@@ -334,6 +334,7 @@ namespace videogfx {
   };
 
 
+  template <class Pel>
   inline void CalcAlignedSizes(int w,int h,                       // original bitmap size
 			       int border,int halign,int valign,  // alignments
 			       int& intw,int& inth,int& intb)     // aligned sizes
@@ -345,7 +346,7 @@ namespace videogfx {
     // integrate default alignments into alignment specification
 
     int def_border,def_halign,def_valign;
-    Bitmap<class Pel>::AskAlignmentDefaults(def_border, def_halign, def_valign);
+    Bitmap<Pel>::AskAlignmentDefaults(def_border, def_halign, def_valign);
 
     border = std::max(border,def_border);
     halign = LeastCommonMultiple(halign,def_halign);
@@ -387,7 +388,7 @@ namespace videogfx {
       BitmapProvider_Mem<Pel>::d_height = h;
       BitmapProvider_Mem<Pel>::d_border = border;
 
-      CalcAlignedSizes(w,h,border,halign,valign,
+      CalcAlignedSizes<Pel>(w,h,border,halign,valign,
 		       BitmapProvider_Mem<Pel>::d_aligned_width,BitmapProvider_Mem<Pel>::d_aligned_height,BitmapProvider_Mem<Pel>::d_aligned_border);
 
       // total size including border
@@ -530,7 +531,7 @@ namespace videogfx {
 	compatible=true;
 
 	// let's see what our requirements are
-	CalcAlignedSizes(w,h,border,halign,valign,
+	CalcAlignedSizes<Pel>(w,h,border,halign,valign,
 			 intw,inth,intb);
 
 	// new bitmap memory has to fit into old bitmap
