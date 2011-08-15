@@ -1,4 +1,4 @@
-#/*********************************************************************
+/*********************************************************************
   libvideogfx/graphics/draw/scale.hh
 
   purpose:
@@ -228,14 +228,28 @@ namespace videogfx {
     const Pel*const* sp = src.AskFrame();
     Pel*const* dp = dst.AskFrame();
 
-    Assert(dst.AskWidth()  >= dstx0+dw);
-    Assert(dst.AskHeight() >= dsty0+dh);
-    Assert(src.AskWidth()  >= srcx0+sw);
-    Assert(src.AskHeight() >= srcy0+sh);
+    int w = dst.AskWidth();
+    int h = dst.AskHeight();
+    int srcw = src.AskWidth();
+    int srch = src.AskHeight();
 
-    for (int y=0;y<dh;y++)
-      for (int x=0;x<dw;x++)
-	dp[dsty0+y][dstx0+x] = sp[srcy0+y*sh/dh][srcx0+x*sw/dw];
+    for (int y=std::max(0,-dsty0);y<dh;y++)
+      {
+	int srcy = srcy0 + y*sh/dh;
+	if (srcy<0) continue;
+	if (srcy>=srch) break;
+	if (dsty0+y>=h) break;
+
+	for (int x=std::max(0,-dstx0);x<dw;x++)
+	  {
+	    int srcx = srcx0+x*sw/dw;
+	    if (srcx<0) continue;
+	    if (srcx>srcw) break;
+	    if (dstx0+x>=w) break;
+
+	    dp[dsty0+y][dstx0+x] = sp[srcy][srcx];
+	  }
+      }
   }
 
 
