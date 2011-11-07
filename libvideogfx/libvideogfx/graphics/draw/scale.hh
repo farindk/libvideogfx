@@ -226,7 +226,7 @@ namespace videogfx {
     if (src.IsEmpty()) return;
 
     const Pel*const* sp = src.AskFrame();
-    Pel*const* dp = dst.AskFrame();
+    /* */ Pel*const* dp = dst.AskFrame();
 
     int w = dst.AskWidth();
     int h = dst.AskHeight();

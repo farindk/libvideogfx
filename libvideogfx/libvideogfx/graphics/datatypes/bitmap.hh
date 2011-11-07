@@ -169,6 +169,13 @@ namespace videogfx {
     */
     int AskStride() const { return AskFrame()[1]-AskFrame()[0]; }
 
+    int getWidth() const { return AskWidth(); }
+    int getHeight() const { return AskHeight(); }
+    int getStride() const { return AskStride(); }
+    Pel* getData() { return AskFrame()[0]; }
+    const Pel* getData() const { return AskFrame()[0]; }
+    typedef Pel PixelType;
+
     /* NOTE: use of Ask*Offset() is deprecated. Use Ask[Min/Max][X/Y] instead. */
     int AskXOffset() const { return d_xoffset; }
     int AskYOffset() const { return d_yoffset; }
