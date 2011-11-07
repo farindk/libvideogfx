@@ -23,7 +23,9 @@
 
 #include "libvideogfx/graphics/fileio/unified_reader.hh"
 //#include "libvideogfx/graphics/fileio/mplayer.hh"
+#ifdef HAVE_FFMPEG
 #include "libvideogfx/graphics/fileio/ffmpeg.hh"
+#endif
 #include "libvideogfx/graphics/fileio/png.hh"
 #include "libvideogfx/graphics/fileio/ppm.hh"
 #include "libvideogfx/graphics/fileio/uyvy.hh"
@@ -584,7 +586,7 @@ namespace videogfx {
   // ------------------------------------------------------------------------------
 
 
-
+#ifdef HAVE_FFMPEG
   class ReaderStage_FFMPEG : public ReaderStage
   {
   public:
@@ -632,7 +634,7 @@ namespace videogfx {
     const char* Name() const { return "loader: ffmpeg pipe"; }
 
   } singleton_ffmpeg;
-
+#endif
 
 
   // ------------------------------------------------------------------------------
