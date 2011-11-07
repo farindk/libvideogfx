@@ -230,8 +230,8 @@ AS_IF([test "x$with_ffmpeg" = xno],
    AC_CHECK_HEADER([libavcodec/avcodec.h],   [], [have_ffmpeg=no])
    AC_CHECK_HEADER([libavformat/avformat.h], [], [have_ffmpeg=no])
    AC_CHECK_HEADER([libswscale/swscale.h],   [], [have_ffmpeg=no])
-   AC_CHECK_LIB(avcodec,  avcodec_decode_video, [], [have_ffmpeg=no])
-   AC_CHECK_LIB(avformat, av_open_input_file,   [], [have_ffmpeg=no], [-lavcodec])
+   AC_CHECK_LIB(avcodec,  avcodec_decode_video2, [], [have_ffmpeg=no])
+   AC_CHECK_LIB(avformat, av_open_input_file,    [], [have_ffmpeg=no], [-lavcodec])
    AC_CHECK_LIB(swscale,  sws_scale,         [], [have_ffmpeg=no])
 
    AS_IF([test x"$have_ffmpeg" = "xyes"],

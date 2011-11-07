@@ -79,7 +79,7 @@ namespace videogfx
 
     videoStreamIdx=-1;
     for (int i=0;i< formatCtx->nb_streams; i++)
-      if (formatCtx->streams[i]->codec->codec_type == CODEC_TYPE_VIDEO)
+      if (formatCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO)
 	{
 	  codecCtx = formatCtx->streams[i]->codec;
 
