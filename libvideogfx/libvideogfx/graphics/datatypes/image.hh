@@ -200,8 +200,10 @@ namespace videogfx {
     ImageParam AskParam() const { return d_param; }
     /// Query image width (full resolution).
     int  AskWidth()  const { return d_param.width; }
+    int  getWidth()  const { return d_param.width; }
     /// Query image height (full resolution).
     int  AskHeight() const { return d_param.height; }
+    int  getHeight() const { return d_param.height; }
     /// Query image border (full resolution).
     int  AskBorder() const { return d_param.border; }
     /// Get both, width and height, of the image.
