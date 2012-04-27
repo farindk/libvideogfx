@@ -71,6 +71,9 @@ namespace videogfx {
   void WriteImage_PPM(std::ostream& stream, const Image<Pixel>&);
   void WriteImage_PPM(const char* filename, const Image<Pixel>&);
 
+  void WriteImage_PPM(std::ostream& stream, const Image<uint16>&, int maxVal=65535);
+  void WriteImage_PPM(const char* filename, const Image<uint16>&, int maxVal=65535);
+
   // next two are obsolete
   inline void WriteImage_PPM(const Image<Pixel>& img, std::ostream& stream)
   {
