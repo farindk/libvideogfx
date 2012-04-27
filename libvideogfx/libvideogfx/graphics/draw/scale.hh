@@ -48,6 +48,8 @@ namespace videogfx {
   template <class Pel> void HalfSize_Avg_H(Bitmap<Pel>& dst,const Bitmap<Pel>& src);
   template <class Pel> void HalfSize_Avg_V(Bitmap<Pel>& dst,const Bitmap<Pel>& src);
 
+  template <class Pel> void ScaleDownOctaves_Avg(Bitmap<Pel>& dst,const Bitmap<Pel>& src, int nOctaves);
+
 
   /* Copy scaled version of region into another bitmap.
    */
@@ -217,6 +219,26 @@ namespace videogfx {
 	assert(h==newh*2-1);
 	for (int x=0;x<w;x++)
 	  dp[newh-1][x] = sp[h-1][x];
+      }
+  }
+
+  template <class Pel> void ScaleDownOctaves_Avg(Bitmap<Pel>& dst,const Bitmap<Pel>& src, int nOctaves)
+  {
+    if (nOctaves==0)
+      { dst = src.Clone(); }
+    else
+      {
+	HalfSize_Avg(dst,src);
+	nOctaves--;
+
+	while (nOctaves>0)
+	  {
+	    Bitmap<Pel> tmp = dst;
+	    dst.Release();
+	    
+	    HalfSize_Avg(dst,tmp);
+	    nOctaves--;
+	  }
       }
   }
 
