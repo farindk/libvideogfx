@@ -267,12 +267,17 @@ namespace videogfx {
       { throw Excpt_Text(ErrSev_Error,"input is not a PPM format file"); }
 
     bool greyscale;
+    bool ascii=false;
     if (buffer[1]=='5')
-      greyscale=true;
+      { greyscale=true; ascii=false; }
     else if (buffer[1]=='6')
-      greyscale=false;
+      { greyscale=false; ascii=false; }
+    else if (buffer[1]=='2')
+      { greyscale=true; ascii=true; }
+    else if (buffer[1]=='3')
+      { greyscale=false; ascii=true; }
     else
-      { throw Excpt_Text(ErrSev_Error,"input is not a type 5 or type 6 PPM format file"); }
+      { throw Excpt_Text(ErrSev_Error,"input is not a type 2,3,5 or 6 PPM format file"); }
 
 
     int width,height,maxval;
@@ -298,7 +303,39 @@ namespace videogfx {
     param.width  = width;
     param.height = height;
 
-    if (nbytes_per_pixel==2)
+
+    if (ascii)
+      {
+	if (greyscale)
+	  {
+	    param.colorspace = Colorspace_Greyscale;
+	    dest.Create(param);
+
+	    uint16*const* Y = dest.AskFrameY();
+
+	    for (int y=0;y<height;y++)
+	      for (int x=0;x<width;x++)
+		{
+		  stream >> Y[y][x];
+		}
+	  }
+	else
+	  {
+	    param.colorspace = Colorspace_RGB;
+	    dest.Create(param);
+
+	    uint16*const* r = dest.AskFrameR();
+	    uint16*const* g = dest.AskFrameG();
+	    uint16*const* b = dest.AskFrameB();
+
+	    for (int y=0;y<height;y++)
+	      for (int x=0;x<width;x++)
+		{
+		  stream >> r[y][x] >> g[y][x] >> b[y][x];
+		}
+	  }
+      }
+    else if (nbytes_per_pixel==2)
       {
 	if (greyscale)
 	  {
@@ -472,7 +509,8 @@ namespace videogfx {
 
   void WriteImage_PPM(const char* filename, const Image<uint16>& img, int maxVal)
   {
-    ofstream ostr(filename);
+    ofstream ostr;
+    ostr.open(filename, std::ios::out | std::ios::binary);
     return WriteImage_PPM(ostr, img, maxVal);
   }
 }
