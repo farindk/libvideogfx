@@ -40,10 +40,6 @@
 
 namespace videogfx {
 
-  /* TODO: we seem to have a subpixel image shift in the Scale_NN and Scale_Bilinear functions.
-     Check that this is correct... Same probably for the BinomialDownsample() function.
-  */
-
   template <class Pel> void Scale_NN      (Bitmap<Pel>& dst,const Bitmap<Pel>& src, int newWidth, int newHeight);
   template <class Pel> void Scale_Bilinear(Bitmap<Pel>& dst,const Bitmap<Pel>& src, int newWidth, int newHeight);
 
@@ -321,10 +317,14 @@ namespace videogfx {
     for (int x=0;x<newW;x++)
       {
 	if (factor==NULL)
-	  { mapping[x] = (w-1)*x/(newW -1); }
+	  {
+	    mapping[x] = ((w-1)*x + (newW-1)/2)/(newW -1);
+	  }
 	else
 	  {
-	    int pos = 256*(w-1)*x/(newW -1);
+	    // The -1 (A) is to prevent setting mapping[x] to the maximum value.
+	    // Hence, we can simply access mapping[x]+1 in the interpolation algorithm without the danger of overflow.
+	    int pos = (256*(w-1) -1/*A*/ )*x/(newW -1);
 	    mapping[x] = pos/256;
 	    factor[x]  = pos%256;
 	  }
@@ -374,8 +374,8 @@ namespace videogfx {
     int h = src.getHeight();
 
     // we set the maximum value to w-1 so that we can always access the pixel at mapX[x]+1
-    FillScaleMapping(mapX, factorX, w-1, newWidth);
-    FillScaleMapping(mapY, factorY, h-1, newHeight);
+    FillScaleMapping(mapX, factorX, w, newWidth);
+    FillScaleMapping(mapY, factorY, h, newHeight);
 
     dst.Create(newWidth, newHeight);
 
