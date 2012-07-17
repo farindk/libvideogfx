@@ -59,6 +59,49 @@ namespace videogfx {
   void LowPass_Binomial_Downsample(Bitmap<Pixel>& dest, const Bitmap<Pixel>& img);
 
   void LowPass_Binomial           (Bitmap<short>& dest, const Bitmap<short>& img);
+
+
+
+  template <class T> void BinomialDownsample(Bitmap<T>& outbm, const Bitmap<T>& inbm)
+  {
+    int w,h;
+    w=inbm.AskWidth();
+    h=inbm.AskHeight();
+
+    int outW = (w+1)/2;
+    int outH = (h+1)/2;
+
+    T* line = new T[w+2];
+
+    outbm.Create(outW, outH);
+
+    const T*const* ip = inbm.AskFrame();
+    T*const* op = outbm.AskFrame();
+
+    T* l=line+1;
+
+    const int round=2;
+
+    for (int y=0;y<outH;y++)
+      {
+	const T* line_m1 = (y>0 ? ip[2*y-1] : ip[0]);
+	const T* line_0  = ip[2*y];
+	const T* line_p1 = (2*y+1 < h ? ip[2*y+1] : ip[h-1]);
+
+	for (int x=0;x<w;x++)
+	  l[x] = (line_m1[x] + 2*line_0[x] + line_p1[x] + round)>>2;
+
+	l[-1]=l[0];
+	l[w]=l[w-1];
+
+	for (int x=0;x<outW;x++)
+	  op[y][x] = (l[2*x-1] + 2*l[2*x] + l[2*x+1] + round)>>2;
+      }
+
+    delete[] line;
+  }
+
+
 }
 
 #endif

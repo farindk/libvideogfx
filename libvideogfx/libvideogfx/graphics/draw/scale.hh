@@ -40,6 +40,13 @@
 
 namespace videogfx {
 
+  /* TODO: we seem to have a subpixel image shift in the Scale_NN and Scale_Bilinear functions.
+     Check that this is correct... Same probably for the BinomialDownsample() function.
+  */
+
+  template <class Pel> void Scale_NN      (Bitmap<Pel>& dst,const Bitmap<Pel>& src, int newWidth, int newHeight);
+  template <class Pel> void Scale_Bilinear(Bitmap<Pel>& dst,const Bitmap<Pel>& src, int newWidth, int newHeight);
+
   template <class Pel> void DoubleSize_Dup  (Bitmap<Pel>& dst,const Bitmap<Pel>& src);
   template <class Pel> void DoubleSize_Dup_H(Bitmap<Pel>& dst,const Bitmap<Pel>& src);
   template <class Pel> void DoubleSize_Dup_V(Bitmap<Pel>& dst,const Bitmap<Pel>& src);
@@ -306,6 +313,102 @@ namespace videogfx {
     CopyScaled(dst,dstx0,dsty0,dw,dh, src,
 	       -src.AskXOffset(),-src.AskYOffset(),src.AskWidth()-src.AskXOffset(),src.AskHeight()-src.AskYOffset());
   }
+
+
+
+  inline void FillScaleMapping(int* mapping, unsigned char* factor, int w, int newW)
+  {
+    for (int x=0;x<newW;x++)
+      {
+	if (factor==NULL)
+	  { mapping[x] = (w-1)*x/(newW -1); }
+	else
+	  {
+	    int pos = 256*(w-1)*x/(newW -1);
+	    mapping[x] = pos/256;
+	    factor[x]  = pos%256;
+	  }
+      }
+  }
+
+
+  template <class Pel> void Scale_NN(Bitmap<Pel>& dst,const Bitmap<Pel>& src, int newWidth, int newHeight)
+  {
+    int* mapX = new int[newWidth];
+    int* mapY = new int[newHeight];
+
+    int w = src.getWidth();
+    int h = src.getHeight();
+
+    FillScaleMapping(mapX, NULL, w, newWidth);
+    FillScaleMapping(mapY, NULL, h, newHeight);
+
+    dst.Create(newWidth, newHeight);
+
+    const Pel*const* in  = src.AskFrame();
+    /* */ Pel*const* out = dst.AskFrame();
+
+    for (int y=0;y<newHeight;y++)
+      {
+	const int iy = mapY[y];
+
+	for (int x=0;x<newWidth;x++)
+	  {
+	    dst[y][x] = in[iy][ mapX[x] ];
+	  }
+      }
+
+    delete[] mapX;
+    delete[] mapY;
+  }
+
+
+  template <class Pel> void Scale_Bilinear(Bitmap<Pel>& dst,const Bitmap<Pel>& src, int newWidth, int newHeight)
+  {
+    int* mapX = new int[newWidth];
+    int* mapY = new int[newHeight];
+    unsigned char* factorX = new unsigned char[newWidth];
+    unsigned char* factorY = new unsigned char[newHeight];
+
+    int w = src.getWidth();
+    int h = src.getHeight();
+
+    // we set the maximum value to w-1 so that we can always access the pixel at mapX[x]+1
+    FillScaleMapping(mapX, factorX, w-1, newWidth);
+    FillScaleMapping(mapY, factorY, h-1, newHeight);
+
+    dst.Create(newWidth, newHeight);
+
+    const Pel*const* in  = src.AskFrame();
+    /* */ Pel*const* out = dst.AskFrame();
+
+    for (int y=0;y<newHeight;y++)
+      {
+	const int iy = mapY[y];
+	const int factor = factorY[y];
+
+	for (int x=0;x<newWidth;x++)
+	  {
+	    int ix = mapX[x];
+
+	    Pel A = in[iy][ix];
+	    Pel B = in[iy][ix+1];
+	    Pel C = in[iy+1][ix];
+	    Pel D = in[iy+1][ix+1];
+
+	    Pel left  = (A*256 + (C-A)*factor) / 256;
+	    Pel right = (B*256 + (D-B)*factor) / 256;
+
+	    dst[y][x] = (left*256 + (right-left)*factorX[x]) / 256;
+	  }
+      }
+
+    delete[] mapX;
+    delete[] mapY;
+    delete[] factorX;
+    delete[] factorY;
+  }
+
 }
 
 
