@@ -40,6 +40,12 @@
 
 namespace videogfx {
 
+  /* In Scale_NN and Scale_Bilinear, scaling is done such that the first pixels and
+     the last pixels in each row/column match exactly. For an assignment that matches
+     more closely to, e.g., the binomial decimation, a different scaling table would
+     be needed (TODO / w/newW instead of (w-1)/(newW-1) ).
+  */
+
   template <class Pel> void Scale_NN      (Bitmap<Pel>& dst,const Bitmap<Pel>& src, int newWidth, int newHeight);
   template <class Pel> void Scale_Bilinear(Bitmap<Pel>& dst,const Bitmap<Pel>& src, int newWidth, int newHeight);
 
