@@ -22,12 +22,18 @@ libvideogfx_graphics_filters_la_SOURCES = \
 	median.hh	\
 	binomial.cc	\
 	binomial.hh	\
+	scale.hh \
+	scale.cc \
+	resampler.cpp \
+	resampler.h \
 	$(mmx_sources)
 
 libvideogfx_graphics_filters_include_HEADERS = \
 	linear.hh	\
 	median.hh	\
 	binomial.hh	\
+	scale.hh \
+	resampler.h \
 	$(mmx_headers)
 
 INCLUDES = \

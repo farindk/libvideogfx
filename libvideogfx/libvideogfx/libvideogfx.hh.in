@@ -62,6 +62,7 @@
 #include <libvideogfx/graphics/filters/linear.hh>
 #include <libvideogfx/graphics/filters/median.hh>
 #include <libvideogfx/graphics/filters/binomial.hh>
+#include <libvideogfx/graphics/filters/scale.hh>
 #include <libvideogfx/graphics/measure/snr.hh>
 #include <libvideogfx/graphics/visualize/regions.hh>
 #include <libvideogfx/audio/fileio/audiosink.hh>
