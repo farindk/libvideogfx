@@ -464,47 +464,89 @@ namespace videogfx {
 	 << param.width << " " << param.height << "\n"
 	 << maxVal << "\n";
 
-    uint16* linebuf = NULL;
     int w = img.getWidth();
     int h = img.getHeight();
 
-    if (isColor)
+    if (maxVal>=256)
       {
-	linebuf = new uint16[w*3];
-
-	for (int y=0;y<h;y++)
+	uint16* linebuf = NULL;
+	if (isColor)
 	  {
-	    uint16* l = linebuf;
-	    for (int x=0;x<w;x++)
+	    linebuf = new uint16[w*3];
+
+	    for (int y=0;y<h;y++)
 	      {
-		*l++ = img.AskFrameR()[y][x];
-		*l++ = img.AskFrameG()[y][x];
-		*l++ = img.AskFrameB()[y][x];
-	      }
+		uint16* l = linebuf;
+		for (int x=0;x<w;x++)
+		  {
+		    *l++ = img.AskFrameR()[y][x];
+		    *l++ = img.AskFrameG()[y][x];
+		    *l++ = img.AskFrameB()[y][x];
+		  }
 
 #if !WORDS_BIGENDIAN
-	    swapbytes(linebuf, 3*w);
+		swapbytes(linebuf, 3*w);
 #endif
 
-	    ostr.write((const char*)linebuf, 2*3*w);
+		ostr.write((const char*)linebuf, 2*3*w);
+	      }
 	  }
+	else
+	  {
+	    linebuf = new uint16[w];
+
+	    for (int y=0;y<h;y++)
+	      {
+		memcpy(linebuf, img.AskFrameY()[y], w*2);
+#if !WORDS_BIGENDIAN
+		swapbytes(linebuf, w);
+#endif
+
+		ostr.write((const char*)linebuf, 2*w);
+	      }
+	  }
+
+	delete[] linebuf;
       }
     else
       {
-	linebuf = new uint16[w];
+	uint8* linebuf = NULL;
 
-	for (int y=0;y<h;y++)
+	if (isColor)
 	  {
-	    memcpy(linebuf, img.AskFrameY()[y], w*2);
-#if !WORDS_BIGENDIAN
-	    swapbytes(linebuf, w);
-#endif
+	    linebuf = new uint8[w*3];
 
-	    ostr.write((const char*)linebuf, 2*w);
+	    for (int y=0;y<h;y++)
+	      {
+		uint8* l = linebuf;
+		for (int x=0;x<w;x++)
+		  {
+		    *l++ = img.AskFrameR()[y][x];
+		    *l++ = img.AskFrameG()[y][x];
+		    *l++ = img.AskFrameB()[y][x];
+		  }
+
+		ostr.write((const char*)linebuf, 3*w);
+	      }
 	  }
-      }
+	else
+	  {
+	    linebuf = new uint8[w];
 
-    delete[] linebuf;
+	    for (int y=0;y<h;y++)
+	      {
+		uint8* l = linebuf;
+		for (int x=0;x<w;x++)
+		  {
+		    *l++ = img.AskFrameY()[y][x];
+		  }
+
+		ostr.write((const char*)linebuf, w);
+	      }
+	  }
+
+	delete[] linebuf;
+      }
   }
 
   void WriteImage_PPM(const char* filename, const Image<uint16>& img, int maxVal)
