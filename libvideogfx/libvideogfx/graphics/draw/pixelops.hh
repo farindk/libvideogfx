@@ -54,6 +54,8 @@ namespace videogfx {
   template <class T> void StretchValues(Bitmap<T>& bm,T low,T high);
   template <class T> void BinaryThreshold(Bitmap<T>& bm,T thresh,T setlow,T sethigh); // setlow if bm[]<thresh else sethigh
 
+  template <class Pel> void ModuloRange(Bitmap<Pel>& bm, Pel mini, Pel maxi);
+
 
 
   // --------------------- implementation ------------------------
@@ -220,6 +222,23 @@ namespace videogfx {
 	{
 	  if (p[y][x] < thresh) p[y][x] = setlow;
 	  else                  p[y][x] = sethigh;
+	}
+  }
+
+  template <class Pel>
+  void ModuloRange(Bitmap<Pel>& bm, Pel mini, Pel maxi)
+  {
+    Pel range = maxi-mini;
+
+    Pel*const* p = bm.AskFrame();
+    int w = bm.AskWidth();
+    int h = bm.AskHeight();
+
+    for (int y=0;y<h;y++)
+      for (int x=0;x<w;x++)
+	{
+	  while (p[y][x] <  mini) p[y][x] += range;
+	  while (p[y][x] >= maxi) p[y][x] -= range;
 	}
   }
 
