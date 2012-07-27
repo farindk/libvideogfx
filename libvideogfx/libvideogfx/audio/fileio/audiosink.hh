@@ -58,7 +58,7 @@ namespace videogfx {
   public:
     virtual ~AudioSink() { }
 
-    virtual void       SetParam(const AudioParam& p) { }
+    virtual void       SetParam(const AudioParam&) { }
     virtual AudioParam AskParam() const { return AudioParam(); }
 
     virtual void SendSamples(const int8*  samples,int len);
