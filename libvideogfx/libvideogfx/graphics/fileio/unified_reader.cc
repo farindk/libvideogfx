@@ -21,6 +21,7 @@
 #define _GNU_SOURCE
 #endif
 
+#include "config.h"
 #include "libvideogfx/graphics/fileio/unified_reader.hh"
 //#include "libvideogfx/graphics/fileio/mplayer.hh"
 #ifdef HAVE_FFMPEG
@@ -214,7 +215,7 @@ namespace videogfx {
     if (idx >= s_nplugins)
       return NULL;
     else
-      return s_plugins[idx]->AskName();
+      return s_plugins[idx]->Name();
   }
 
 
@@ -615,6 +616,7 @@ namespace videogfx {
 	  CheckSuffix(*spec, "vob") ||
 	  CheckSuffix(*spec, "m1v") ||
 	  CheckSuffix(*spec, "m2v") ||
+	  CheckSuffix(*spec, "mp4") ||
 	  CheckSuffix(*spec, "mpeg") ||
 	  CheckSuffix(*spec, "wmf"))
 	{

@@ -97,7 +97,7 @@ namespace videogfx {
     /* Parse the specification. If the loader factory can handle it, it removes
        the option from the specification and appends it to the plugin pipeline. */
     virtual ReaderStage* ParseSpec(char** spec) const = 0;
-    virtual const char* AskName() const { return "noname"; }
+    virtual const char* Name() const { return "noname"; }
   };
 
 
