@@ -120,7 +120,11 @@ namespace videogfx {
   {
     Colorspace cs = img.AskParam().colorspace;
 
-    if (cs == Colorspace_RGB)
+    if (cs == Colorspace_Greyscale)
+      {
+        Clear(img.AskBitmapY(),Pixel(0));
+      }
+    else if (cs == Colorspace_RGB)
       {
         Clear(img.AskBitmapR(),Pixel(0));
         Clear(img.AskBitmapG(),Pixel(0));
