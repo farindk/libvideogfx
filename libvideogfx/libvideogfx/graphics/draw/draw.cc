@@ -116,4 +116,29 @@ namespace videogfx {
   }
 
 
+  void ClearToBlack(Image<Pixel>& img)
+  {
+    Colorspace cs = img.AskParam().colorspace;
+
+    if (cs == Colorspace_RGB)
+      {
+        Clear(img.AskBitmapR(),Pixel(0));
+        Clear(img.AskBitmapG(),Pixel(0));
+        Clear(img.AskBitmapB(),Pixel(0));
+      }
+    else if (cs == Colorspace_YUV)
+      {
+        Clear(img.AskBitmapY(),Pixel(16));
+        Clear(img.AskBitmapU(),Pixel(128));
+        Clear(img.AskBitmapV(),Pixel(128));
+      }
+    else if (cs == Colorspace_HSV)
+      {
+        Clear(img.AskBitmap(Bitmap_Hue       ),Pixel(0));
+        Clear(img.AskBitmap(Bitmap_Saturation),Pixel(0));
+        Clear(img.AskBitmap(Bitmap_Value     ),Pixel(0));
+      }
+  }
+
+
 }

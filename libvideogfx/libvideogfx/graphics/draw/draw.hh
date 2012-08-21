@@ -67,6 +67,7 @@ namespace videogfx {
   /* Set all of the bitmap to the specified color. */
   template <class T> void Clear         (Bitmap<T>&,T color);
   template <class T> void Clear         (Image<T>& ,Color<T> color);
+  /*              */ void ClearToBlack  (Image<Pixel>&);
 
   /* Draw H/V-aligned rectangle. */
   template <class T> void DrawRectangle(Bitmap<T>& bm,int x1,int y1,int w, int h,T color);
@@ -806,7 +807,7 @@ namespace videogfx {
     // rasterize lower sub-triangle
 
     if(invydelta[2] > FLT_SMALL_EPSILON) {
-      // advance major edge attirubtes to middle point (if we have process the other edge)
+      // advance major edge attributes to middle point (if we have process the other edge)
 
       if(invydelta[1] > FLT_SMALL_EPSILON) {
 	double dy = p[1].y - p[0].y;
