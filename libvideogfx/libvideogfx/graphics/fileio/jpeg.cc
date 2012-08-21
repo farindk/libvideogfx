@@ -77,58 +77,100 @@ namespace videogfx {
     jpeg_stdio_src(&cinfo, infile);
 
     jpeg_read_header(&cinfo, TRUE);
-    cinfo.out_color_space = JCS_YCbCr;
 
-    jpeg_start_decompress(&cinfo);
+    if (cinfo.jpeg_color_space == JCS_GRAYSCALE)
+      {
+        cinfo.out_color_space = JCS_GRAYSCALE;
 
-    JSAMPARRAY buffer;
-    buffer = (*cinfo.mem->alloc_sarray)
-      ((j_common_ptr) &cinfo, JPOOL_IMAGE, cinfo.output_width * cinfo.output_components, 1);
+        jpeg_start_decompress(&cinfo);
 
-
-    // create destination image
-
-    ImageParam spec = img.AskParam();
-    spec.width      = cinfo.output_width;
-    spec.height     = cinfo.output_height;
-    spec.colorspace = Colorspace_YUV;
-    spec.chroma     = Chroma_420;
-    img.Create(spec);
-
-    Pixel*const* py  = img.AskFrameY();
-    Pixel*const* pcb = img.AskFrameCb();
-    Pixel*const* pcr = img.AskFrameCr();
+        JSAMPARRAY buffer;
+        buffer = (*cinfo.mem->alloc_sarray)
+          ((j_common_ptr) &cinfo, JPOOL_IMAGE, cinfo.output_width * cinfo.output_components, 1);
 
 
-    // read the image
+        // create destination image
 
-    while (cinfo.output_scanline < cinfo.output_height) {
-      JOCTET* bufp;
+        ImageParam spec = img.AskParam();
+        spec.width      = cinfo.output_width;
+        spec.height     = cinfo.output_height;
+        spec.colorspace = Colorspace_Greyscale;
+        img.Create(spec);
 
-      (void) jpeg_read_scanlines(&cinfo, buffer, 1);
-
-      bufp = buffer[0];
-
-      for (unsigned int x=0;x<cinfo.output_width;x+=2)
-	{
-	  py [cinfo.output_scanline-1][x] = *bufp++;
-	  pcb[(cinfo.output_scanline-1)/2][x/2] = *bufp++;
-	  pcr[(cinfo.output_scanline-1)/2][x/2] = *bufp++;
-	  py [cinfo.output_scanline-1][x+1] = *bufp++;
-	  bufp+=2;
-	}
+        Pixel*const* py  = img.AskFrameY();
 
 
-      (void) jpeg_read_scanlines(&cinfo, buffer, 1);
+        // read the image
 
-      bufp = buffer[0];
+        while (cinfo.output_scanline < cinfo.output_height) {
+          JOCTET* bufp;
 
-      for (unsigned int x=0;x<cinfo.output_width;x++)
-	{
-	  py [cinfo.output_scanline-1][x] = *bufp++;
-	  bufp+=2;
-	}
-    }
+          (void) jpeg_read_scanlines(&cinfo, buffer, 1);
+
+          bufp = buffer[0];
+
+          for (unsigned int x=0;x<cinfo.output_width;x++)
+            {
+              py[cinfo.output_scanline-1][x] = *bufp++;
+            }
+        }
+
+      }
+    else
+      {
+        cinfo.out_color_space = JCS_YCbCr;
+
+        jpeg_start_decompress(&cinfo);
+
+        JSAMPARRAY buffer;
+        buffer = (*cinfo.mem->alloc_sarray)
+          ((j_common_ptr) &cinfo, JPOOL_IMAGE, cinfo.output_width * cinfo.output_components, 1);
+
+
+        // create destination image
+
+        ImageParam spec = img.AskParam();
+        spec.width      = cinfo.output_width;
+        spec.height     = cinfo.output_height;
+        spec.colorspace = Colorspace_YUV;
+        spec.chroma     = Chroma_420;
+        img.Create(spec);
+
+        Pixel*const* py  = img.AskFrameY();
+        Pixel*const* pcb = img.AskFrameCb();
+        Pixel*const* pcr = img.AskFrameCr();
+
+
+        // read the image
+
+        while (cinfo.output_scanline < cinfo.output_height) {
+          JOCTET* bufp;
+
+          (void) jpeg_read_scanlines(&cinfo, buffer, 1);
+
+          bufp = buffer[0];
+
+          for (unsigned int x=0;x<cinfo.output_width;x+=2)
+            {
+              py [cinfo.output_scanline-1][x] = *bufp++;
+              pcb[(cinfo.output_scanline-1)/2][x/2] = *bufp++;
+              pcr[(cinfo.output_scanline-1)/2][x/2] = *bufp++;
+              py [cinfo.output_scanline-1][x+1] = *bufp++;
+              bufp+=2;
+            }
+
+
+          (void) jpeg_read_scanlines(&cinfo, buffer, 1);
+
+          bufp = buffer[0];
+
+          for (unsigned int x=0;x<cinfo.output_width;x++)
+            {
+              py [cinfo.output_scanline-1][x] = *bufp++;
+              bufp+=2;
+            }
+        }
+      }
 
 
     // cleanup
@@ -144,7 +186,8 @@ namespace videogfx {
 
   void WriteImage_JPEG(const char* filename, const Image<Pixel>& img)
   {
-    Assert(img.AskParam().colorspace == Colorspace_YUV);
+    Assert(img.AskParam().colorspace == Colorspace_YUV ||
+           img.AskParam().colorspace == Colorspace_Greyscale);
 
     struct jpeg_compress_struct cinfo;
     struct jpeg_error_mgr jerr;
@@ -166,48 +209,85 @@ namespace videogfx {
 
     cinfo.image_width = img.AskWidth();
     cinfo.image_height = img.AskHeight();
-    cinfo.input_components = 3;
-    cinfo.in_color_space = JCS_YCbCr;
 
-    jpeg_set_defaults(&cinfo);
+    if (img.AskParam().colorspace == Colorspace_YUV)
+      {
+        cinfo.input_components = 3;
+        cinfo.in_color_space = JCS_YCbCr;
 
-    jpeg_start_compress(&cinfo,TRUE);
+        jpeg_set_defaults(&cinfo);
 
-    JSAMPARRAY buffer;
-    buffer = (*cinfo.mem->alloc_sarray)
-      ((j_common_ptr) &cinfo, JPOOL_IMAGE, cinfo.image_width * cinfo.input_components, 1);
+        jpeg_start_compress(&cinfo,TRUE);
 
-
-    const Pixel*const* py  = img.AskFrameY();
-    const Pixel*const* pcb = img.AskFrameCb();
-    const Pixel*const* pcr = img.AskFrameCr();
+        JSAMPARRAY buffer;
+        buffer = (*cinfo.mem->alloc_sarray)
+          ((j_common_ptr) &cinfo, JPOOL_IMAGE, cinfo.image_width * cinfo.input_components, 1);
 
 
-    // write the image
+        const Pixel*const* py  = img.AskFrameY();
+        const Pixel*const* pcb = img.AskFrameCb();
+        const Pixel*const* pcr = img.AskFrameCr();
 
-    while (cinfo.next_scanline < cinfo.image_height) {
-      JOCTET* bufp;
-      JSAMPROW row[1];
-      row[0]=buffer[0];
 
-      bufp = buffer[0];
+        // write the image
 
-      for (unsigned int x=0;x<cinfo.image_width;x++)
-	{
-	  *bufp++ = py[cinfo.next_scanline][x];
-	  *bufp++ = pcb[(cinfo.next_scanline)/2][x/2];
-	  *bufp++ = pcr[(cinfo.next_scanline)/2][x/2];
-	}
+        while (cinfo.next_scanline < cinfo.image_height) {
+          JOCTET* bufp;
+          JSAMPROW row[1];
+          row[0]=buffer[0];
 
-      jpeg_write_scanlines(&cinfo, row, 1);
-    }
+          bufp = buffer[0];
 
+          for (unsigned int x=0;x<cinfo.image_width;x++)
+            {
+              *bufp++ = py[cinfo.next_scanline][x];
+              *bufp++ = pcb[(cinfo.next_scanline)/2][x/2];
+              *bufp++ = pcr[(cinfo.next_scanline)/2][x/2];
+            }
+
+          jpeg_write_scanlines(&cinfo, row, 1);
+        }
+      }
+    else
+      {
+        cinfo.input_components = 1;
+        cinfo.in_color_space = JCS_GRAYSCALE;
+
+        jpeg_set_defaults(&cinfo);
+
+        jpeg_start_compress(&cinfo,TRUE);
+
+        JSAMPARRAY buffer;
+        buffer = (*cinfo.mem->alloc_sarray)
+          ((j_common_ptr) &cinfo, JPOOL_IMAGE, cinfo.image_width * cinfo.input_components, 1);
+
+
+        const Pixel*const* py  = img.AskFrameY();
+
+
+        // write the image
+
+        while (cinfo.next_scanline < cinfo.image_height) {
+          JOCTET* bufp;
+          JSAMPROW row[1];
+          row[0]=buffer[0];
+
+          bufp = buffer[0];
+
+          for (unsigned int x=0;x<cinfo.image_width;x++)
+            {
+              *bufp++ = py[cinfo.next_scanline][x];
+            }
+
+          jpeg_write_scanlines(&cinfo, row, 1);
+        }
+      }
 
     // cleanup
-
+    
     jpeg_finish_compress(&cinfo);
     jpeg_destroy_compress(&cinfo);
-  
+    
     fclose(outfile);
   }
 #endif
