@@ -23,8 +23,8 @@ linux_headers =
 endif
 
 if HAVE_FFMPEG
-ffmpeg_sources = ffmpeg.cc
-ffmpeg_headers = ffmpeg.hh
+ffmpeg_sources = ffmpeg.cc ffmpeg_writer.cc
+ffmpeg_headers = ffmpeg.hh ffmpeg_writer.hh
 else
 ffmpeg_sources = 
 ffmpeg_headers = 

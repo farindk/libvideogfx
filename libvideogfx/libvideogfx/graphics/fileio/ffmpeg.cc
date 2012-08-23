@@ -85,6 +85,7 @@ namespace videogfx
 
 	  w = codecCtx->width;
 	  h = codecCtx->height;
+	  fps = float(codecCtx->time_base.den)/codecCtx->time_base.num / codecCtx->ticks_per_frame;
 
 	  videoStreamIdx=i;
 	  break;

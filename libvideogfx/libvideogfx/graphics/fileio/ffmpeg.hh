@@ -48,9 +48,10 @@ namespace videogfx
     bool IsEOF() const { return m_eof; }
     bool ReadImage(Image<Pixel>&);
     void SkipToImage(int nr);
-  
+
     int AskWidth() const { return w; }
     int AskHeight() const { return h; }
+    float getFPS() const { return fps; }
 
   private:
     struct AVFormatContext* formatCtx;
@@ -61,6 +62,7 @@ namespace videogfx
     struct AVFrame* frameRGB;
     uint8* buffer;
     int  w,h;
+    float fps;
 
     int  m_preloadFrameNr;
     bool m_eof;
