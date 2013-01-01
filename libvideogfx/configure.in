@@ -134,6 +134,9 @@ AC_SUBST(LINUX_COMMENT)
 
 dnl Check for X11
 
+CFLAGS+=" -std=c++0x"
+CXXFLAGS+=" -std=c++0x"
+
 saved_cflags="$CFLAGS"
 saved_ldflags="$LDFLAGS"
 

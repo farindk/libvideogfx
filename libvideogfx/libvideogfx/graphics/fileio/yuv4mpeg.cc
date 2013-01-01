@@ -42,7 +42,7 @@ namespace videogfx {
       return;
 
     //cout << "init " << ((void*)this) << endl;
-    Assert(d_yuvstr);
+    assert(d_yuvstr);
 
 #if 0
     d_yuvstr->seekg(0,ios::end);
@@ -57,7 +57,7 @@ namespace videogfx {
 
     /* look for keyword in header */
     if (strncmp(buf, Y4M_MAGIC, strlen(Y4M_MAGIC)))
-      throw Excpt_Text(ErrSev_Error,"input is not a YUV4MPEG2 file");
+      { fprintf(stderr,"input is not a YUV4MPEG2 file\n"); exit(5); } // TODO
 
     d_spec.width = 0;
     d_spec.height = 0;
@@ -78,11 +78,11 @@ namespace videogfx {
       switch (tag) {
       case 'W':  /* width */
 	d_spec.width = atoi(value);
-	if (d_spec.width <= 0) throw Excpt_Text(ErrSev_Error,"input width must be positive");
+	if (d_spec.width <= 0) { fprintf(stderr,"input width must be positive\n"); exit(5); }
 	break;
       case 'H':  /* height */
 	d_spec.height = atoi(value); 
-	if (d_spec.height <= 0) throw Excpt_Text(ErrSev_Error,"input height must be positive");
+	if (d_spec.height <= 0) { fprintf(stderr,"input height must be positive\n"); exit(5); }
 	break;
       case 'F':  /* frame rate (fps) */
 #if 0
@@ -180,7 +180,7 @@ namespace videogfx {
       {
 	bool success = ReadImage(dummy);
 	if (!success)
-	  { AssertDescr(false, "yuv4mpeg loader: skipping beyond the end of the stream"); }
+	  { assert(false); } // , "yuv4mpeg loader: skipping beyond the end of the stream"); }
       }
   }
 
@@ -202,7 +202,7 @@ namespace videogfx {
 	Init();
       }
 
-    Assert(d_yuvstr);
+    assert(d_yuvstr);
 
     char buf[512];
     d_yuvstr->getline(buf,511);
@@ -255,7 +255,7 @@ namespace videogfx {
 
   void FileWriter_YUV4MPEG::WriteImage(const Image<Pixel>& img)
   {
-    Assert(d_yuvstr);
+    assert(d_yuvstr);
 
     ImageParam param = img.AskParam();
 

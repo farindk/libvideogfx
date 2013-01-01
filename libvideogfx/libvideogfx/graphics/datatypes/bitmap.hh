@@ -32,11 +32,11 @@
 #ifndef LIBVIDEOGFX_GRAPHICS_BASIC_BITMAP_HH
 #define LIBVIDEOGFX_GRAPHICS_BASIC_BITMAP_HH
 
-#include <libvideogfx/error.hh>
 #include <libvideogfx/types.hh>
 #include <libvideogfx/utility/math.hh>
 #include <string.h>
 #include <algorithm>
+#include <assert.h>
 
 namespace videogfx {
 
@@ -706,11 +706,10 @@ namespace videogfx {
     if (d_parent==NULL)
       return Bitmap<Pel>();
 
-    AssertDescr(!(x0+d_xoffset<0 ||
+    assert(!(x0+d_xoffset<0 ||
 		  y0+d_yoffset<0 ||
 		  x0+d_xoffset+w > d_aligned_width ||
-		  y0+d_yoffset+h > d_aligned_height),
-		"sub-view range not within bitmap");
+		  y0+d_yoffset+h > d_aligned_height)); // "sub-view range not within bitmap");
 
     Bitmap<Pel> pm;
 
@@ -868,61 +867,61 @@ namespace videogfx {
 
   template <class Pel> inline int Bitmap<Pel>::AskWidth()  const
   {
-    AssertDescr(d_parent,"no bitmap-provider attached to bitmap");
+    assert(d_parent); //"no bitmap-provider attached to bitmap");
     return d_width;
   }
 
   template <class Pel> inline int Bitmap<Pel>::AskHeight() const
   {
-    AssertDescr(d_parent,"no bitmap-provider attached to bitmap");
+    assert(d_parent); //"no bitmap-provider attached to bitmap");
     return d_height;
   }
 
   template <class Pel> inline int Bitmap<Pel>::AskAlignedWidth() const
   {
-    AssertDescr(d_parent,"no bitmap-provider attached to bitmap");
+    assert(d_parent); //"no bitmap-provider attached to bitmap");
     return d_aligned_width;
   }
 
   template <class Pel> inline int Bitmap<Pel>::AskAlignedHeight() const
   {
-    AssertDescr(d_parent,"no bitmap-provider attached to bitmap");
+    assert(d_parent); //"no bitmap-provider attached to bitmap");
     return d_aligned_height;
   }
 
   template <class Pel> inline int Bitmap<Pel>::AskTotalWidth() const
   {
-    AssertDescr(d_parent,"no bitmap-provider attached to bitmap");
+    assert(d_parent); //"no bitmap-provider attached to bitmap");
     return d_total_width;
   }
 
   template <class Pel> inline int Bitmap<Pel>::AskTotalHeight() const
   {
-    AssertDescr(d_parent,"no bitmap-provider attached to bitmap");
+    assert(d_parent); //"no bitmap-provider attached to bitmap");
     return d_total_height;
   }
 
   template <class Pel> inline int Bitmap<Pel>::AskBorder() const
   {
-    AssertDescr(d_parent,"no bitmap-provider attached to bitmap");
+    assert(d_parent); //"no bitmap-provider attached to bitmap");
     return d_border;
   }
 
   template <class Pel> inline int Bitmap<Pel>::AskAlignedBorder() const
   {
-    AssertDescr(d_parent,"no bitmap-provider attached to bitmap");
+    assert(d_parent); //"no bitmap-provider attached to bitmap");
     return d_aligned_border;
   }
 
   template <class Pel> inline Pel*const* Bitmap<Pel>::AskFrame()
   {
-    AssertDescr(d_parent,"no bitmap-provider attached to bitmap");
+    assert(d_parent); //"no bitmap-provider attached to bitmap");
     return &d_data[d_border+d_yoffset];
   }
 
   template <class Pel> inline const Pel*const* Bitmap<Pel>::AskFrame() const
   {
-    AssertDescr(d_parent,"no bitmap-provider attached to bitmap");
+    assert(d_parent); //"no bitmap-provider attached to bitmap");
     return &d_data[d_border+d_yoffset];
   }
 

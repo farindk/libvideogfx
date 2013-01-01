@@ -369,7 +369,7 @@ namespace videogfx {
 	break;
 
       case Colorspace_Invalid:
-	Assert(0);
+	assert(0);
 	break;
       }
 
@@ -398,9 +398,8 @@ namespace videogfx {
 
   template <class Pel> void Image<Pel>::MoveZero(int x0,int y0)
   {
-    AssertDescr((x0 % ChromaSubH(AskParam().chroma)==0) &&
-		(y0 % ChromaSubV(AskParam().chroma)==0),
-		"can only move zero position in multiples of chroma-subsampling positions");
+    assert((x0 % ChromaSubH(AskParam().chroma)==0) &&
+		(y0 % ChromaSubV(AskParam().chroma)==0)); // "can only move zero position in multiples of chroma-subsampling positions");
 
     d_pm[0].MoveZero(x0,y0);
     d_pm[3].MoveZero(x0,y0);

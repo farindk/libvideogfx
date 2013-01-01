@@ -21,6 +21,7 @@
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #ifdef HAVE_LIBJPEG
 extern "C" {
@@ -40,12 +41,12 @@ namespace videogfx {
 
   void ReadImage_JPEG(Image<Pixel>& img,const char* filename)
   {
-    AssertDescr(false,"JPEG support has not been compiled into libvideogfx.\n");
+    assert(false); // ,"JPEG support has not been compiled into libvideogfx.\n");
   }
 
   void WriteImage_JPEG(const char* filename,const Image<Pixel>& img)
   {
-    AssertDescr(false,"JPEG support has not been compiled into libvideogfx.\n");
+    assert(false); // ,"JPEG support has not been compiled into libvideogfx.\n");
   }
 
 #else
@@ -186,7 +187,7 @@ namespace videogfx {
 
   void WriteImage_JPEG(const char* filename, const Image<Pixel>& img)
   {
-    Assert(img.AskParam().colorspace == Colorspace_YUV ||
+    assert(img.AskParam().colorspace == Colorspace_YUV ||
            img.AskParam().colorspace == Colorspace_Greyscale);
 
     struct jpeg_compress_struct cinfo;

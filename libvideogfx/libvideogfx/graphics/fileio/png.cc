@@ -41,12 +41,12 @@ namespace videogfx {
 
   void ReadImage_PNG(Image<Pixel>& img, istream& stream)
   {
-    AssertDescr(false,"PNG support has not been compiled into libvideogfx.\n");
+    assert(false); // ,"PNG support has not been compiled into libvideogfx.\n");
   }
 
   void WriteImage_PNG(ostream& stream, const Image<Pixel>& img)
   {
-    AssertDescr(false,"PNG support has not been compiled into libvideogfx.\n");
+    assert(false); //,"PNG support has not been compiled into libvideogfx.\n");
   }
 
 #else
@@ -87,7 +87,7 @@ namespace videogfx {
 
   void ReadImage_PNG(Image<Pixel>& img, istream& is)
   {
-    AssertDescr(is != NULL, "Open stream first.");
+    assert(is != NULL); // , "Open stream first.");
 
     png_structp png_ptr;
     png_infop info_ptr;
@@ -101,13 +101,13 @@ namespace videogfx {
      * was compiled with a compatible version of the library.  REQUIRED
      */
     png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-    Assert(png_ptr != NULL);
+    assert(png_ptr != NULL);
 
     /* Allocate/initialize the memory for image information.  REQUIRED. */
     info_ptr = png_create_info_struct(png_ptr);
     if (info_ptr == NULL) {
       png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
-      AssertDescr(false, "could not create info_ptr");
+      assert(false); // , "could not create info_ptr");
     } // if
 
     /* Set error handling if you are using the setjmp/longjmp method (this is
@@ -118,7 +118,7 @@ namespace videogfx {
       /* Free all of the memory associated with the png_ptr and info_ptr */
       png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
       /* If we get here, we had a problem reading the file */
-      AssertDescr(false, "fatal error in png library");
+      assert(false); // , "fatal error in png library");
     } // if
 
       /* If you are using replacement read functions, instead of calling
@@ -134,7 +134,7 @@ namespace videogfx {
     png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type,
 		 &interlace_type, NULL, NULL);
 
-    AssertDescr(bit_depth < 16, "cannot handle 16 bit images");
+    assert(bit_depth < 16); // , "cannot handle 16 bit images");
       
     /**** Set up the data transformations you want.  Note that these are all
      **** optional.  Only call them if you want/need them.  Many of the
@@ -191,11 +191,11 @@ namespace videogfx {
 
     /* The easiest way to read the image: */
     uint8** row_pointers = new png_bytep[height];
-    Assert(row_pointers != NULL);
+    assert(row_pointers != NULL);
 
     for (uint32 y = 0; y < height; y++) {
       row_pointers[y] = (png_bytep)malloc(png_get_rowbytes(png_ptr, info_ptr));
-      Assert(row_pointers[y] != NULL);
+      assert(row_pointers[y] != NULL);
     } // for
 
       /* Now it's time to read the image.  One of these methods is REQUIRED */
@@ -223,7 +223,7 @@ namespace videogfx {
       band = 3;
       break;
     default:
-      AssertDescr(false, "unknown color type in png image.");
+      assert(false); // , "unknown color type in png image.");
     } // switch
 
     ImageParam param = img.AskParam();
@@ -301,11 +301,11 @@ namespace videogfx {
      * in case we are using dynamically linked libraries.  REQUIRED.
      */
     png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-    Assert(png_ptr != NULL);
+    assert(png_ptr != NULL);
 
     /* Allocate/initialize the image information data.  REQUIRED */
     png_infop info_ptr = png_create_info_struct(png_ptr);
-    Assert(info_ptr != NULL);
+    assert(info_ptr != NULL);
 
     /* Set error handling.  REQUIRED if you aren't supplying your own
      * error hadnling functions in the png_create_write_struct() call.
@@ -313,7 +313,7 @@ namespace videogfx {
     if (setjmp(png_jmpbuf(png_ptr))) {
       /* If we get here, we had a problem reading the file */
       png_destroy_write_struct(&png_ptr,  (png_infopp)NULL);
-      AssertDescr(false, "could not write png file");
+      assert(false); // , "could not write png file");
     }
 
     /* If you are using replacement read functions, instead of calling
@@ -344,7 +344,7 @@ namespace videogfx {
       color_type = PNG_COLOR_TYPE_GRAY;
       bands = 1;
     } else {
-      AssertDescr(false,"can only save RGB or grayscale images");
+      assert(false); // ,"can only save RGB or grayscale images");
     }
 
     if (param.has_alpha) { color_type |= PNG_COLOR_MASK_ALPHA; bands++; }
@@ -359,11 +359,11 @@ namespace videogfx {
     png_write_info(png_ptr, info_ptr);
 
     uint8** row_pointers = new uint8*[h];
-    Assert(row_pointers);
+    assert(row_pointers);
 
     for (int y = 0; y < h; y++) {
       row_pointers[y] = new uint8[w * bands];
-      Assert(row_pointers[y]);
+      assert(row_pointers[y]);
     } // for
 
     if (bands == 1 || bands == 2) {
@@ -449,7 +449,7 @@ namespace videogfx {
   void WriteImage_PNG(const char* filename, const Image<Pixel>& img)
   {
     ofstream ofs(filename, ios::out | ios::binary);
-    Assert(ofs);
+    assert(ofs);
     WriteImage_PNG(ofs, img);
   }
 }

@@ -276,7 +276,7 @@ namespace videogfx {
     for (int i=i0;i<=i1;i++)
       sum += f[i];
 
-    AssertDescr(sum != 0.0, "Filter cannot be normalized since coefficients sum to zero.");
+    assert(sum != 0.0); //, "Filter cannot be normalized since coefficients sum to zero.");
 
     const double fact = 1.0/sum;
 

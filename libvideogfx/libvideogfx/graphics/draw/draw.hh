@@ -508,8 +508,8 @@ namespace videogfx {
 
     if (param.colorspace == Colorspace_YUV)
       {
-	AssertDescr(param.chroma == Chroma_420 ||
-		    param.chroma == Chroma_444,"cannot draw circle because chroma pixels are not square");
+	assert(param.chroma == Chroma_420 ||
+               param.chroma == Chroma_444); // ,"cannot draw circle because chroma pixels are not square");
       }
 
     for (int i=0;i<4;i++)
@@ -534,7 +534,7 @@ namespace videogfx {
 
   template <class T> void DrawRectangle(Bitmap<T>& bm,int x1,int y1,int w, int h,T color)
   {
-    MessageDisplay::Show(ErrSev_Warning, "depreceated use of old DrawRectangle() function.");
+    fprintf(stderr,"depreceated use of old DrawRectangle() function.\n");
     DrawRectangle_NEW(bm,x1,y1,x1+w-1,y1+h-1, color);
   }
 
@@ -580,7 +580,7 @@ namespace videogfx {
 
   template <class T> void DrawRectangle(Image<T>&  bm,int x1,int y1,int w, int h,Color<T> color)
   {
-    MessageDisplay::Show(ErrSev_Warning, "depreceated use of old DrawRectangle() function.");
+    fprintf(stderr, "depreceated use of old DrawRectangle() function.\n");
     DrawRectangle_NEW(bm,x1,y1,x1+w-1,y1+h-1,color);
   }
 
@@ -646,8 +646,8 @@ namespace videogfx {
 
     if (param.colorspace == Colorspace_YUV)
       {
-	AssertDescr(param.chroma == Chroma_420 ||
-		    param.chroma == Chroma_444,"cannot draw circle because chroma pixels are not square");
+	assert(param.chroma == Chroma_420 ||
+               param.chroma == Chroma_444); // ,"cannot draw circle because chroma pixels are not square");
       }
 
     for (int i=0;i<4;i++)

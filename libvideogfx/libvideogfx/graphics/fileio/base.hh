@@ -51,7 +51,7 @@ namespace videogfx {
 
     virtual void ReadImage(Image<Pixel>&) = 0;
     virtual bool SkipToImage(int nr)
-    { AssertDescr(false, "frame-skipping not implemented"); return false; }
+    { assert(false); return false; } // , "frame-skipping not implemented"); return false; }
 
   };
 

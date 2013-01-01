@@ -35,31 +35,18 @@
 #ifndef LIBVIDEOGFX_TYPES_HH
 #define LIBVIDEOGFX_TYPES_HH
 
+#include <cstdint>
+
 namespace videogfx {
 
-#ifdef _WIN32
-  typedef unsigned _int64 uint64;
-  typedef          _int64  int64;
-  typedef unsigned long   uint32;
-  typedef   signed long    int32;
-#else
-#  ifdef __x86_64__
-    typedef unsigned long uint64;
-    typedef   signed long  int64;
-    typedef unsigned int  uint32;
-    typedef   signed int   int32;
-#  else
-    typedef unsigned long long uint64;
-    typedef   signed long long  int64;
-    typedef unsigned long      uint32;
-    typedef   signed long       int32;
-#  endif
-#endif
-
-  typedef unsigned short     uint16;
-  typedef   signed short      int16;
-  typedef unsigned char      uint8;
-  typedef   signed char       int8;
+  typedef uint64_t uint64;
+  typedef  int64_t  int64;
+  typedef uint32_t uint32;
+  typedef  int32_t  int32;
+  typedef uint16_t uint16;
+  typedef  int16_t  int16;
+  typedef uint8_t  uint8;
+  typedef  int8_t   int8;
 
   typedef uint32 uint31;
   typedef uint32 uint30;
@@ -104,7 +91,7 @@ namespace videogfx {
   typedef  int8  int3;
   typedef  int8  int4;
 
-  typedef uint8 Pixel;
+  typedef uint8_t Pixel;
 
   const Pixel BoolPixel_Set   = 255;
   const Pixel BoolPixel_Clear = 0;

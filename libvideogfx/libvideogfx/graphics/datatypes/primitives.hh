@@ -36,6 +36,8 @@
 #define LIBVIDEOGFX_GRAPHICS_DATATYPES_PRIMITIVES_HH
 
 #include <math.h>
+#include <algorithm>
+
 
 namespace videogfx {
 
@@ -48,6 +50,8 @@ namespace videogfx {
 
     bool operator==(const Point2D<T>& p) const { return p.x==x && p.y==y; }
     bool operator!=(const Point2D<T>& p) const { return p.x!=x || p.y!=y; }
+
+    void shiftByOffset(T ox,T oy) { x+=ox; y+=oy; }
 
     T x,y;
   };
@@ -71,6 +75,51 @@ namespace videogfx {
   {
     Point2D<T> upperleft;
     Point2D<T> lowerright;
+
+    int& left()   { return upperleft.x; }
+    int& top()    { return upperleft.y; }
+    int& right()  { return lowerright.x; }
+    int& bottom() { return lowerright.y; }
+
+    int left()   const { return upperleft.x; }
+    int top()    const { return upperleft.y; }
+    int right()  const { return lowerright.x; }
+    int bottom() const { return lowerright.y; }
+
+    int width()  const { return right()-left()+1; }
+    int height() const { return bottom()-top()+1; }
+
+    void initEmpty(T w,T h)
+    {
+      left()  = w;
+      right() = 0;
+      top()   = h;
+      bottom()= 0;
+    }
+
+    void extendToIncludePoint(T x,T y)
+    {
+      left() = std::min(left(),x);
+      right()= std::max(right(),x);
+      top()  = std::min(top() ,y);
+      bottom()=std::max(bottom(),y);
+    }
+
+    void extendToIncludeRect(const Rect2D<T>& r)
+    {
+      left()  = std::min(left()  ,r.left());
+      right() = std::max(right() ,r.right());
+      top()   = std::min(top()   ,r.top());
+      bottom()= std::max(bottom(),r.bottom());
+    }
+
+    void shiftByOffset(int x,int y)
+    {
+      left() += x;
+      right() += x;
+      top() += y;
+      bottom() += y;
+    }
   };
 
   template <class T> struct Color

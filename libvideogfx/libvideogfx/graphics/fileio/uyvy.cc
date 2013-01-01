@@ -90,8 +90,8 @@ namespace videogfx {
   {
     ImageParam param = img.AskParam();
 
-    Assert(param.chroma     == Chroma_422);
-    Assert(param.colorspace == Colorspace_YUV);
+    assert(param.chroma     == Chroma_422);
+    assert(param.colorspace == Colorspace_YUV);
 
 
     // Write file

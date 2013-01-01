@@ -34,11 +34,12 @@ public:
   void Close();
 
   int AddVideoStream(int w,int h,float fps, int bitrate=1500000);
-  int AddAudioStream(int samplerate,int nchannels);
+  int AddAudioStream(int samplerate,int nchannels, int bitrate=64000);
+  int getPreferredAudioFrameSize() const { return audio_input_frame_size; }
 
   bool Start();
   void PushImage(const Image<Pixel>&, int channel=-1);
-  void PushAudioSamples(int16* samples,int n, int channel=-1);
+  void PushAudioSamples(const int16* samples,int n, int channel=-1);
 
 private:
   std::string mFilename;
@@ -53,6 +54,16 @@ private:
   uint8_t *video_outbuf;
   int video_outbuf_size;
   struct SwsContext *img_convert_ctx;
+
+  uint8_t *audio_outbuf;
+  int audio_outbuf_size;
+  int audio_input_frame_size;
+
+  int16_t *samples;
+  int nBufferedSamples;
+
+  void encodeAudioFrame(const int16* p);
+  void flushAudioBuffer();
 };
 
 }

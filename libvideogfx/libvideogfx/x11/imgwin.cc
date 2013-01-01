@@ -26,6 +26,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include <iostream>
 #include <iomanip>
@@ -289,7 +290,7 @@ namespace videogfx {
 #if HAVE_XV
     if (d_dispimg->UsesXv())
       {
-	Assert(img.AskParam().colorspace == Colorspace_YUV);
+	assert(img.AskParam().colorspace == Colorspace_YUV);
 
 	XvImage* xvimg = (XvImage*)d_dispimg->AskXvImage();
 

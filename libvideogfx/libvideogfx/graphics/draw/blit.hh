@@ -38,7 +38,6 @@
 #include <libvideogfx/graphics/datatypes/bitmap.hh>
 #include <libvideogfx/graphics/datatypes/image.hh>
 #include <libvideogfx/graphics/datatypes/primitives.hh>
-#include <libvideogfx/error.hh>
 
 namespace videogfx {
 
@@ -125,8 +124,8 @@ namespace videogfx {
     const int w = src.AskWidth();
     const int h = src.AskHeight();
 
-    Assert(w == dst.AskWidth());
-    Assert(h == dst.AskHeight());
+    assert(w == dst.AskWidth());
+    assert(h == dst.AskHeight());
 
     const Pel*const* sp = src.AskFrame();
     Pel*const* dp = dst.AskFrame();

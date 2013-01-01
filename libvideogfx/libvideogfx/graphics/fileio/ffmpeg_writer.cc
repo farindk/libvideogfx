@@ -108,99 +108,131 @@ int gcd(int a,int b)
 
 int FFMPEG_Writer::AddVideoStream(int w,int h,float fps, int bitrate)
 {
-    AVStream *st;
-    st = videoStream = av_new_stream(oc, 0);
-    if (!st) {
-      std::cerr << "Could not alloc ffmpeg video stream\n";
-      return -1;
-    }
+  std::cout << "int FFMPEG_Writer::AddVideoStream(" << w << "," << h << "," << fps << "," << bitrate << ")\n";
 
-    int d = roundf(fps*100);
-    int n = 100;
-    int g = gcd(d,n);
+  AVStream *st;
+  st = videoStream = av_new_stream(oc, 0);
+  if (!st) {
+    std::cerr << "Could not alloc ffmpeg video stream\n";
+    return -1;
+  }
 
-    AVCodecContext *c;
-    c = st->codec;
-    c->codec_id = fmt->video_codec;
-    c->codec_type = AVMEDIA_TYPE_VIDEO;
-    c->bit_rate = bitrate;
-    c->width  = w;
-    c->height = h;
-    c->time_base.den = d/g;
-    c->time_base.num = n/g;
-    c->gop_size = 25;
-    c->pix_fmt = PIX_FMT_YUV420P;
+  int d = roundf(fps*100);
+  int n = 100;
+  int g = gcd(d,n);
 
-    if(oc->oformat->flags & AVFMT_GLOBALHEADER)
-        c->flags |= CODEC_FLAG_GLOBAL_HEADER;
+  AVCodecContext *c;
+  c = st->codec;
+  c->codec_id = fmt->video_codec;
+  c->codec_type = AVMEDIA_TYPE_VIDEO;
+  c->bit_rate = bitrate;
+  c->width  = w;
+  c->height = h;
+  c->time_base.den = d/g;
+  c->time_base.num = n/g;
+  c->gop_size = 25;
+  c->pix_fmt = PIX_FMT_YUV420P;
+
+  if(oc->oformat->flags & AVFMT_GLOBALHEADER)
+    c->flags |= CODEC_FLAG_GLOBAL_HEADER;
 
 
-    // openVideo()
+  // openVideo()
 
-    AVCodec *codec;
+  AVCodec *codec;
 
-    codec = avcodec_find_encoder(c->codec_id);
-    if (!codec) {
-      std::cerr << "codec not found\n";
-      return -1;
-    }
+  codec = avcodec_find_encoder(c->codec_id);
+  if (!codec) {
+    std::cerr << "codec not found\n";
+    return -1;
+  }
 
-    if (avcodec_open(c, codec) < 0) {
-      std::cerr << "could not open codec\n";
-      return -1;
-    }
+  if (avcodec_open(c, codec) < 0) {
+    std::cerr << "could not open codec\n";
+    return -1;
+  }
 
-    video_outbuf = NULL;
-    if (!(oc->oformat->flags & AVFMT_RAWPICTURE)) {
-        video_outbuf_size = 200000;
-        video_outbuf = (uint8_t*)av_malloc(video_outbuf_size);
-    }
+  video_outbuf = NULL;
+  if (!(oc->oformat->flags & AVFMT_RAWPICTURE)) {
+    video_outbuf_size = 200000;
+    video_outbuf = (uint8_t*)av_malloc(video_outbuf_size);
+  }
 
-    picture = allocPicture(c->pix_fmt, c->width, c->height);
-    if (!picture) {
+  picture = allocPicture(c->pix_fmt, c->width, c->height);
+  if (!picture) {
+    std::cerr << "could not allocate picture\n";
+    return -1;
+  }
+
+  tmp_picture = NULL;
+  if (c->pix_fmt != PIX_FMT_YUV420P) {
+    tmp_picture = allocPicture(PIX_FMT_YUV420P, c->width, c->height);
+    if (!tmp_picture) {
       std::cerr << "could not allocate picture\n";
       return -1;
     }
+  }
 
-    tmp_picture = NULL;
-    if (c->pix_fmt != PIX_FMT_YUV420P) {
-        tmp_picture = allocPicture(PIX_FMT_YUV420P, c->width, c->height);
-        if (!tmp_picture) {
-	  std::cerr << "could not allocate picture\n";
-	  return -1;
-        }
-    }
-
-    return 0;
+  return 0;
 }
 
-int FFMPEG_Writer::AddAudioStream(int samplerate,int nchannels)
+int FFMPEG_Writer::AddAudioStream(int samplerate,int nchannels, int bitrate)
 {
-    AVStream *st;
-    st = audioStream = av_new_stream(oc, 1);
-    if (!st) {
-      std::cerr << "could not alloc ffmpeg audio stream\n";
-      return .1;
-    }
+  std::cout << "int FFMPEG_Writer::AddAudioStream(" << samplerate << "," << nchannels << "," << bitrate << ")\n";
 
-    AVCodecContext *c;
-    c = st->codec;
-    c->codec_id = fmt->audio_codec;
-    c->codec_type = AVMEDIA_TYPE_AUDIO;
-    c->sample_fmt = AV_SAMPLE_FMT_S16;
-    c->bit_rate = 64000;
-    c->sample_rate = samplerate;
-    c->channels = nchannels;
+  AVStream *st;
+  st = audioStream = av_new_stream(oc, 1);
+  if (!st) {
+    std::cerr << "could not alloc ffmpeg audio stream\n";
+    return .1;
+  }
 
-    if(oc->oformat->flags & AVFMT_GLOBALHEADER)
-        c->flags |= CODEC_FLAG_GLOBAL_HEADER;
+  AVCodecContext *c;
+  c = st->codec;
+  c->codec_id = CODEC_ID_MP3; //fmt->audio_codec;
+  c->codec_type = AVMEDIA_TYPE_AUDIO;
+  c->sample_fmt = AV_SAMPLE_FMT_S16;
+  c->bit_rate = bitrate;
+  c->sample_rate = samplerate;
+  c->channels = nchannels;
 
-    return 0;
+  if(oc->oformat->flags & AVFMT_GLOBALHEADER)
+    c->flags |= CODEC_FLAG_GLOBAL_HEADER;
+
+
+  // openAudio()
+
+  AVCodec *codec;
+
+  codec = avcodec_find_encoder(c->codec_id);
+  if (!codec) {
+    std::cerr << "codec not found\n";
+    exit(1);
+  }
+
+  if (avcodec_open(c, codec) < 0) {
+    std::cerr << "could not open codec\n";
+    exit(1);
+  }
+
+
+  // alloc audio buffers
+
+  audio_outbuf_size = FF_MIN_BUFFER_SIZE;
+  audio_outbuf = (uint8_t*)av_malloc(audio_outbuf_size);
+  audio_input_frame_size = c->frame_size;
+    
+  samples = (int16_t*)av_malloc(audio_input_frame_size * 2 * c->channels);
+  nBufferedSamples=0;
+
+  return 0;
 }
 
 
 bool FFMPEG_Writer::Start()
 {
+  std::cout << "bool FFMPEG_Writer::Start()\n";
+
   av_set_parameters(oc, NULL);
   av_dump_format(oc, 0, mFilename.c_str(), 1);
 
@@ -216,6 +248,8 @@ bool FFMPEG_Writer::Start()
 
 void FFMPEG_Writer::PushImage(const Image<Pixel>& img, int channel)
 {
+  //std::cout << "void FFMPEG_Writer::PushImage(const Image<Pixel>& img, int channel)\n";
+
   const Image<Pixel> yuv = ChangeColorspace_NoCopy(img,
 						   Colorspace_YUV,
 						   Chroma_420);
@@ -283,12 +317,107 @@ void FFMPEG_Writer::PushImage(const Image<Pixel>& img, int channel)
 
 }
 
-void FFMPEG_Writer::PushAudioSamples(int16* samples,int n, int channel)
+void FFMPEG_Writer::PushAudioSamples(const int16* p,int n, int channel)
 {
+  //std::cout << "void FFMPEG_Writer::PushAudioSamples(const int16* p,int n, int channel)\n";
+
+  //std::cout << "---\n";
+  //std::cout << nBufferedSamples << " <+ " << n << "\n";
+
+  // if there are still buffered samples, append some more until we have a complete audio frame
+
+  if (nBufferedSamples>0)
+    {
+      int maxAdd = audio_input_frame_size-nBufferedSamples;
+      int nAdd = std::min(maxAdd,n);
+
+      memcpy(samples+nBufferedSamples, p, nAdd*2);
+      p += nAdd;
+      n -= nAdd;
+      nBufferedSamples+=nAdd;
+
+      //std::cout << "fill buffer " << nAdd << "\n";
+    }
+
+  //std::cout << nBufferedSamples << " <+ " << n << "\n";
+
+  // if buffer is full, encode this frame
+
+  if (nBufferedSamples==audio_input_frame_size)
+    {
+      encodeAudioFrame(samples);
+      nBufferedSamples=0;
+      //std::cout << "encode buffer\n";
+    }
+
+  //std::cout << nBufferedSamples << " <+ " << n << "\n";
+
+  // encode more frames from input
+
+  while (n>=audio_input_frame_size)
+    {
+      /*
+      for (int i=0;i<n;i++)
+        {
+          std::cout << p[i] << " ";
+          if ((i%32)==31) std::cout << "\n";
+        }
+      */
+
+      encodeAudioFrame(p);
+      p += audio_input_frame_size;
+      n -= audio_input_frame_size;
+      //std::cout << "encode input\n";
+    }
+
+  //std::cout << nBufferedSamples << " <+ " << n << "\n";
+
+  // copy remaining samples into buffer
+
+  if (n>0)
+    {
+      memcpy(samples, p, n*2);
+      nBufferedSamples += n;
+      //std::cout << "copy to buffer\n";
+    }
+
+  //std::cout << nBufferedSamples << " <+ " << n << "\n";
 }
 
 
+void FFMPEG_Writer::flushAudioBuffer()
+{
+  if (nBufferedSamples>0)
+    {
+      // fill will zeros
 
+      memset(samples,0, (audio_input_frame_size-nBufferedSamples)*2);
+      encodeAudioFrame(samples);
+
+      nBufferedSamples=0;
+    }
+}
+
+void FFMPEG_Writer::encodeAudioFrame(const int16* p)
+{
+    AVPacket pkt;
+    av_init_packet(&pkt);
+
+    AVCodecContext *c = audioStream->codec;
+    
+    pkt.size= avcodec_encode_audio(c, audio_outbuf, audio_outbuf_size, p);
+
+    if (c->coded_frame && c->coded_frame->pts != AV_NOPTS_VALUE)
+      pkt.pts= av_rescale_q(c->coded_frame->pts, c->time_base, audioStream->time_base);
+    pkt.flags |= AV_PKT_FLAG_KEY;
+    pkt.stream_index= audioStream->index;
+    pkt.data= audio_outbuf;
+
+    if (av_interleaved_write_frame(oc, &pkt) != 0) {
+      std::cerr << "cannot write audio\n";
+      assert(false);
+    }
+}
 
 
 
@@ -304,37 +433,12 @@ void FFMPEG_Writer::PushAudioSamples(int16* samples,int n, int channel)
 
 
 #if 0
-int16_t *samples;
-uint8_t *audio_outbuf;
-int audio_outbuf_size;
-int audio_input_frame_size;
 int audio_samplePtr=0;
 //SoundFile audio;
 
 
 static void openAudio(AVFormatContext *oc, AVStream *st)
 {
-    AVCodecContext *c;
-    AVCodec *codec;
-
-    c = st->codec;
-
-    codec = avcodec_find_encoder(c->codec_id);
-    if (!codec) {
-      std::cerr << "codec not found\n";
-      exit(1);
-    }
-
-    if (avcodec_open(c, codec) < 0) {
-      std::cerr << "could not open codec\n";
-      exit(1);
-    }
-
-    audio_outbuf_size = 10000;
-    audio_outbuf = (uint8_t*)av_malloc(audio_outbuf_size);
-    audio_input_frame_size = c->frame_size;
-    
-    samples = (int16_t*)av_malloc(audio_input_frame_size * 2 * c->channels);
 }
 
 

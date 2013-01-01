@@ -15,38 +15,31 @@ using namespace videogfx;
 
 int main(int argc,char** argv)
 {
-  try
+  V4L_Grabber grabber;
+  grabber.SetDevice("/dev/video0");
+  grabber.SetGreyscaleMode();
+
+  //grabber.DoChromaAvgOn422To420();
+  // void SetResolution(int w,int h);
+
+  grabber.StartGrabbing();
+
+  Image<Pixel> img;
+  grabber.Grab(img);
+
+  ImageWindow_Autorefresh_X11 win;
+  win.Create(img.AskWidth(),img.AskHeight(),"edges");
+
+  Bitmap<int16> edges;
+
+  for (;;)
     {
-      V4L_Grabber grabber;
-      grabber.SetDevice("/dev/video0");
-      grabber.SetGreyscaleMode();
-
-      //grabber.DoChromaAvgOn422To420();
-      // void SetResolution(int w,int h);
-
-      grabber.StartGrabbing();
-
-      Image<Pixel> img;
       grabber.Grab(img);
 
-      ImageWindow_Autorefresh_X11 win;
-      win.Create(img.AskWidth(),img.AskHeight(),"edges");
+      Sobel_Hor(edges,img.AskBitmapY());
+      PixelDifferenceToPixel(img.AskBitmapY(),edges);
 
-      Bitmap<int16> edges;
-
-      for (;;)
-	{
-	  grabber.Grab(img);
-
-	  Sobel_Hor(edges,img.AskBitmapY());
-	  PixelDifferenceToPixel(img.AskBitmapY(),edges);
-
-	  win.Display(img);
-	}
-    }
-  catch(Excpt_Base& e)
-    {
-      MessageDisplay::Show(e);
+      win.Display(img);
     }
 
   return 0;

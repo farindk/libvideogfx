@@ -23,46 +23,39 @@ void Show(Bitmap<Pixel> pm)
 
 int main(int argc,char** argv)
 {
-  try
-    {
-      Bitmap<Pixel> pm(new BitmapProvider_Mem<Pixel>(20,11, 0));
+  Bitmap<Pixel> pm(new BitmapProvider_Mem<Pixel>(20,11, 0));
 
-      {
-	Pixel*const* p = pm.AskFrame();
+  {
+    Pixel*const* p = pm.AskFrame();
 
-	for (int y=0;y<pm.AskHeight();y++)
-	  for (int x=0;x<pm.AskWidth();x++)
-	    p[y][x] = x+2*y;
-      }
+    for (int y=0;y<pm.AskHeight();y++)
+      for (int x=0;x<pm.AskWidth();x++)
+        p[y][x] = x+2*y;
+  }
 
 #if 1
-      Bitmap<Pixel> sub = pm.CreateSubView(3,5,6,4);
-      Bitmap<Pixel> top = pm.CreateFieldView(true);
-      Bitmap<Pixel> bot = pm.CreateFieldView(false);
+  Bitmap<Pixel> sub = pm.CreateSubView(3,5,6,4);
+  Bitmap<Pixel> top = pm.CreateFieldView(true);
+  Bitmap<Pixel> bot = pm.CreateFieldView(false);
 #endif
 
-      Array<double> filter;
-      filter.Create(3,-1);
-      filter[-1] = 1;
-      filter[ 0] = 2;
-      filter[ 1] = 1;
-      //CreateGaussFilter(filter,2.0);
+  Array<double> filter;
+  filter.Create(3,-1);
+  filter[-1] = 1;
+  filter[ 0] = 2;
+  filter[ 1] = 1;
+  //CreateGaussFilter(filter,2.0);
 
-      Bitmap<Pixel> filteredbm;
+  Bitmap<Pixel> filteredbm;
 
-      Show(pm);
-      Show(sub);
+  Show(pm);
+  Show(sub);
 
-      ConvolveV(filteredbm, sub,filter);
+  ConvolveV(filteredbm, sub,filter);
 
-      Copy(sub,filteredbm);
+  Copy(sub,filteredbm);
 
-      Show(pm);
-    }
-  catch (Excpt_Base& e)
-    {
-      MessageDisplay::Show(e);
-    }
+  Show(pm);
 
   return 0;
 }
