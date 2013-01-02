@@ -97,6 +97,11 @@ namespace videogfx {
       bottom()= 0;
     }
 
+    bool isEmpty() const
+    {
+      return left()>right() || top()>bottom();
+    }
+
     void extendToIncludePoint(T x,T y)
     {
       left() = std::min(left(),x);
