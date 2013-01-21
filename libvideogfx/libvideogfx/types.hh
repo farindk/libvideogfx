@@ -35,7 +35,11 @@
 #ifndef LIBVIDEOGFX_TYPES_HH
 #define LIBVIDEOGFX_TYPES_HH
 
+#if defined(__GCC__) && (__GNUC__ < 4) || (__GNUC__ == 4 && __GNUC_MINOR__ < 5)
+#include <stdint.h>
+#else
 #include <cstdint>
+#endif
 
 namespace videogfx {
 

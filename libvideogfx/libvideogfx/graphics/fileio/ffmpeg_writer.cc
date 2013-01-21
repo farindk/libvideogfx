@@ -1,3 +1,6 @@
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include "ffmpeg_writer.hh"
 
@@ -18,9 +21,49 @@
 #endif
 
 extern "C" {
+#ifdef HAVE_FFMPEG_AVUTIL_H
+#include <ffmpeg/avutil.h>
+#include <ffmpeg/mathematics.h>
+#else
 #include <libavutil/avutil.h>
 #include <libavutil/mathematics.h>
+#endif
+#ifdef HAVE_FFMPEG_AVFORMAT_H
+#include <ffmpeg/avformat.h>
+#else
+#include <libavformat/avformat.h>
+#endif
+#ifdef HAVE_FFMPEG_SWSCALE_H
+#include <ffmpeg/swscale.h>
+#else
+#include <libswscale/swscale.h>
+#endif
 }
+
+#if defined(HAVE_FFMPEG_AVCODEC_H)
+# if !defined(AVMEDIA_TYPE_VIDEO)
+# define AVMEDIA_TYPE_VIDEO CODEC_TYPE_VIDEO
+# endif
+# if !defined(AVMEDIA_TYPE_AUDIO)
+# define AVMEDIA_TYPE_AUDIO CODEC_TYPE_AUDIO
+# endif
+# if !defined(AV_PKT_FLAG_KEY)
+# define AV_PKT_FLAG_KEY PKT_FLAG_KEY
+# endif
+# if !defined(AV_SAMPLE_FMT_S16)
+# define AV_SAMPLE_FMT_S16 SAMPLE_FMT_S16
+# endif
+# if !defined(AVIO_FLAG_WRITE)
+# define AVIO_FLAG_WRITE URL_WRONLY
+# endif
+#endif
+
+#ifndef HAVE_AVIO_OPEN
+#define avio_open url_fopen
+#define avio_close(x) url_fclose(&(x))
+#define av_dump_format dump_format
+#define av_guess_format guess_format
+#endif
 
 #include <unistd.h>
 
@@ -80,7 +123,11 @@ FFMPEG_Writer::~FFMPEG_Writer()
 void FFMPEG_Writer::Open(const char* filename, const char* format)
 {
   fmt = av_guess_format(format,NULL,NULL);
+#ifdef HAVE_AVFORMAT_ALLOW_CONTEXT
   oc = avformat_alloc_context();
+#else
+  oc = av_alloc_format_context();
+#endif
   oc->oformat = fmt;
 
   mFilename = filename;
@@ -233,7 +280,7 @@ bool FFMPEG_Writer::Start()
 {
   std::cout << "bool FFMPEG_Writer::Start()\n";
 
-  av_set_parameters(oc, NULL);
+  //av_set_parameters(oc, NULL);
   av_dump_format(oc, 0, mFilename.c_str(), 1);
 
   if (avio_open(&oc->pb, mFilename.c_str(), AVIO_FLAG_WRITE) < 0) {
@@ -241,7 +288,11 @@ bool FFMPEG_Writer::Start()
     return false;
   }
 
+#ifdef HAVE_AVFORMAT_AVFORMAT_WRITE_HEADER
+  avformat_write_header(oc, NULL);
+#else
   av_write_header(oc);
+#endif
   return true;
 }
 

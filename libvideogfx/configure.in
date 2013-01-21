@@ -131,11 +131,23 @@ case ${target_os} in
 esac
 AC_SUBST(LINUX_COMMENT)
 
+dnl Activate C++0x if compiler supports it
+
+# We need to test for at least gcc 4.5 here, because older versions don't
+# support C++0x
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [
+#if !defined(__GNUC__) || (__GNUC__ < 4) || (__GNUC__ == 4 && __GNUC_MINOR__ < 5)
+#error
+#endif])], have_gcc45=yes, have_gcc45=no)
+
+if test "$GCC" = "yes" ; then
+  if test x$have_gcc45 = xyes; then
+    CFLAGS+=" -std=c++0x"
+    CXXFLAGS+=" -std=c++0x"
+  fi
+fi
 
 dnl Check for X11
-
-CFLAGS+=" -std=c++0x"
-CXXFLAGS+=" -std=c++0x"
 
 saved_cflags="$CFLAGS"
 saved_ldflags="$LDFLAGS"
@@ -242,13 +254,64 @@ AS_IF([test "x$with_ffmpeg" = xno],
    AM_CONDITIONAL(HAVE_FFMPEG, false)
   ],
   [
-   have_ffmpeg=yes
-   AC_CHECK_HEADER([libavcodec/avcodec.h],   [], [have_ffmpeg=no])
-   AC_CHECK_HEADER([libavformat/avformat.h], [], [have_ffmpeg=no])
-   AC_CHECK_HEADER([libswscale/swscale.h],   [], [have_ffmpeg=no])
-   AC_CHECK_LIB(avcodec,  avcodec_decode_video2, [], [have_ffmpeg=no])
-   AC_CHECK_LIB(avformat, av_open_input_file,    [], [have_ffmpeg=no], [-lavcodec])
-   AC_CHECK_LIB(swscale,  sws_scale,         [], [have_ffmpeg=no])
+   AC_CHECK_HEADERS([libavcodec/avcodec.h ffmpeg/avcodec.h])
+   AC_CHECK_HEADERS([libavformat/avformat.h ffmpeg/avformat.h])
+   AC_CHECK_HEADERS([libswscale/swscale.h ffmpeg/swscale.h])
+   AC_CHECK_HEADERS([libavutil/avutil.h ffmpeg/avutil.h])
+   AC_MSG_CHECKING(for required ffmpeg header files)
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [
+   #if (!defined(HAVE_LIBAVCODEC_AVCODEC_H) && !defined(HAVE_FFMPEG_AVCODEC_H))
+   #error "avcodec.h" not found
+   #endif
+   #if (!defined(HAVE_LIBAVFORMAT_AVFORMAT_H) && !defined(HAVE_FFMPEG_AVFORMAT_H))
+   #error "avformat.h" not found
+   #endif
+   #if (!defined(HAVE_LIBSWSCALE_SWSCALE_H) && !defined(HAVE_FFMPEG_SWSCALE_H))
+   #error "swscale.h" not found
+   #endif
+   #if (!defined(HAVE_LIBAVUTIL_AVUTIL_H) && !defined(HAVE_FFMPEG_AVUTIL_H))
+   #error "avutil.h" not found
+   #endif
+   ])], [
+     AC_MSG_RESULT(yes)
+     have_ffmpeg=yes
+   ], [
+     AC_MSG_RESULT(no)
+     have_ffmpeg=no
+   ])
+   AC_CHECK_LIB(avcodec,  avcodec_decode_video,  [LIBS+=" -lavcodec" AC_DEFINE(HAVE_AVCODEC_DECODE_VIDEO, 1, [Define if the libavcodec supports avcodec_decode_video])], [], [-lavutil -lpthread -lm])
+   AC_CHECK_LIB(avcodec,  avcodec_decode_video2, [LIBS+=" -lavcodec" AC_DEFINE(HAVE_AVCODEC_DECODE_VIDEO2, 1, [Define if the libavcodec supports avcodec_decode_video2])], [], [-lavutil -lpthread -lm])
+   AC_CHECK_LIB(avformat, avio_open, [AC_DEFINE(HAVE_AVIO_OPEN, 1, [Define if the libavformat supports avio_open])], [], [-lavcodec -lavutil -lpthread -lm])
+   AC_CHECK_LIB(avformat, url_fopen, [AC_DEFINE(HAVE_URL_FOPEN, 1, [Define if the libavformat supports url_fopen])], [], [-lavcodec -lavutil -lpthread -lm])
+   AC_CHECK_LIB(avformat, avformat_alloc_context, [AC_DEFINE(HAVE_AVFORMAT_ALLOW_CONTEXT, 1, [Define if the libavformat supports avformat_alloc_context,])], [], [-lavcodec -lavutil -lpthread -lz -lm])
+   AC_CHECK_LIB(avformat, av_alloc_format_context, [AC_DEFINE(HAVE_AV_ALLOC_FORMAT_CONTEXT, 1, [Define if the libavformat supports av_alloc_format_context,])], [], [-lavcodec -lavutil -lpthread -lz -lm])
+   if test x$ac_cv_lib_avcodec_avcodec_decode_video = x; then
+     if test x$ac_cv_lib_avcodec_avcodec_decode_video2 = x; then
+       have_ffmpeg=no
+     fi
+   fi
+
+   AC_CHECK_LIB(avformat,  avformat_open_input, [LIBS+=" -lavformat" AC_DEFINE(HAVE_AVFORMAT_AVFORMAT_OPEN_INPUT, 1, [Define if the libavformat supports avformat_open_input])], [], [-lavcodec -lavutil -lpthread -lz -lm])
+   AC_CHECK_LIB(avformat,  av_open_input_file,  [LIBS+=" -lavformat" AC_DEFINE(HAVE_AVFORMAT_AV_OPEN_INPUT_FILE,  1, [Define if the libavformat supports av_open_input_file])], [], [-lavcodec -lavutil -lpthread -lz -lm])
+
+   AC_CHECK_LIB(avformat,  avformat_write_header, [AC_DEFINE(HAVE_AVFORMAT_AVFORMAT_WRITE_HEADER, 1, [Define if the libavformat supports avformat_write_header])], [], [-lavcodec -lavutil -lpthread -lz -lm])
+   AC_CHECK_LIB(avformat,  av_write_header,       [AC_DEFINE(HAVE_AVFORMAT_AV_WRITE_HEADER,       1, [Define if the libavformat supports av_write_header])], [], [-lavcodec -lavutil -lpthread -lz -lm])
+
+   AC_CHECK_LIB(swscale,  sws_scale,         [], [have_ffmpeg=no], [-lavutil -lm])
+
+   AC_MSG_CHECKING(if ffmpeg supports ticks_per_frame)
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
+   #ifdef HAVE_FFMPEG_AVCODEC_H
+   #include <ffmpeg/avcodec.h>
+   #else
+   #include <libavcodec/avcodec.h>
+   #endif
+   ], [struct AVCodecContext ctx; ctx.ticks_per_frame = 0])], [
+     AC_MSG_RESULT(yes)
+     AC_DEFINE(HAVE_AVCODEC_TICKS_PER_FRAME, 1, [Define if the libavcodec supports ticks_per_frame])
+   ], [
+     AC_MSG_RESULT(no)
+   ])
 
    AS_IF([test x"$have_ffmpeg" = "xyes"],
    	    [
@@ -272,7 +335,7 @@ AS_IF([test "x$with_ffmpeg" = xno],
 
 
 CFLAGS="$saved_cflags"
-LDFLAGS="$saved_ldflags"
+LDFLAGS="$saved_ldflags $jpeg_libs $png_libs"
 
 dnl Replace `main' with a function in -lstdc:
 dnl AC_CHECK_LIB(stdc, main)

@@ -15,11 +15,11 @@
 #define INT64_C(x) (x ## LL)
 #endif
 
-extern "C" {
-#include <libavformat/avformat.h>
-#include <libswscale/swscale.h>
-}
-
+struct AVOutputFormat;
+struct AVFormatContext;
+struct AVStream;
+struct AVFrame;
+struct SwsContext;
 
 namespace videogfx
 {

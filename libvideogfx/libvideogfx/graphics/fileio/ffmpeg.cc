@@ -23,6 +23,10 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ********************************************************************************/
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "libvideogfx/graphics/fileio/ffmpeg.hh"
 //#include <iostream>
 
@@ -31,11 +35,26 @@
 #endif
 
 extern "C" {
+#ifdef HAVE_FFMPEG_AVCODEC_H
+#include <ffmpeg/avcodec.h>
+#else
 #include <libavcodec/avcodec.h>
+#endif
+#ifdef HAVE_FFMPEG_AVFORMAT_H
+#include <ffmpeg/avformat.h>
+#else
 #include <libavformat/avformat.h>
+#endif
+#ifdef HAVE_FFMPEG_SWSCALE_H
+#include <ffmpeg/swscale.h>
+#else
 #include <libswscale/swscale.h>
+#endif
 }
 
+#if defined(HAVE_FFMPEG_AVCODEC_H) && !defined(AVMEDIA_TYPE_VIDEO)
+#define AVMEDIA_TYPE_VIDEO CODEC_TYPE_VIDEO
+#endif
 
 using namespace std;
 
@@ -68,8 +87,13 @@ namespace videogfx
 
     // open file
 
+#ifdef HAVE_AVFORMAT_AVFORMAT_OPEN_INPUT
+    if (avformat_open_input(&formatCtx, filename, NULL, NULL) != 0)
+      return false;
+#else
     if (av_open_input_file(&formatCtx, filename, NULL, 0, NULL) != 0)
       return false;
+#endif
 
     if (av_find_stream_info(formatCtx)<0)
       return false;
@@ -85,7 +109,11 @@ namespace videogfx
 
 	  w = codecCtx->width;
 	  h = codecCtx->height;
+#ifdef HAVE_AVCODEC_TICKS_PER_FRAME
 	  fps = float(codecCtx->time_base.den)/codecCtx->time_base.num / codecCtx->ticks_per_frame;
+#else
+          fps = float(codecCtx->time_base.den)/codecCtx->time_base.num;
+#endif
 
 	  videoStreamIdx=i;
 	  break;
@@ -156,7 +184,11 @@ namespace videogfx
 
         if (packet.stream_index == videoStreamIdx)
 	  {
+#ifdef HAVE_AVCODEC_DECODE_VIDEO2
             avcodec_decode_video2(codecCtx, frame, &frameFinished, &packet);
+#else
+            avcodec_decode_video(codecCtx, frame, &frameFinished, packet.data, packet.size);
+#endif
 
             if (!m_isInSync && frame->key_frame)
 	      m_isInSync=true;
