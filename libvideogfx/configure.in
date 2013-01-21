@@ -227,7 +227,7 @@ AC_SUBST(FEATURE_JPEG)
 AC_CHECK_LIB(png,
              png_read_image,
              png_available="true"
-             png_libs="-lpng -lz -lm",
+             png_libs="-lpng",
              AC_MSG_RESULT([*** libpng not found. PNG loader will be disabled.]),
 	     -lz -lm
 	     )
@@ -279,6 +279,9 @@ AS_IF([test "x$with_ffmpeg" = xno],
      AC_MSG_RESULT(no)
      have_ffmpeg=no
    ])
+
+   AC_CHECK_LIB(avutil,  av_malloc, [], [-lpthread -lm])
+
    AC_CHECK_LIB(avcodec,  avcodec_decode_video,  [LIBS+=" -lavcodec" AC_DEFINE(HAVE_AVCODEC_DECODE_VIDEO, 1, [Define if the libavcodec supports avcodec_decode_video])], [], [-lavutil -lpthread -lm])
    AC_CHECK_LIB(avcodec,  avcodec_decode_video2, [LIBS+=" -lavcodec" AC_DEFINE(HAVE_AVCODEC_DECODE_VIDEO2, 1, [Define if the libavcodec supports avcodec_decode_video2])], [], [-lavutil -lpthread -lm])
    AC_CHECK_LIB(avformat, avio_open, [AC_DEFINE(HAVE_AVIO_OPEN, 1, [Define if the libavformat supports avio_open])], [], [-lavcodec -lavutil -lpthread -lm])
