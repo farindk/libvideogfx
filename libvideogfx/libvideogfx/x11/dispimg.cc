@@ -36,7 +36,10 @@ namespace X11 {
 #include <X11/extensions/XShm.h>
 #include <X11/Xutil.h>
 #include <X11/Xmd.h>
+
+#if HAVE_X11_EXTENSIONS_SHMPROTO_H
 #include <X11/extensions/shmproto.h>
+#endif
 
 #if HAVE_XV
 #include <X11/extensions/Xvlib.h>

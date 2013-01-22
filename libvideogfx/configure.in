@@ -204,6 +204,10 @@ AC_SUBST(FEATURE_X11)
 AC_SUBST(FEATURE_XV)
 AC_SUBST(X11_COMMENT)
 
+
+AC_CHECK_HEADERS([X11/extensions/shmproto.h],[],[],[#include <X11/Xmd.h>])
+
+
 # Check for the JPEG library
 AC_CHECK_LIB(jpeg,
              jpeg_start_decompress,
