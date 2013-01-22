@@ -11,14 +11,14 @@ libvideogfx_utility_la_SOURCES = \
 	math.hh	\
 	math.cc	\
 	bitmanip.hh	\
-	bitmanip.cc
-#	fastalloc.cc
+	bitmanip.cc	\
+	fastalloc.cc
 
 libvideogfx_utility_include_HEADERS = \
 	math.hh	\
-	bitmanip.hh	
+	bitmanip.hh	\
+	fastalloc.hh	
 #	refcntr.hh	
-#	fastalloc.hh	
 #	smartpointer.hh
 
 INCLUDES = \
