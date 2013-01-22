@@ -282,6 +282,22 @@ AS_IF([test "x$with_ffmpeg" = xno],
 
    AC_CHECK_LIB(avutil,  av_malloc, [], [-lpthread -lm])
 
+   AC_MSG_CHECKING(for AVMEDIA_TYPE_VIDEO)
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
+#ifdef HAVE_FFMPEG_AVUTIL_H
+#include <ffmpeg/avutil.h>
+#else
+#include <libavutil/avutil.h>
+#endif
+   ], [
+   enum AVMediaType type = AVMEDIA_TYPE_VIDEO;
+   ])], [
+     AC_DEFINE(HAVE_AVMEDIA_TYPE_VIDEO, 1, [Define if AVMEDIA_TYPEVIDEO is used instead of CODEC_TYPE_VIDEO])
+     AC_MSG_RESULT(yes)
+   ], [
+     AC_MSG_RESULT(no)
+   ])
+
    AC_CHECK_LIB(avcodec,  avcodec_decode_video,  [LIBS+=" -lavcodec" AC_DEFINE(HAVE_AVCODEC_DECODE_VIDEO, 1, [Define if the libavcodec supports avcodec_decode_video])], [], [-lavutil -lpthread -lm])
    AC_CHECK_LIB(avcodec,  avcodec_decode_video2, [LIBS+=" -lavcodec" AC_DEFINE(HAVE_AVCODEC_DECODE_VIDEO2, 1, [Define if the libavcodec supports avcodec_decode_video2])], [], [-lavutil -lpthread -lm])
    AC_CHECK_LIB(avformat, avio_open, [AC_DEFINE(HAVE_AVIO_OPEN, 1, [Define if the libavformat supports avio_open])], [], [-lavcodec -lavutil -lpthread -lm])

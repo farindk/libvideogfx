@@ -52,7 +52,7 @@ extern "C" {
 #endif
 }
 
-#if defined(HAVE_FFMPEG_AVCODEC_H) && !defined(AVMEDIA_TYPE_VIDEO)
+#if !defined(HAVE_AVMEDIA_TYPE_VIDEO)
 #define AVMEDIA_TYPE_VIDEO CODEC_TYPE_VIDEO
 #endif
 

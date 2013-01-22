@@ -40,27 +40,18 @@ extern "C" {
 #endif
 }
 
-#if defined(HAVE_FFMPEG_AVCODEC_H)
-# if !defined(AVMEDIA_TYPE_VIDEO)
+#if !defined(HAVE_AVMEDIA_TYPE_VIDEO)
 # define AVMEDIA_TYPE_VIDEO CODEC_TYPE_VIDEO
-# endif
-# if !defined(AVMEDIA_TYPE_AUDIO)
 # define AVMEDIA_TYPE_AUDIO CODEC_TYPE_AUDIO
-# endif
-# if !defined(AV_PKT_FLAG_KEY)
 # define AV_PKT_FLAG_KEY PKT_FLAG_KEY
-# endif
-# if !defined(AV_SAMPLE_FMT_S16)
 # define AV_SAMPLE_FMT_S16 SAMPLE_FMT_S16
-# endif
-# if !defined(AVIO_FLAG_WRITE)
 # define AVIO_FLAG_WRITE URL_WRONLY
-# endif
 #endif
 
 #ifndef HAVE_AVIO_OPEN
 #define avio_open url_fopen
-#define avio_close(x) url_fclose(&(x))
+//#define avio_close(x) url_fclose(&(x))
+#define avio_close(x) url_fclose(x)
 #define av_dump_format dump_format
 #define av_guess_format guess_format
 #endif
