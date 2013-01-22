@@ -1,6 +1,5 @@
 
 #include "libvideogfx/audio/fileio/audiosink.hh"
-#include "libvideogfx/error.hh"
 #include <algorithm>
 
 namespace videogfx {
@@ -22,7 +21,7 @@ namespace videogfx {
 
   void AudioSink::SendSamples(const int16* samples,int len)
   {
-    MessageDisplay::Show(ErrSev_Warning,"No 16 bit audio output defined. Most probably, this is an error.");
+    // MessageDisplay::Show(ErrSev_Warning,"No 16 bit audio output defined. Most probably, this is an error.");
 
     int32 buf[1000];
 

@@ -63,7 +63,7 @@ namespace videogfx {
 
   void FileReader_MPEG::SkipToImage(int nr)
   {
-    AssertDescr(nr>=d_next_framenr,"cannot search backwards in MPEG stream (not implemented yet)");
+    assert(nr>=d_next_framenr); //"cannot search backwards in MPEG stream (not implemented yet)");
 
     Image<Pixel> dummy;
     while (nr>d_next_framenr)

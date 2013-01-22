@@ -53,7 +53,7 @@ namespace videogfx {
 
   void UnifiedImageWriter::RegisterPlugin(const WriterStageFactory* fact)
   {
-    Assert(s_nplugins < MAX_WRITER_PLUGINS);
+    assert(s_nplugins < MAX_WRITER_PLUGINS);
     s_plugins[s_nplugins++] = fact;
   }
 
@@ -110,7 +110,7 @@ namespace videogfx {
 
   void UnifiedImageWriter::WriteImage(const Image<Pixel>& img)
   {
-    AssertDescr(d_writer_pipeline, "no writer specified");
+    assert(d_writer_pipeline); // "no writer specified");
     d_writer_pipeline->WriteImage(img);
   }
 
@@ -129,7 +129,7 @@ namespace videogfx {
 
     enum FileFormat { Format_Undefined, Format_JPEG, Format_PNG, Format_PPM, Format_UYVY };
 
-    void SetFilenameTemplate(const char* t) { Assert(strlen(t)<MAX_FILENAME_LEN); strcpy(d_filename_template,t); }
+    void SetFilenameTemplate(const char* t) { assert(strlen(t)<MAX_FILENAME_LEN); strcpy(d_filename_template,t); }
     void SetFormat(WriterStage_SglPictures::FileFormat f) { d_format=f; }
 
     void WriteImage(const Image<Pixel>& img)
@@ -142,13 +142,13 @@ namespace videogfx {
       switch (d_format)
 	{
 	case WriterStage_SglPictures::Format_JPEG:
-	  AssertDescr(JPEG_Supported(),"JPEG support not compiled in");
+	  assert(JPEG_Supported()); //"JPEG support not compiled in");
 	  conv_img = ChangeColorspace_NoCopy(img, Colorspace_YUV, Chroma_420);
 	  WriteImage_JPEG(d_filename,conv_img);
 	  break;
 
 	case WriterStage_SglPictures::Format_PNG:
-	  AssertDescr(PNG_Supported(),"PNG support not compiled in");
+	  assert(PNG_Supported()); //"PNG support not compiled in");
 	  conv_img = ChangeColorspace_NoCopy(img, Colorspace_RGB);
 	  WriteImage_PNG (d_filename,conv_img);
 	  break;
@@ -163,8 +163,8 @@ namespace videogfx {
 	    conv_img = ChangeColorspace_NoCopy(img, Colorspace_YUV, Chroma_422);
 
 	    // TODO
-	    Assert(conv_img.AskWidth()==704);
-	    Assert(conv_img.AskHeight()==568);
+	    assert(conv_img.AskWidth()==704);
+	    assert(conv_img.AskHeight()==568);
 
 	    ofstream ostr(d_filename);
 	    WriteImage_UYVY (ostr, conv_img);
@@ -186,7 +186,7 @@ namespace videogfx {
 
     void GenerateFilename() const
     {
-      Assert(strlen(d_filename_template)<MAX_FILENAME_LEN);
+      assert(strlen(d_filename_template)<MAX_FILENAME_LEN);
       snprintf((char*)d_filename,MAX_FILENAME_LEN,d_filename_template,d_next);
     }
   };
@@ -236,7 +236,7 @@ namespace videogfx {
 
     void SetFilename(const char* t)
     {
-      Assert(strlen(t)<MAX_FILENAME_LEN);
+      assert(strlen(t)<MAX_FILENAME_LEN);
       strcpy(d_filename,t);
       // d_ostr.close();
       /* NOTE: strange C++ behaviour: if the stream is closed,
@@ -247,7 +247,7 @@ namespace videogfx {
 
     void SetAlphaFilename(const char* t)
     {
-      Assert(strlen(t)<MAX_FILENAME_LEN);
+      assert(strlen(t)<MAX_FILENAME_LEN);
       strcpy(d_alpha_filename,t);
       d_alpha_ostr.open(d_alpha_filename, std::ios::out | std::ios::binary);
       d_writer.SetAlphaStream(d_alpha_ostr);
@@ -332,7 +332,7 @@ namespace videogfx {
 
     void SetWindowName(const char* name)
     {
-      Assert(strlen(name)<MAX_FILENAME_LEN);
+      assert(strlen(name)<MAX_FILENAME_LEN);
       strcpy(d_winname,name);
     }
 
@@ -395,7 +395,7 @@ namespace videogfx {
       newimg.Create(img.AskWidth(), img.AskHeight(), Colorspace_Greyscale);
       newimg.ReplaceBitmap(Bitmap_Y, img.AskBitmapA());
 
-      Assert(next);
+      assert(next);
       next->WriteImage(newimg);
     }
   };
@@ -440,7 +440,7 @@ namespace videogfx {
       OverlayAlphaMask(newimg.AskBitmapG(), img.AskBitmapA(), d_col.c[1]);
       OverlayAlphaMask(newimg.AskBitmapB(), img.AskBitmapA(), d_col.c[2]);
 
-      Assert(next);
+      assert(next);
       next->WriteImage(newimg);
     }
 
@@ -500,7 +500,7 @@ namespace videogfx {
       tmp.Create(spec);
       CopyScaled(tmp,0,0,w,h,img);
 
-      Assert(next);
+      assert(next);
       next->WriteImage(tmp);
     }
 

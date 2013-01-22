@@ -18,7 +18,6 @@
  ********************************************************************************/
 
 #include "libvideogfx/graphics/fileio/ppm.hh"
-#include "libvideogfx/error.hh"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,8 +48,8 @@ namespace videogfx {
     const int w = r.AskWidth();
     const int h = r.AskHeight();
 
-    Assert(w==g.AskWidth() && h==g.AskHeight());
-    Assert(w==b.AskWidth() && h==b.AskHeight());
+    assert(w==g.AskWidth() && h==g.AskHeight());
+    assert(w==b.AskWidth() && h==b.AskHeight());
 
     ostr << "P6\n" << w << ' ' << h << "\n255\n";
 
@@ -121,12 +120,12 @@ namespace videogfx {
 	  WritePPM5(img.AskBitmapY(),ostr);
 	else
 	  {
-	    AssertDescr(false,"cannot save YUV as PPM in RGB colorspace");
+	    assert(false); //"cannot save YUV as PPM in RGB colorspace");
 	  }
       }
     else
       {
-	AssertDescr(false,"cannot save this colorspace as PPM file");
+	assert(false); //"cannot save this colorspace as PPM file");
       }
   }
 
@@ -174,7 +173,9 @@ namespace videogfx {
     stream.getline(buffer,100);
 
     if (strlen(buffer)!=2 || buffer[0]!='P')
-      { throw Excpt_Text(ErrSev_Error,"input is not a PPM format file"); }
+      {
+        assert(0); // TODO: return "input is not a PPM format file"
+      }
 
     bool greyscale;
     if (buffer[1]=='5')
@@ -182,7 +183,9 @@ namespace videogfx {
     else if (buffer[1]=='6')
       greyscale=false;
     else
-      { throw Excpt_Text(ErrSev_Error,"input is not a type 5 or type 6 PPM format file"); }
+      {
+        assert(0); // TODO: return "input is not a type 5 or type 6 PPM format file"
+      }
 
 
     int width,height,maxval;
@@ -199,7 +202,9 @@ namespace videogfx {
     maxval=atoi(buffer);
 
     if (maxval > 255)
-      { throw Excpt_Text(ErrSev_Error,"cannot read PPM file with maximum pixel-value > 255"); }
+      {
+        assert(0); // TODO: return "cannot read PPM file with maximum pixel-value > 255"
+      }
 
 
     ImageParam param = dest.AskParam();
@@ -264,7 +269,9 @@ namespace videogfx {
     stream.getline(buffer,100);
 
     if (strlen(buffer)!=2 || buffer[0]!='P')
-      { throw Excpt_Text(ErrSev_Error,"input is not a PPM format file"); }
+      {
+        assert(0); // TODO: return "input is not a PPM format file"
+      }
 
     bool greyscale;
     bool ascii=false;
@@ -277,7 +284,9 @@ namespace videogfx {
     else if (buffer[1]=='3')
       { greyscale=false; ascii=true; }
     else
-      { throw Excpt_Text(ErrSev_Error,"input is not a type 2,3,5 or 6 PPM format file"); }
+      {
+        assert(0); // TODO: return "input is not a type 2,3,5 or 6 PPM format file"
+      }
 
 
     int width,height,maxval;
@@ -294,7 +303,9 @@ namespace videogfx {
     maxval=atoi(buffer);
 
     if (maxval > 65535)
-      { throw Excpt_Text(ErrSev_Error,"cannot read PPM file with maximum pixel-value > 65535"); }
+      {
+        assert(0); // TODO: return "cannot read PPM file with maximum pixel-value > 65535"
+      }
 
     int nbytes_per_pixel=1;
     if (maxval>255) nbytes_per_pixel=2;

@@ -82,7 +82,7 @@ namespace videogfx {
   X11ServerConnection::X11ServerConnection(X11Server* s)
     : d_parent(s)
   {
-    Assert(s);
+    assert(s);
     d_parent->IncrRef();
   }
 

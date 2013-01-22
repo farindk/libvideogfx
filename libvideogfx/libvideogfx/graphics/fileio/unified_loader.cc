@@ -81,7 +81,7 @@ namespace videogfx {
 	    FILE* fh = fopen(buf,"r");
 	    if (!fh)
 	      {
-		AssertDescr(0,"no macro definition file found in user home directory");
+		assert(false); // "no macro definition file found in user home directory");
 		return NULL;
 	      }
 
@@ -165,7 +165,7 @@ namespace videogfx {
 
   void UnifiedImageLoader::RegisterPlugin(const FileIOFactory* fact)
   {
-    Assert(s_nplugins < MAX_LOADER_PLUGINS);
+    assert(s_nplugins < MAX_LOADER_PLUGINS);
     s_plugins[s_nplugins++] = fact;
   }
 
@@ -212,8 +212,8 @@ namespace videogfx {
   }
 
 
-  int  UnifiedImageLoader::AskNFrames() const { Assert(d_loader_pipeline); return d_loader_pipeline->AskNFrames(); }
-  bool UnifiedImageLoader::IsEOF() const { Assert(d_loader_pipeline); return d_loader_pipeline->IsEOF(); }
+  int  UnifiedImageLoader::AskNFrames() const { assert(d_loader_pipeline); return d_loader_pipeline->AskNFrames(); }
+  bool UnifiedImageLoader::IsEOF() const { assert(d_loader_pipeline); return d_loader_pipeline->IsEOF(); }
 
 
   bool UnifiedImageLoader::SkipToImage(int nr)
@@ -221,7 +221,7 @@ namespace videogfx {
     if (d_framenr==nr)
       return true;
 
-    Assert(d_loader_pipeline);
+    assert(d_loader_pipeline);
     d_framenr = nr;
     d_preload.Release();
     return d_loader_pipeline->SkipToImage(nr);
@@ -230,7 +230,7 @@ namespace videogfx {
 
   void UnifiedImageLoader::ReadImage(Image<Pixel>& img)
   {
-    AssertDescr(d_loader_pipeline, "no loader specified");
+    assert(d_loader_pipeline); // "no loader specified");
 
     d_framenr++;
 
@@ -541,7 +541,7 @@ namespace videogfx {
 
     enum FileFormat { Format_Undefined, Format_JPEG, Format_PNG, Format_PPM, Format_UYVY };
 
-    void SetFilenameTemplate(const char* t) { Assert(strlen(t)<900); strcpy(d_filename_template,t); }
+    void SetFilenameTemplate(const char* t) { assert(strlen(t)<900); strcpy(d_filename_template,t); }
     void SetFormat(LoaderPlugin_SglPictures::FileFormat f) { d_format=f; }
 
     int  AskNFrames() const { return 999999; }
@@ -584,7 +584,7 @@ namespace videogfx {
     char d_filename_template[1000];
 
     void GenerateFilename() const
-    { Assert(strlen(d_filename_template)<900); sprintf((char*)d_filename,d_filename_template,d_next); }
+    { assert(strlen(d_filename_template)<900); sprintf((char*)d_filename,d_filename_template,d_next); }
   };
 
 
@@ -777,13 +777,13 @@ namespace videogfx {
   class LoaderPlugin_Quarter : public LoaderPlugin
   {
   public:
-    int  AskNFrames() const { Assert(prev); return prev->AskNFrames(); }
-    bool IsEOF() const { Assert(prev); return prev->IsEOF(); }
+    int  AskNFrames() const { assert(prev); return prev->AskNFrames(); }
+    bool IsEOF() const { assert(prev); return prev->IsEOF(); }
 
-    bool SkipToImage(int nr) { Assert(prev); return prev->SkipToImage(nr); }
+    bool SkipToImage(int nr) { assert(prev); return prev->SkipToImage(nr); }
     void ReadImage(Image<Pixel>& img)
     {
-      Assert(prev);
+      assert(prev);
 
       Image<Pixel> tmp;
       prev->ReadImage(tmp);
@@ -837,13 +837,13 @@ namespace videogfx {
 
     void SetParam(int ll,int rr,int tt,int bb) { l=ll; r=rr; t=tt; b=bb; }
 
-    int  AskNFrames() const { Assert(prev); return prev->AskNFrames(); }
-    bool IsEOF() const { Assert(prev); return prev->IsEOF(); }
+    int  AskNFrames() const { assert(prev); return prev->AskNFrames(); }
+    bool IsEOF() const { assert(prev); return prev->IsEOF(); }
 
-    bool SkipToImage(int nr) { Assert(prev); return prev->SkipToImage(nr); }
+    bool SkipToImage(int nr) { assert(prev); return prev->SkipToImage(nr); }
     void ReadImage(Image<Pixel>& img)
     {
-      Assert(prev);
+      assert(prev);
 
       Image<Pixel> tmp;
       prev->ReadImage(tmp);
@@ -893,13 +893,13 @@ namespace videogfx {
 
     void SetParam(int ww,int hh) { w=ww; h=hh; }
 
-    int  AskNFrames() const { Assert(prev); return prev->AskNFrames(); }
-    bool IsEOF() const { Assert(prev); return prev->IsEOF(); }
+    int  AskNFrames() const { assert(prev); return prev->AskNFrames(); }
+    bool IsEOF() const { assert(prev); return prev->IsEOF(); }
 
-    bool SkipToImage(int nr) { Assert(prev); return prev->SkipToImage(nr); }
+    bool SkipToImage(int nr) { assert(prev); return prev->SkipToImage(nr); }
     void ReadImage(Image<Pixel>& img)
     {
-      Assert(prev);
+      assert(prev);
 
       Image<Pixel> tmp;
       prev->ReadImage(tmp);
@@ -1056,10 +1056,10 @@ namespace videogfx {
 
     void SetFactor(int f) { d_factor=f; }
 
-    int  AskNFrames() const { Assert(prev); return prev->AskNFrames()/d_factor; }
-    bool IsEOF() const { Assert(prev); return prev->IsEOF(); }
+    int  AskNFrames() const { assert(prev); return prev->AskNFrames()/d_factor; }
+    bool IsEOF() const { assert(prev); return prev->IsEOF(); }
 
-    bool SkipToImage(int nr) { Assert(prev); return prev->SkipToImage(nr*d_factor); }
+    bool SkipToImage(int nr) { assert(prev); return prev->SkipToImage(nr*d_factor); }
     void ReadImage(Image<Pixel>& img)
     {
       for (int i=0;i<d_factor;i++)
@@ -1104,10 +1104,10 @@ namespace videogfx {
 
     void SetStartFrame(int s) { d_start=s; d_startupread=s; }
 
-    int  AskNFrames() const { Assert(prev); return prev->AskNFrames()-d_start; }
-    bool IsEOF() const { Assert(prev); return prev->IsEOF(); }
+    int  AskNFrames() const { assert(prev); return prev->AskNFrames()-d_start; }
+    bool IsEOF() const { assert(prev); return prev->IsEOF(); }
 
-    bool SkipToImage(int nr) { Assert(prev); d_startupread=0; return prev->SkipToImage(nr+d_start); }
+    bool SkipToImage(int nr) { assert(prev); d_startupread=0; return prev->SkipToImage(nr+d_start); }
     void ReadImage(Image<Pixel>& img)
     {
       while (d_startupread)
@@ -1158,10 +1158,10 @@ namespace videogfx {
 
     void SetSeqLength(int l) { d_len=l; }
 
-    int  AskNFrames() const { Assert(prev); return std::min(prev->AskNFrames(),d_len); }
-    bool IsEOF() const { Assert(prev); if (d_curr>=d_len) return true; else return prev->IsEOF(); }
+    int  AskNFrames() const { assert(prev); return std::min(prev->AskNFrames(),d_len); }
+    bool IsEOF() const { assert(prev); if (d_curr>=d_len) return true; else return prev->IsEOF(); }
 
-    bool SkipToImage(int nr) { Assert(prev); d_curr=nr; return prev->SkipToImage(nr); }
+    bool SkipToImage(int nr) { assert(prev); d_curr=nr; return prev->SkipToImage(nr); }
     void ReadImage(Image<Pixel>& img)
     {
       prev->ReadImage(img);
@@ -1233,10 +1233,10 @@ namespace videogfx {
 
     void SetAlphaStream(const char* name) { fh=fopen(name,"rb"); }
 
-    int  AskNFrames() const { Assert(prev); return prev->AskNFrames(); }
-    bool IsEOF() const { Assert(prev); return prev->IsEOF(); }
+    int  AskNFrames() const { assert(prev); return prev->AskNFrames(); }
+    bool IsEOF() const { assert(prev); return prev->IsEOF(); }
 
-    bool SkipToImage(int nr) { Assert(prev); d_framenr=nr; return prev->SkipToImage(nr); }
+    bool SkipToImage(int nr) { assert(prev); d_framenr=nr; return prev->SkipToImage(nr); }
     void ReadImage(Image<Pixel>& img)
     {
       // read image as usual

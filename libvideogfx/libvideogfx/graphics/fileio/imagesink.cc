@@ -56,7 +56,7 @@ namespace videogfx {
 	break;
       }
 
-    Assert(0);
+    assert(0);
     return false;
   }
 
@@ -73,7 +73,7 @@ namespace videogfx {
 
   void ImageSink_Save::SendImage(const Image<Pixel>& img)
   {
-    Assert(IsFormatSupported(d_format));
+    assert(IsFormatSupported(d_format));
 
     // construct output filename
 
@@ -100,7 +100,7 @@ namespace videogfx {
 	break;
       }
 
-    Assert(suffix);
+    assert(suffix);
 
     char* buf = new char[strlen(d_filename_template) + 100];
 

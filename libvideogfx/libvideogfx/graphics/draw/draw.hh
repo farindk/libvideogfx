@@ -46,6 +46,7 @@
 #include <math.h>
 #include <algorithm>
 #include <vector>
+#include <stdio.h>
 
 //#include <iostream>
 //using namespace std;

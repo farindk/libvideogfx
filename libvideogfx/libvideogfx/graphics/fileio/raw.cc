@@ -18,7 +18,6 @@
  ********************************************************************************/
 
 #include "libvideogfx/graphics/fileio/raw.hh"
-#include "libvideogfx/error.hh"
 
 #include <stdio.h>
 #include <stdlib.h>

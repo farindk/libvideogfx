@@ -18,7 +18,6 @@
  ********************************************************************************/
 
 #include "libvideogfx/audio/fileio/audiosink_linux.hh"
-#include "libvideogfx/error.hh"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -89,7 +88,7 @@ namespace videogfx {
 	  case AFMT_S32_NE: d_bits_per_sample=32; break;
 	*/
       default:
-	throw Excpt_Text(ErrSev_Error,"unsupported audio sample format");
+	assert(0); // "unsupported audio sample format"
 	break;
       }
 
@@ -138,11 +137,11 @@ namespace videogfx {
   void AudioSink_LinuxSndCard::SendSamples(const int16* samples,int len)
   {
 #if 0
-    Assert(d_initialized);
+    assert(d_initialized);
 
     if (d_sample_format != AFMT_S16_NE)
       {
-	AssertDescr(0,"non-native sample formats not supported yet");
+	assert(false); // "non-native sample formats not supported yet");
       }
 #endif
 
@@ -173,7 +172,7 @@ namespace videogfx {
 
   Timestamp AudioSink_LinuxSndCard::NextDataPresentationTime() const
   {
-    Assert(d_initialized);
+    assert(d_initialized);
 
     if (d_queue.IsEmpty())
       {

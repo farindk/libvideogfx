@@ -100,13 +100,13 @@ namespace videogfx {
     }
 
     bool IsNULL() const { return counter==NULL; }
-    T* operator->()  { AssertDescr(counter,"smart pointer is NULL"); return pointer; }
-    operator T*()    { AssertDescr(counter,"smart pointer is NULL"); return pointer; }
-    T& operator()()  { AssertDescr(counter,"smart pointer is NULL"); return *pointer; }
+    T* operator->()  { assert(counter); return pointer; }
+    operator T*()    { assert(counter); return pointer; }
+    T& operator()()  { assert(counter); return *pointer; }
 
-    const T* operator->() const { AssertDescr(counter,"smart pointer is NULL"); return pointer; }
-    operator const T*()   const { AssertDescr(counter,"smart pointer is NULL"); return pointer; }
-    const T& operator()() const { AssertDescr(counter,"smart pointer is NULL"); return *pointer; }
+    const T* operator->() const { assert(counter); return pointer; }
+    operator const T*()   const { assert(counter); return pointer; }
+    const T& operator()() const { assert(counter); return *pointer; }
 
     void Decouple()
     {
@@ -149,7 +149,7 @@ namespace videogfx {
 
     SSP(const SSP<T>& s)
     {
-      Assert(0);
+      assert(0);
     }
 
     ~SSP()
@@ -159,7 +159,7 @@ namespace videogfx {
 
     SSP<T>& operator=(const SSP<T>& s)
     {
-      Assert(0);
+      assert(0);
     }
 
     SSP<T>& operator=(T* p)
@@ -171,8 +171,8 @@ namespace videogfx {
     }
 
     bool IsNULL() const { return pointer==NULL; }
-    operator T*()   { AssertDescr(SSP<T>::counter,"smart pointer is NULL"); return pointer; }
-    T& operator()() { AssertDescr(SSP<T>::counter,"smart pointer is NULL"); return *pointer; }
+    operator T*()   { assert(SSP<T>::counter); return pointer; }
+    T& operator()() { assert(SSP<T>::counter); return *pointer; }
 
     void Decouple()
     {

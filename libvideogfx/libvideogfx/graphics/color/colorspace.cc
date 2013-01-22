@@ -21,7 +21,6 @@
 #include "libvideogfx/graphics/draw/scale.hh"
 #include "libvideogfx/graphics/draw/blit.hh"
 #include "libvideogfx/graphics/draw/draw.hh"
-#include "libvideogfx/error.hh"
 
 
 namespace videogfx {
@@ -30,7 +29,7 @@ namespace videogfx {
   {
     ImageParam param = dst.AskParam();
 
-    Assert(src.AskParam().colorspace == Colorspace_YUV);
+    assert(src.AskParam().colorspace == Colorspace_YUV);
 
     param.width      = src.AskWidth();
     param.height     = src.AskHeight();

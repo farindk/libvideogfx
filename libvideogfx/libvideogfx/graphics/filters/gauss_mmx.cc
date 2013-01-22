@@ -19,7 +19,7 @@
 
 #include "libvideogfx/graphics/filters/gauss_mmx.hh"
 #include "libvideogfx/arch/mmx.h"
-
+#include <assert.h>
 
 /*
   Flow graph for row transform:
@@ -44,7 +44,7 @@ namespace videogfx {
 
   void LowPass_3x3Gauss_MMX(Bitmap<Pixel>& destbm, const Bitmap<Pixel>& srcbm)
   {
-    AssertDescr(0, "Use of \"LowPass_3x3Gauss_MMX()\" is deprecated. Use LowPass_Binormial_Decimate() instead");
+    assert(false); // "Use of \"LowPass_3x3Gauss_MMX()\" is deprecated. Use LowPass_Binormial_Decimate() instead"
 
     destbm.Create((srcbm.AskWidth()+1)/2,(srcbm.AskHeight()+1)/2 ,8);
 

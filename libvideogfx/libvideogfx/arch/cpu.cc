@@ -91,18 +91,18 @@ namespace videogfx {
 
     void GetCPUInfo(char* buf,int maxChars,bool long_descr=false)
     {
-      Assert((int)strlen(d_typename) < maxChars);
+      assert((int)strlen(d_typename) < maxChars);
       strcpy(buf,d_typename);
 
       if (long_descr)
 	{
 	  maxChars -= strlen(buf);
-	  if (HasMMX()) { Assert(maxChars >= 4); strcat(buf," MMX"); }
-	  if (HasMMX2()) { Assert(maxChars >= 7); strcat(buf," MMXext"); }
-	  if (Has3dNow()) { Assert(maxChars >= 7); strcat(buf," 3dNow!"); }
-	  if (HasMTRR()) { Assert(maxChars >= 5); strcat(buf," MTRR"); }
-	  if (HasCMOV()) { Assert(maxChars >= 5); strcat(buf," CMOV"); }
-	  if (HasFPU()) { Assert(maxChars >= 4); strcat(buf," FPU"); }
+	  if (HasMMX()) { assert(maxChars >= 4); strcat(buf," MMX"); }
+	  if (HasMMX2()) { assert(maxChars >= 7); strcat(buf," MMXext"); }
+	  if (Has3dNow()) { assert(maxChars >= 7); strcat(buf," 3dNow!"); }
+	  if (HasMTRR()) { assert(maxChars >= 5); strcat(buf," MTRR"); }
+	  if (HasCMOV()) { assert(maxChars >= 5); strcat(buf," CMOV"); }
+	  if (HasFPU()) { assert(maxChars >= 4); strcat(buf," FPU"); }
 	}
     }
 
@@ -138,7 +138,7 @@ namespace videogfx {
 	if (!d_cpu) d_cpu = new CPU_Generic;
       }
 
-    Assert(d_cpu);
+    assert(d_cpu);
 
     return d_cpu;
   }
@@ -148,7 +148,7 @@ namespace videogfx {
   {
     const char* unknown_arch = "unknown CPU";
 
-    Assert((int)strlen(unknown_arch) < maxChars);
+    assert((int)strlen(unknown_arch) < maxChars);
     strcpy(buf,unknown_arch);
   }
 

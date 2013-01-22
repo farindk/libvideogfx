@@ -94,8 +94,8 @@ namespace videogfx {
 
     dst.Create(w,h);
 
-    Assert(w == dst.AskWidth());
-    Assert(h == dst.AskHeight());
+    assert(w == dst.AskWidth());
+    assert(h == dst.AskHeight());
 
     const Pel*const* sp = src.AskFrame();
     Pel*const* dp = dst.AskFrame();

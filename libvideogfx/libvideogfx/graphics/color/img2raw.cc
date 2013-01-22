@@ -18,7 +18,6 @@
  ********************************************************************************/
 
 #include "config.h"
-#include "libvideogfx/error.hh"
 #include "libvideogfx/macros.hh"
 #include "libvideogfx/arch/cpu.hh"
 

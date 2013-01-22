@@ -18,9 +18,9 @@
  ********************************************************************************/
 
 #include "libvideogfx/graphics/geometry/matrix.hh"
-#include <libvideogfx/error.hh>
 #include <math.h>
 #include <iomanip>
+#include <assert.h>
 
 namespace videogfx {
   using namespace std;
@@ -51,8 +51,8 @@ namespace videogfx {
 
   Matrix4G   Matrix4G::operator+(const Matrix4G& m) const
   {
-    AssertDescr(d_rows    == m.d_rows,    "matrix dimensions differ (rows)");
-    AssertDescr(d_columns == m.d_columns, "matrix dimensions differ (columns)");
+    assert(d_rows    == m.d_rows); //    "matrix dimensions differ (rows)");
+    assert(d_columns == m.d_columns); // "matrix dimensions differ (columns)");
 
     Matrix4G mat(d_rows,d_columns);
 
@@ -65,8 +65,8 @@ namespace videogfx {
 
   Matrix4G   Matrix4G::operator-(const Matrix4G& m) const
   {
-    AssertDescr(d_rows    == m.d_rows,    "matrix dimensions differ (rows)");
-    AssertDescr(d_columns == m.d_columns, "matrix dimensions differ (columns)");
+    assert(d_rows    == m.d_rows); //    "matrix dimensions differ (rows)");
+    assert(d_columns == m.d_columns); // "matrix dimensions differ (columns)");
 
     Matrix4G mat(d_rows,d_columns);
 
@@ -81,7 +81,7 @@ namespace videogfx {
   {
     const Matrix4G& a = *this;
 
-    AssertDescr(a.d_columns == b.d_rows, "matrix sizes are incompatible for multiplication");
+    assert(a.d_columns == b.d_rows); // "matrix sizes are incompatible for multiplication");
 
     Matrix4G mat(a.d_rows,b.d_columns);
 
@@ -133,8 +133,8 @@ namespace videogfx {
     d_rows    = m.d_rows;
     d_columns = m.d_columns;
 
-    Assert(d_rows<=4);
-    Assert(d_columns<=4);
+    assert(d_rows<=4);
+    assert(d_columns<=4);
 
     for (int i=0;i<d_rows;i++)
       for (int j=0;j<d_columns;j++)
@@ -168,13 +168,13 @@ namespace videogfx {
       }
     else
       {
-	NotImplemented;
+	assert(0); // not implemented
       }
   }
 
   double   Matrix4G::Trace() const
   {
-    AssertDescr(d_columns == d_rows, "matrix sizes are incompatible for multiplication");
+    assert(d_columns == d_rows); // "matrix sizes are incompatible for multiplication");
 
     double sum=0.0;
     for (int i=0; i<d_rows; i++)
@@ -206,7 +206,7 @@ namespace videogfx {
 
   Matrix4G Matrix4G::Inverse() const
   {
-    AssertDescr(d_rows == d_columns, "matrix must be square for inverse computation");
+    assert(d_rows == d_columns); // "matrix must be square for inverse computation");
 
     Matrix4G inv(d_rows,d_rows);
 
@@ -292,7 +292,7 @@ namespace videogfx {
 	return inv;
       }
     else
-      { Assert(0); }
+      { assert(0); }
   }
 
 

@@ -20,7 +20,6 @@
 
 #include "libvideogfx/utility/bitstream/bytebuffer.hh"
 #include "libvideogfx/utility/refcntr.hh"
-#include "libvideogfx/error.hh"
 
 #include <string.h>
 
@@ -99,7 +98,7 @@ namespace videogfx {
 	if (d_param->initialsize_hint!=0)
 	  {
 	    d_buf  = (unsigned char*)(d_param->memalloc.Alloc((int)d_param->initialsize_hint, &d_size));
-	    Assert(d_buf);
+	    assert(d_buf);
 	    d_len  = 0;
 	    d_buf_from_pool = true;
 	  }
@@ -158,7 +157,7 @@ namespace videogfx {
 
   unsigned char* ByteBuffer::GetPtrToAppendToBuffer(unsigned int len)
   {
-    Assert(len>0);
+    assert(len>0);
 
     // If contents will not fit into the buffer, enlarge buffer.
     if (d_len+len > (uint32)d_size)
@@ -196,7 +195,7 @@ namespace videogfx {
 	    newlen = newsize;
 	  }
 
-	Assert(newbuf); // Memory error handler should have caught error.
+	assert(newbuf); // Memory error handler should have caught error.
 	if (d_len>0) { memcpy(newbuf,d_buf,d_len); }
 
 	if (d_buf_from_pool)
@@ -216,7 +215,7 @@ namespace videogfx {
       }
 
     // There has to be enough memory left now.
-    Assert(d_len+len <= (uint32)d_size);
+    assert(d_len+len <= (uint32)d_size);
 
     // Return pointer, pointing behind the last already filled byte in the buffer and
     // enlarge the buffer contents size variable.
@@ -229,7 +228,7 @@ namespace videogfx {
 
   void ByteBuffer::TruncateBuffer(unsigned int nBytes)
   {
-    Assert(nBytes <= d_len);
+    assert(nBytes <= d_len);
     d_len -= nBytes;
   }
 
@@ -239,7 +238,7 @@ namespace videogfx {
     if (nBytes==0)
       return;
 
-    Assert(nBytes <= d_len);
+    assert(nBytes <= d_len);
 
     for (int i=0;i<d_len-nBytes;i++)
       d_buf[i] = d_buf[i+nBytes];

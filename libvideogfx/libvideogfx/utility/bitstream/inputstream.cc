@@ -18,10 +18,10 @@
  ********************************************************************************/
 
 #include "libvideogfx/utility/bitstream/inputstream.hh"
-#include <libvideogfx/error.hh>
 
 #include <algorithm>
 #include <string.h>
+#include <assert.h>
 
 namespace videogfx {
   using namespace std;
@@ -104,7 +104,7 @@ namespace videogfx {
 
     // move stack content to end to make space for new data
 
-    Assert(d_pushback_length + n_bytes <= d_pushback_size);
+    assert(d_pushback_length + n_bytes <= d_pushback_size);
 
     for (int i=d_pushback_length-1;i>=0;i--)
       d_pushback_stack[i+n_bytes] = d_pushback_stack[i];
@@ -118,7 +118,7 @@ namespace videogfx {
 
   void    InputStream::RemoveBytesFromPushbackQueue(int n)
   {
-    Assert(n <= (int)d_pushback_length);
+    assert(n <= (int)d_pushback_length);
     d_pushback_length -= n;
 
     for (uint32 i=0;i<d_pushback_length;i++)

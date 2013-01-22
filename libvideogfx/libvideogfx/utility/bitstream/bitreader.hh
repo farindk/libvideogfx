@@ -47,7 +47,6 @@
 
 #include "libvideogfx/types.hh"
 #include "libvideogfx/utility/bitstream/inputstream.hh"
-#include <assert.h>
 
 namespace videogfx {
 

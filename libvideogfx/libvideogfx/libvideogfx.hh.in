@@ -26,7 +26,7 @@
 
 #include <libvideogfx/types.hh>
 #include <libvideogfx/init.hh>
-#include <libvideogfx/error.hh>
+//#include <libvideogfx/error.hh>
 #include <libvideogfx/arch/cpu.hh>
 #include <libvideogfx/containers/array.hh>
 #include <libvideogfx/containers/array2.hh>

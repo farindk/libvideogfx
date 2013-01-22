@@ -18,9 +18,9 @@
  ********************************************************************************/
 
 #include "libvideogfx/utility/fastalloc.hh"
-#include "libvideogfx/error.hh"
 
 #include <stdlib.h>
+#include <assert.h>
 
 namespace videogfx {
 
@@ -45,7 +45,7 @@ namespace videogfx {
   {
     for (int i=0;i<d_nAreasInPool;i++)
       {
-	Assert(d_Pool[i]);
+	assert(d_Pool[i]);
 	free(d_Pool[i]);
       }
 

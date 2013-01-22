@@ -20,9 +20,9 @@
  ********************************************************************************/
 
 #include "libvideogfx/utility/bitstream/inputstream_istr.hh"
-#include <libvideogfx/error.hh>
 
 #include <iomanip>
+#include <assert.h>
 
 namespace videogfx {
 
@@ -44,7 +44,7 @@ namespace videogfx {
 
   uint32 InputStream_IStream::MyFillBuffer(uint8* mem,uint32 maxlen)
   {
-    Assert(d_istr);
+    assert(d_istr);
 
     d_istr->read((char*)mem,maxlen);
     return d_istr->gcount();
@@ -53,7 +53,7 @@ namespace videogfx {
 
   bool InputStream_IStream::IsEOF() const
   {
-    Assert(d_istr);
+    assert(d_istr);
 
     if (BytesInPushbackQueue()) return false;
 
@@ -72,7 +72,7 @@ namespace videogfx {
 
   uint64 InputStream_IStream::AskStreamLength() const
   {
-    Assert(d_istr);
+    assert(d_istr);
 
     int64 currentpos; currentpos = d_istr->tellg();
     d_istr->seekg(0,std::ios::end);

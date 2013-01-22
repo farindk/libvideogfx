@@ -191,7 +191,7 @@ namespace videogfx {
 #if V4L_ENABLE
     ImageParam spec;
 
-    Assert(d_greyscale || (d_chroma == Chroma_420 ||
+    assert(d_greyscale || (d_chroma == Chroma_420 ||
 			   d_chroma == Chroma_422));
 
     spec.width  = d_width;
