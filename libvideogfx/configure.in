@@ -250,6 +250,9 @@ AC_SUBST(FEATURE_PNG)
 
 
 # Check for the FFMPEG library
+
+# TODO: see if this could help: http://www.letworyinteractive.com/blendercode/da/d44/ffmpeg__compat_8h_source.html
+
 AC_ARG_WITH([ffmpeg], [AS_HELP_STRING([--with-ffmpeg], [support for ffmpeg-based video reader])], [], [with_ffmpeg=check])
 
 AS_IF([test "x$with_ffmpeg" = xno],
