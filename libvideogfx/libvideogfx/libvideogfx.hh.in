@@ -68,9 +68,9 @@
 #include <libvideogfx/audio/fileio/audiosink.hh>
 #include <libvideogfx/audio/fileio/timedsink.hh>
 #include <libvideogfx/utility/bitmanip.hh>
-#include <libvideogfx/utility/smartpointer.hh>
+//#include <libvideogfx/utility/smartpointer.hh>
 #include <libvideogfx/utility/math.hh>
-#include <libvideogfx/utility/refcntr.hh>
+//#include <libvideogfx/utility/refcntr.hh>
 #include <libvideogfx/utility/bitstream/bitbuffer.hh>
 #include <libvideogfx/utility/bitstream/bitreader.hh>
 #include <libvideogfx/utility/bitstream/bitreader_fast.hh>
