@@ -50,8 +50,11 @@ extern "C" {
 
 #ifndef HAVE_AVIO_OPEN
 #define avio_open url_fopen
-//#define avio_close(x) url_fclose(&(x))
-#define avio_close(x) url_fclose(x)
+#ifdef HAVE_AVFORMAT_CONTEXT_BYTEIOCONTEXT_POINTER
+#  define avio_close(x) url_fclose(x)
+#else
+#  define avio_close(x) url_fclose(&(x))
+#endif
 #define av_dump_format dump_format
 #define av_guess_format guess_format
 #endif
@@ -128,6 +131,7 @@ void FFMPEG_Writer::Close()
 {
   av_write_trailer(oc);
   avio_close(oc->pb);
+
   av_free(oc);
 
   oc=NULL;

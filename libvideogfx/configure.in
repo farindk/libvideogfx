@@ -142,7 +142,7 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [
 
 if test "$GCC" = "yes" ; then
   if test x$have_gcc45 = xyes; then
-    CFLAGS+=" -std=c++0x"
+#    CFLAGS+=" -std=c++0x"
     CXXFLAGS+=" -std=c++0x"
   fi
 fi
@@ -331,6 +331,33 @@ AS_IF([test "x$with_ffmpeg" = xno],
    ], [
      AC_MSG_RESULT(no)
    ])
+
+   saved_cflags=$CFLAGS
+   saved_cxxflags=$CXXFLAGS
+   CFLAGS+=" -Werror" # "-fstrict-aliasing -Wstrict-aliasing=1 -Werror=strict-aliasing"
+   CXXFLAGS+=" -Werror" # "-fstrict-aliasing -Wstrict-aliasing=1 -Werror=strict-aliasing"
+
+   AC_MSG_CHECKING(type of ByteIOContext in AVFormatContext)
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
+   #ifdef HAVE_FFMPEG_AVFORMAT_H
+   #include <ffmpeg/avformat.h>
+   #else
+   #include <libavformat/avformat.h>
+   #endif
+   ], [ByteIOContext* bctx;
+       AVFormatContext fctx;
+       bctx = fctx.pb;
+   ])], [
+     AC_MSG_RESULT(pointer)
+     AC_DEFINE(HAVE_AVFORMAT_CONTEXT_BYTEIOCONTEXT_POINTER, 1, [Defined if ByteIOContext is a pointer in AVFormatContext])
+   ], [
+     AC_MSG_RESULT(member variable or no ByteIOContext*)
+   ])
+
+   CFLAGS=$saved_cflags
+   CXXFLAGS=$saved_cxxflags
+
+
 
    AS_IF([test x"$have_ffmpeg" = "xyes"],
    	    [
