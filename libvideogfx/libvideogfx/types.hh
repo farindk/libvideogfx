@@ -41,6 +41,8 @@
 #include <cstdint>
 #endif
 
+#include <cmath>
+
 namespace videogfx {
 
   typedef uint64_t uint64;
@@ -100,7 +102,7 @@ namespace videogfx {
   const Pixel BoolPixel_Set   = 255;
   const Pixel BoolPixel_Clear = 0;
 
-  template <class T> inline T abs(T a) { if (a<0) return -a; else return a; }
+  // template <class T> inline T abs(T a) { if (a<0) return -a; else return a; }
   template <class T> inline int  sign(T x) { if (x<0) return -1; if (x>0) return 1; return 0; }
 
   inline uint32 RightBits(int n)  { return (((uint32)1)<<n)-1; }

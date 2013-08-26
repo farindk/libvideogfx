@@ -125,6 +125,35 @@ namespace videogfx {
       top() += y;
       bottom() += y;
     }
+
+    void inflate(int x,int y)
+    {
+      left()   -= x;
+      right()  += x;
+      top()    -= y;
+      bottom() += y;
+    }
+
+    void inflate(int width)
+    {
+      inflate(width,width);
+    }
+
+    void crop(int w,int h)
+    {
+      if (left()<0) left()=0;
+      if (top()<0)  top()=0;
+      if (bottom()>=h) bottom()=h-1;
+      if (right()>=w)  right()=w-1;
+    }
+
+    void crop(const Rect2D<T>& roi)
+    {
+      left()  = std::max(roi.left(), left());
+      top()   = std::max(roi.top(),  top());
+      right() = std::min(roi.right(), right());
+      bottom()= std::min(roi.bottom(),bottom());
+    }
   };
 
   template <class T> struct Color

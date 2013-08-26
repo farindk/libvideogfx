@@ -535,7 +535,7 @@ namespace videogfx {
 
   template <class T> void DrawRectangle(Bitmap<T>& bm,int x1,int y1,int w, int h,T color)
   {
-    fprintf(stderr,"depreceated use of old DrawRectangle() function.\n");
+    //fprintf(stderr,"depreceated use of old DrawRectangle() function.\n");
     DrawRectangle_NEW(bm,x1,y1,x1+w-1,y1+h-1, color);
   }
 
@@ -581,7 +581,7 @@ namespace videogfx {
 
   template <class T> void DrawRectangle(Image<T>&  bm,int x1,int y1,int w, int h,Color<T> color)
   {
-    fprintf(stderr, "depreceated use of old DrawRectangle() function.\n");
+    //fprintf(stderr, "depreceated use of old DrawRectangle() function.\n");
     DrawRectangle_NEW(bm,x1,y1,x1+w-1,y1+h-1,color);
   }
 
