@@ -22,11 +22,11 @@ int main(int argc,char** argv)
       if (cpu->AskArchitecture() == CPUArch_X86)
 	{
 	  cout << "MMX    : " << (cpu->HasMMX() ? "yes" : "no") << endl;
-	  cout << "MMX-ext: " << (cpu->HasMMX2() ? "yes" : "no") << endl;
 	  cout << "3dNow! : " << (cpu->Has3dNow() ? "yes" : "no") << endl;
-	  cout << "MTRR   : " << (cpu->HasMTRR() ? "yes" : "no") << endl;
+	  cout << "SSE2   : " << (cpu->HasSSE2() ? "yes" : "no") << endl;
+	  cout << "SSE4.1 : " << (cpu->HasSSE4_1() ? "yes" : "no") << endl;
+	  cout << "AVX    : " << (cpu->HasAVX() ? "yes" : "no") << endl;
 	  cout << "CMOV   : " << (cpu->HasCMOV() ? "yes" : "no") << endl;
-	  cout << "FPU    : " << (cpu->HasFPU() ? "yes" : "no") << endl;
 	}
     }
   catch(const Excpt_Base& b)

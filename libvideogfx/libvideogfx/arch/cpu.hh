@@ -64,12 +64,19 @@ namespace videogfx {
 
     // x86 architecture
 
-    virtual bool HasMMX()   const { assert(0); return false; }
-    virtual bool HasMMX2()  const { assert(0); return false; }
-    virtual bool Has3dNow() const { assert(0); return false; }
-    virtual bool HasMTRR()  const { assert(0); return false; }
-    virtual bool HasCMOV()  const { assert(0); return false; }
-    virtual bool HasFPU()   const { assert(0); return false; }
+    virtual bool HasMMX() const     { assert(0); return false; }
+    virtual bool HasMMXExt() const  { assert(0); return false; }
+    virtual bool HasSSE() const     { assert(0); return false; }
+    virtual bool HasSSE2() const    { assert(0); return false; }
+    virtual bool HasSSE3() const    { assert(0); return false; }
+    virtual bool HasSSSE3() const   { assert(0); return false; }
+    virtual bool HasSSE4_1() const  { assert(0); return false; }
+    virtual bool HasSSE4_2() const  { assert(0); return false; }
+    virtual bool HasAVX() const     { assert(0); return false; }
+    virtual bool HasSSE4a() const   { assert(0); return false; }
+    virtual bool Has3dNow() const   { assert(0); return false; }
+    virtual bool Has3dNowExt() const   { assert(0); return false; }
+    virtual bool HasCMOV() const    { assert(0); return false; }
 
 
     // ARM architecture
