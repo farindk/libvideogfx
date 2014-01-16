@@ -75,16 +75,20 @@ namespace videogfx {
       m_flags = 0;
 
       uint32_t regs[4];
-      uint32_t a = 1;
+
+      int a = 1;
 
 #ifdef _MSC_VER
       __cpuid((int *)regs, (int)a);
 
 #else
       __asm__ volatile
-        ("cpuid" : "=a" (regs[0]), "=b" (regs[1]), "=c" (regs[2]), "=d" (regs[3])
-         : "a" (a), "c" (0));
+	("cpuid" : "=a" (regs[0]), "=b" (regs[1]), "=c" (regs[2]), "=d" (regs[3])
+	 : "a" (a), "c" (0));
+      // ECX is set to zero for CPUID function 4
 #endif
+  
+      // printf("CPUID EAX=1 -> ECX=%x EDX=%x\n", regs[2], regs[3]);
 
       uint32_t ecx = regs[2];
       uint32_t edx = regs[3];
@@ -107,8 +111,9 @@ namespace videogfx {
 
 #else
       __asm__ volatile
-        ("cpuid" : "=a" (regs[0]), "=b" (regs[1]), "=c" (regs[2]), "=d" (regs[3])
-         : "a" (a), "c" (0));
+	("cpuid" : "=a" (regs[0]), "=b" (regs[1]), "=c" (regs[2]), "=d" (regs[3])
+	 : "a" (a), "c" (0));
+      // ECX is set to zero for CPUID function 4
 #endif
 
       ecx = regs[2];
