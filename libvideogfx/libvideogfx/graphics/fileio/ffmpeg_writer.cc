@@ -153,12 +153,13 @@ int FFMPEG_Writer::AddVideoStream(int w,int h,float fps, int bitrate)
   std::cout << "int FFMPEG_Writer::AddVideoStream(" << w << "," << h << "," << fps << "," << bitrate << ")\n";
 
   AVStream *st;
-  st = videoStream = av_new_stream(oc, 0);
+  st = videoStream = avformat_new_stream(oc, NULL);
   if (!st) {
     std::cerr << "Could not alloc ffmpeg video stream\n";
     return -1;
   }
 
+  st->id = 0;
   int d = roundf(fps*100);
   int n = 100;
   int g = gcd(d,n);
@@ -189,7 +190,7 @@ int FFMPEG_Writer::AddVideoStream(int w,int h,float fps, int bitrate)
     return -1;
   }
 
-  if (avcodec_open(c, codec) < 0) {
+  if (avcodec_open2(c, codec, NULL) < 0) {
     std::cerr << "could not open codec\n";
     return -1;
   }
@@ -223,12 +224,13 @@ int FFMPEG_Writer::AddAudioStream(int samplerate,int nchannels, int bitrate)
   std::cout << "int FFMPEG_Writer::AddAudioStream(" << samplerate << "," << nchannels << "," << bitrate << ")\n";
 
   AVStream *st;
-  st = audioStream = av_new_stream(oc, 1);
+  st = audioStream = avformat_new_stream(oc, NULL);
   if (!st) {
     std::cerr << "could not alloc ffmpeg audio stream\n";
     return .1;
   }
 
+  st->id = 1;
   AVCodecContext *c;
   c = st->codec;
   c->codec_id = CODEC_ID_MP3; //fmt->audio_codec;
@@ -252,7 +254,7 @@ int FFMPEG_Writer::AddAudioStream(int samplerate,int nchannels, int bitrate)
     exit(1);
   }
 
-  if (avcodec_open(c, codec) < 0) {
+  if (avcodec_open2(c, codec, NULL) < 0) {
     std::cerr << "could not open codec\n";
     exit(1);
   }

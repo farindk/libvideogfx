@@ -95,7 +95,7 @@ namespace videogfx
       return false;
 #endif
 
-    if (av_find_stream_info(formatCtx)<0)
+    if (avformat_find_stream_info(formatCtx, NULL)<0)
       return false;
 
 
@@ -129,7 +129,7 @@ namespace videogfx
     if (codec==NULL)
       return false;
 
-    if (avcodec_open(codecCtx, codec)<0)
+    if (avcodec_open2(codecCtx, codec, NULL)<0)
       return false;
 
 
