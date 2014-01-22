@@ -8,5 +8,5 @@ Description: Rapid prototyping library for graphics and video processing.
 URL: http://dirk-farin.net/software/libvideogfx/index.html
 Version: @VERSION@
 Requires: 
-Libs: -lvideogfx @jpeg_libs@ @png_libs@
-Cflags: -std=c++0x
+Libs: -lvideogfx @jpeg_libs@ @png_libs@ -L@libdir@ @X_LDFLAGS@ @X_LIBS@
+Cflags: -std=c++0x -I@includedir@ @X_CFLAGS@
