@@ -1,7 +1,7 @@
 
   LibVideoGfx - video processing library
 
-  Copyright (C) 1999-2007 Dirk Farin
+  Copyright (C) 1999-2014 Dirk Farin
 
 ===============================================================================
 
@@ -39,7 +39,7 @@ INTRODUCTION
 COPYRIGHT AND AUTHOR
 
   LibVideoGfx
-  Copyright (C) 1999-2007 Dirk Farin
+  Copyright (C) 1999-2014 Dirk Farin
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -59,10 +59,10 @@ COPYRIGHT AND AUTHOR
 
   Send inquiries, comments, bug reports, suggestions, patches, etc. to:
 
-      Dirk Farin <dirk.farin@gmx.de>
+      Dirk Farin <dirk.farin@gmail.com>
 
   See also the LibVideoGfx home page on the web:
 
-      http://rachmaninoff.informatik.uni-mannheim.de/libvideogfx/index.html
+      http://dirk-farin.net/software/libvideogfx/index.html
 
 ===============================================================================
