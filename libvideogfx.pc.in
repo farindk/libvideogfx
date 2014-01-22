@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libvideogfx
+Description: Rapid prototyping library for graphics and video processing.
+URL: http://dirk-farin.net/software/libvideogfx/index.html
+Version: @VERSION@
+Requires: 
+Libs: -lvideogfx @jpeg_libs@ @png_libs@
+Cflags: -std=c++0x

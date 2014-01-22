@@ -430,4 +430,5 @@ libvideogfx/audio/fileio/Makefile
 libvideogfx/utility/Makefile
 libvideogfx/utility/bitstream/Makefile
 libvideogfx/x11/Makefile
+libvideogfx.pc
 ], [chmod +x libvideogfx-config])
