@@ -41,8 +41,6 @@ using namespace std;
 #endif
 
 
-#include "libvideogfx/init.hh"
-
 #include "server.hh"
 #include "imgwin.hh"
 
@@ -213,7 +211,7 @@ namespace videogfx {
     classhint->res_class = "Libvideogfx";
 
     XSetWMProperties(d_x11data->d_display, d_x11data->d_win, &windowName, &iconName,
-		     glob_argv,glob_argc, sizeh, wm_hints, classhint);
+		     NULL,0, sizeh, wm_hints, classhint);
   
     XSelectInput(d_x11data->d_display, d_x11data->d_win, ExposureMask|KeyPressMask|PointerMotionMask|
 		 ButtonPressMask|ButtonReleaseMask);

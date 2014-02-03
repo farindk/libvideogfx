@@ -61,7 +61,6 @@ libvideogfx_la_LIBADD = \
 #
 # Header files for public installation (non-generated)
 libvideogfx_public_h_sources = \
-	init.hh		\
 	types.hh	\
 	error.hh
 
@@ -75,7 +74,6 @@ CLEANFILES = libvideogfx.hh
 
 # C sources to build the library from
 libvideogfx_c_sources = \
-	init.cc		\
 	error.cc
 
 #
