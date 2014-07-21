@@ -3,14 +3,14 @@
 noinst_LTLIBRARIES = libvideogfx-graphics-measure.la
 
 libvideogfx_graphics_measure_la_SOURCES = \
-	snr.hh	\
-	snr.cc
+	snr.hh snr.cc \
+        ssim.hh ssim.cc
 
 libvideogfx_graphics_measure_includedir = \
 	$(includedir)/libvideogfx/graphics/measure
 
 libvideogfx_graphics_measure_include_HEADERS = \
-	snr.hh
+	snr.hh ssim.hh
 
 INCLUDES = \
 	-I$(top_srcdir)
