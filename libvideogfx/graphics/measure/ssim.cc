@@ -40,8 +40,6 @@ namespace videogfx {
     Array<double> filter;
     CreateGaussFilter(filter, sigma, 0.01);
 
-    printf("filter size: %d\n",filter.AskSize());
-
     Bitmap<float> mean_x, mean_y;
     ConvolveHV(mean_x,img_x, filter);
     ConvolveHV(mean_y,img_y, filter);
