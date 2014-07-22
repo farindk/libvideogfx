@@ -53,6 +53,16 @@ namespace videogfx {
 		  int x0= 0,int y0=0,     // rectangle to consider for the calculation
 		  int x1=-1,int y1=-1);
 
+  enum TransferCurve
+    {
+      TransferCurve_Linear,
+      TransferCurve_Sqrt
+    };
+
+  Bitmap<Pixel> CalcErrorMap(const Bitmap<Pixel>& img1,
+                             const Bitmap<Pixel>& img2,
+                             enum TransferCurve transfer=TransferCurve_Linear,
+                             bool inverted=true);
 }
 
 

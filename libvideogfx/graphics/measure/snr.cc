@@ -103,4 +103,52 @@ namespace videogfx {
     return psnr;
   }
 
+
+  Bitmap<Pixel> CalcErrorMap(const Bitmap<Pixel>& img1,
+                             const Bitmap<Pixel>& img2,
+                             enum TransferCurve transfer_curve,
+                             bool inverted)
+  {
+    int w = img1.AskWidth();
+    int h = img1.AskHeight();
+
+    const Pixel*const* p1 = img1.AskFrame();
+    const Pixel*const* p2 = img2.AskFrame();
+
+    Bitmap<Pixel> error;
+    error.Create(w,h);
+
+    Pixel*const* p = error.AskFrame();
+
+
+    // --- prepare transfer curve ---
+
+    Pixel transfer[255+1+255];
+    for (int d=-255;d<=255;d++)
+      {
+        switch (transfer_curve)
+          {
+          case TransferCurve_Linear:
+            transfer[d+255] = std::abs(d);
+            break;
+
+          case TransferCurve_Sqrt:
+            transfer[d+255] = sqrt(std::abs(d)/255.0)*255;
+            break;
+          }
+
+        if (inverted) transfer[d+255] = 255 - transfer[d+255];
+      }
+
+
+    // --- generate error map ---
+
+    for (int y=0;y<h;y++)
+      for (int x=0;x<w;x++)
+        {
+          p[y][x] = transfer[p1[y][x] - p2[y][x] + 255];
+        }
+
+    return error;
+  }
 }
