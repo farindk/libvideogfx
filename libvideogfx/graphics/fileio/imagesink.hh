@@ -34,7 +34,7 @@
  ********************************************************************************/
 
 #ifndef LIBVIDEOGFX_GRAPHICS_FILEIO_IMAGESINK_HH
-#define LIBVIDEOGFX_GRAPHICS_FILEIO_IMGAESINK_HH
+#define LIBVIDEOGFX_GRAPHICS_FILEIO_IMAGESINK_HH
 
 #include <libvideogfx/graphics/datatypes/image.hh>
 
