@@ -166,7 +166,7 @@ namespace videogfx
     if (frameRGB)  { av_free(frameRGB); frameRGB=NULL; }
     if (frame)     { av_free(frame); frame=NULL; }
     if (codecCtx)  { avcodec_close(codecCtx); codecCtx=NULL; }
-    if (formatCtx) { av_close_input_file(formatCtx); formatCtx=NULL; }
+    if (formatCtx) { avformat_close_input(&formatCtx); formatCtx=NULL; }
   }
 
 

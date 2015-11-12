@@ -13,7 +13,7 @@ void Show(const DynArray<int>& d)
   cout << endl;
 }
 
-main()
+int main()
 {
   DynArray<int> dynarray;
   dynarray.SetEmptyValue(-1);

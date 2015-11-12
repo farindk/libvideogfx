@@ -34,6 +34,5 @@ libvideogfx_graphics_color_include_HEADERS = \
 	img2raw.hh	\
 	colorspace.hh
 
-
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir)

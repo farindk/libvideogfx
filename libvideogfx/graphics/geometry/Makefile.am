@@ -15,5 +15,5 @@ libvideogfx_graphics_geometry_include_HEADERS = \
 	matrix.hh 	\
 	transform.hh
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir)

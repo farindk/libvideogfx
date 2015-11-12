@@ -74,6 +74,6 @@ libvideogfx_graphics_fileio_include_HEADERS = \
 	$(linux_headers) \
 	$(ffmpeg_headers)
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir)
 

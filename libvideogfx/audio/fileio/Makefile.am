@@ -24,6 +24,6 @@ libvideogfx_audio_fileio_include_HEADERS = \
 	timedsink.hh	\
 	$(linux_headers)
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir)
 

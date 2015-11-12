@@ -20,5 +20,5 @@ libvideogfx_graphics_visualize_include_HEADERS = \
 #	markblks.hh	\
 #	motionfield.hh
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir)

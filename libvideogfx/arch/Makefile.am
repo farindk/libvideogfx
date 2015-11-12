@@ -19,5 +19,5 @@ libvideogfx_arch_include_HEADERS = \
 	cpu.hh	\
 	$(mmx_headers)
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir)

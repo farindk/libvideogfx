@@ -8,7 +8,7 @@ endif
 
 DIST_SUBDIRS = arch audio utility graphics containers x11
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\"	\
 	-DLIBDIR=\"$(libdir)\"		\
 	-DSYSCONFDIR=\"$(sysconfdir)\"	\
