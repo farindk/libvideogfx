@@ -22,5 +22,5 @@ libvideogfx_x11_include_HEADERS = \
 	draw_x11.hh	\
 	server.hh
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir)

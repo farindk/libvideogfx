@@ -19,5 +19,5 @@ libvideogfx_graphics_draw_include_HEADERS = \
 	blit.hh		\
 	scale.hh
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir)

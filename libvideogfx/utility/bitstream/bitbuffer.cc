@@ -58,7 +58,7 @@ namespace videogfx {
 
   void BitBuffer::WriteBitsMasked(uint32 bits,int nBits)
   {
-    uint32 long mask=1;
+    uint32 mask=1;
     mask<<=nBits;
     mask--;
 

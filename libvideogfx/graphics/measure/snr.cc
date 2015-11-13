@@ -129,11 +129,11 @@ namespace videogfx {
         switch (transfer_curve)
           {
           case TransferCurve_Linear:
-            transfer[d+255] = std::abs(d);
+            transfer[d+255] = abs(d);
             break;
 
           case TransferCurve_Sqrt:
-            transfer[d+255] = sqrt(std::abs(d)/255.0)*255;
+            transfer[d+255] = sqrt(abs(d)/255.0)*255;
             break;
           }
 

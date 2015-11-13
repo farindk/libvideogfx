@@ -36,5 +36,5 @@ libvideogfx_graphics_filters_include_HEADERS = \
 	resampler.h \
 	$(mmx_headers)
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir)

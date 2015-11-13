@@ -18,5 +18,5 @@ libvideogfx_graphics_datatypes_include_HEADERS = \
 	bitmap.hh	\
 	image.hh
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir)

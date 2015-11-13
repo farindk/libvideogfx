@@ -21,5 +21,5 @@ libvideogfx_utility_include_HEADERS = \
 	refcntr.hh	
 #	smartpointer.hh
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir)

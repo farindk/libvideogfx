@@ -16,7 +16,7 @@ void Show(const SymMatrix<int>& d)
     }
 }
 
-main()
+int main()
 {
   SymMatrix<int> m;
   m.Create(6);

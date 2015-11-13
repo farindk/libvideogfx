@@ -27,5 +27,5 @@ libvideogfx_utility_bitstream_include_HEADERS = \
 	inputstream.hh	\
 	inputstream_istr.hh
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir)

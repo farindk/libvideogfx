@@ -12,5 +12,5 @@ libvideogfx_graphics_measure_includedir = \
 libvideogfx_graphics_measure_include_HEADERS = \
 	snr.hh ssim.hh
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir)
