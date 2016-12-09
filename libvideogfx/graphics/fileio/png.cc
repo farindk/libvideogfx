@@ -87,7 +87,7 @@ namespace videogfx {
 
   void ReadImage_PNG(Image<Pixel>& img, istream& is)
   {
-    assert(is != NULL); // , "Open stream first.");
+    assert(is.good()); // , "Open stream first.");
 
     png_structp png_ptr;
     png_infop info_ptr;
@@ -135,7 +135,7 @@ namespace videogfx {
 		 &interlace_type, NULL, NULL);
 
     assert(bit_depth < 16); // , "cannot handle 16 bit images");
-      
+
     /**** Set up the data transformations you want.  Note that these are all
      **** optional.  Only call them if you want/need them.  Many of the
      **** transformations only work on specific types of images, and many
@@ -291,7 +291,7 @@ namespace videogfx {
 
     delete[] row_pointers;
   }
-    
+
   void WriteImage_PNG(ostream& os, const Image<Pixel>& img)
   {
     /* Create and initialize the png_struct with the desired error handler
@@ -416,8 +416,8 @@ namespace videogfx {
 	  }
       }
     }
-      
-      
+
+
     png_write_image(png_ptr, row_pointers);
 
     /* It is REQUIRED to call this to finish writing the rest of the file */
