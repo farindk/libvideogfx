@@ -73,7 +73,7 @@ namespace videogfx {
     // initialize decompressor
 
     jpeg_create_decompress(&cinfo);
-  
+
     cinfo.err = jpeg_std_error(&jerr);
     jpeg_stdio_src(&cinfo, infile);
 
@@ -156,20 +156,26 @@ namespace videogfx {
               py [cinfo.output_scanline-1][x] = *bufp++;
               pcb[(cinfo.output_scanline-1)/2][x/2] = *bufp++;
               pcr[(cinfo.output_scanline-1)/2][x/2] = *bufp++;
-              py [cinfo.output_scanline-1][x+1] = *bufp++;
+
+              if (x+1 < cinfo.output_width) {
+                py [cinfo.output_scanline-1][x+1] = *bufp++;
+              }
+
               bufp+=2;
             }
 
 
-          (void) jpeg_read_scanlines(&cinfo, buffer, 1);
+          if (cinfo.output_scanline < cinfo.output_height) {
+            (void) jpeg_read_scanlines(&cinfo, buffer, 1);
 
-          bufp = buffer[0];
+            bufp = buffer[0];
 
-          for (unsigned int x=0;x<cinfo.output_width;x++)
-            {
-              py [cinfo.output_scanline-1][x] = *bufp++;
-              bufp+=2;
-            }
+            for (unsigned int x=0;x<cinfo.output_width;x++)
+              {
+                py [cinfo.output_scanline-1][x] = *bufp++;
+                bufp+=2;
+              }
+          }
         }
       }
 
@@ -285,10 +291,10 @@ namespace videogfx {
       }
 
     // cleanup
-    
+
     jpeg_finish_compress(&cinfo);
     jpeg_destroy_compress(&cinfo);
-    
+
     fclose(outfile);
   }
 #endif
