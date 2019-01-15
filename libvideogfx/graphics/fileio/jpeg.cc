@@ -202,9 +202,15 @@ namespace videogfx {
     // open output file
 
     FILE * outfile;
-    if ((outfile = fopen(filename, "wb")) == NULL) {
-      fprintf(stderr, "can't open %s\n", filename);
-      exit(1);
+
+    if (filename==nullptr) {
+      outfile = stdout;
+    }
+    else {
+      if ((outfile = fopen(filename, "wb")) == NULL) {
+        fprintf(stderr, "can't open %s\n", filename);
+        exit(1);
+      }
     }
 
 
@@ -295,7 +301,9 @@ namespace videogfx {
     jpeg_finish_compress(&cinfo);
     jpeg_destroy_compress(&cinfo);
 
-    fclose(outfile);
+    if (filename != nullptr) {
+      fclose(outfile);
+    }
   }
 #endif
 }
