@@ -65,13 +65,13 @@ extern "C" {
 namespace videogfx
 {
 
-static AVFrame *allocPicture(enum PixelFormat pix_fmt, int width, int height)
+static AVFrame *allocPicture(enum AVPixelFormat pix_fmt, int width, int height)
 {
     AVFrame *picture;
     uint8_t *picture_buf;
     int size;
 
-    picture = avcodec_alloc_frame();
+    picture = av_frame_alloc();
     if (!picture)
         return NULL;
     size = avpicture_get_size(pix_fmt, width, height);
@@ -174,7 +174,7 @@ int FFMPEG_Writer::AddVideoStream(int w,int h,float fps, int bitrate)
   c->time_base.den = d/g;
   c->time_base.num = n/g;
   c->gop_size = 25;
-  c->pix_fmt = PIX_FMT_YUV420P;
+  c->pix_fmt = AV_PIX_FMT_YUV420P;
 
   if(oc->oformat->flags & AVFMT_GLOBALHEADER)
     c->flags |= CODEC_FLAG_GLOBAL_HEADER;
@@ -208,8 +208,8 @@ int FFMPEG_Writer::AddVideoStream(int w,int h,float fps, int bitrate)
   }
 
   tmp_picture = NULL;
-  if (c->pix_fmt != PIX_FMT_YUV420P) {
-    tmp_picture = allocPicture(PIX_FMT_YUV420P, c->width, c->height);
+  if (c->pix_fmt != AV_PIX_FMT_YUV420P) {
+    tmp_picture = allocPicture(AV_PIX_FMT_YUV420P, c->width, c->height);
     if (!tmp_picture) {
       std::cerr << "could not allocate picture\n";
       return -1;
@@ -233,7 +233,7 @@ int FFMPEG_Writer::AddAudioStream(int samplerate,int nchannels, int bitrate)
   st->id = 1;
   AVCodecContext *c;
   c = st->codec;
-  c->codec_id = CODEC_ID_MP3; //fmt->audio_codec;
+  c->codec_id = AV_CODEC_ID_MP3; //fmt->audio_codec;
   c->codec_type = AVMEDIA_TYPE_AUDIO;
   c->sample_fmt = AV_SAMPLE_FMT_S16;
   c->bit_rate = bitrate;
@@ -265,7 +265,7 @@ int FFMPEG_Writer::AddAudioStream(int samplerate,int nchannels, int bitrate)
   audio_outbuf_size = FF_MIN_BUFFER_SIZE;
   audio_outbuf = (uint8_t*)av_malloc(audio_outbuf_size);
   audio_input_frame_size = c->frame_size;
-    
+
   samples = (int16_t*)av_malloc(audio_input_frame_size * 2 * c->channels);
   nBufferedSamples=0;
 
@@ -309,10 +309,10 @@ void FFMPEG_Writer::PushImage(const Image<Pixel>& img, int channel)
 
   c = st->codec;
 
-  if (c->pix_fmt != PIX_FMT_YUV420P) {
+  if (c->pix_fmt != AV_PIX_FMT_YUV420P) {
     if (img_convert_ctx == NULL) {
       img_convert_ctx = sws_getContext(c->width, c->height,
-				       PIX_FMT_YUV420P,
+				       AV_PIX_FMT_YUV420P,
 				       c->width, c->height,
 				       c->pix_fmt,
 				       SWS_BICUBIC, NULL, NULL, NULL);
@@ -340,6 +340,9 @@ void FFMPEG_Writer::PushImage(const Image<Pixel>& img, int channel)
 
     ret = av_interleaved_write_frame(oc, &pkt);
   } else {
+
+    // TODO: FFMPEG API for avcodec_encode_video2() has changed
+#if 0
     out_size = avcodec_encode_video(c, video_outbuf, video_outbuf_size, picture);
     if (out_size > 0) {
       AVPacket pkt;
@@ -357,6 +360,9 @@ void FFMPEG_Writer::PushImage(const Image<Pixel>& img, int channel)
     } else {
       ret = 0;
     }
+#else
+    assert(false);
+#endif
   }
   if (ret != 0) {
     std::cerr << "error writing video\n";
@@ -448,11 +454,13 @@ void FFMPEG_Writer::flushAudioBuffer()
 
 void FFMPEG_Writer::encodeAudioFrame(const int16* p)
 {
+  // TODO: FFMPEG API for avcodec_encode_audio2() has changed
+#if 0
     AVPacket pkt;
     av_init_packet(&pkt);
 
     AVCodecContext *c = audioStream->codec;
-    
+
     pkt.size= avcodec_encode_audio(c, audio_outbuf, audio_outbuf_size, p);
 
     if (c->coded_frame && c->coded_frame->pts != AV_NOPTS_VALUE)
@@ -465,6 +473,9 @@ void FFMPEG_Writer::encodeAudioFrame(const int16* p)
       std::cerr << "cannot write audio\n";
       assert(false);
     }
+#else
+    assert(false);
+#endif
 }
 
 
@@ -512,7 +523,7 @@ static bool writeAudioFrame(AVFormatContext *oc, AVStream *st)
     av_init_packet(&pkt);
 
     c = st->codec;
-    
+
     bool cont = fillAudio(samples, audio_input_frame_size, c->channels);
     if (!cont) return false;
 

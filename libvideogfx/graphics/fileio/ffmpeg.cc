@@ -135,17 +135,21 @@ namespace videogfx
 
     // alloc frame storage
 
-    frame = avcodec_alloc_frame();
+    //frame = avcodec_alloc_frame();
+    frame = av_frame_alloc();
     if (frame==NULL)
       return false;
 
-    frameRGB = avcodec_alloc_frame();
+    //frameRGB = avcodec_alloc_frame();
+    frameRGB = av_frame_alloc();
     if (frameRGB==NULL)
       return false;
 
-    int nBytesPerFrame = avpicture_get_size(PIX_FMT_RGB24, codecCtx->width, codecCtx->height);
+    //int nBytesPerFrame = avpicture_get_size(PIX_FMT_RGB24, codecCtx->width, codecCtx->height);
+    int nBytesPerFrame = avpicture_get_size(AV_PIX_FMT_RGB24, codecCtx->width, codecCtx->height);
     buffer = static_cast<uint8_t*>(av_malloc(nBytesPerFrame));
-    avpicture_fill(reinterpret_cast<AVPicture*>(frameRGB), buffer, PIX_FMT_RGB24, codecCtx->width, codecCtx->height);
+    //avpicture_fill(reinterpret_cast<AVPicture*>(frameRGB), buffer, PIX_FMT_RGB24, codecCtx->width, codecCtx->height);
+    avpicture_fill(reinterpret_cast<AVPicture*>(frameRGB), buffer, AV_PIX_FMT_RGB24, codecCtx->width, codecCtx->height);
 
 
     // preload first frame
@@ -239,7 +243,8 @@ namespace videogfx
 
     struct SwsContext* swsContext
       = sws_getContext(codecCtx->width, codecCtx->height, codecCtx->pix_fmt,
-		       codecCtx->width, codecCtx->height, PIX_FMT_RGB24, SWS_POINT, NULL, NULL, NULL);
+		       //codecCtx->width, codecCtx->height, PIX_FMT_RGB24, SWS_POINT, NULL, NULL, NULL);
+		       codecCtx->width, codecCtx->height, AV_PIX_FMT_RGB24, SWS_POINT, NULL, NULL, NULL);
 
     sws_scale(swsContext, frame->data, frame->linesize, 0, codecCtx->height,
 	      frameRGB->data, frameRGB->linesize);
