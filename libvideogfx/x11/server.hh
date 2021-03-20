@@ -39,6 +39,7 @@
 #define LIBVIDEOGFX_X11_SERVER_HH
 
 #include <X11/Xlib.h>
+#undef Bool
 
 namespace videogfx {
 
