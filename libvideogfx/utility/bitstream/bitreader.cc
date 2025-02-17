@@ -21,6 +21,7 @@
 
 #include "libvideogfx/types.hh"
 #include "libvideogfx/utility/bitstream/bitreader.hh"
+#include <cassert>
 
 
 namespace videogfx {
@@ -63,7 +64,8 @@ namespace videogfx {
   {
 #if WORDS_BIGENDIAN
     assert(sizeof(uint32)==4);
-    uint32 val = *((uint32*)d_ptr)++;
+    uint32 val = *((uint32*)d_ptr);
+    d_ptr += 4;
 
     uint64 val64 = val;
     val64 <<= (64-d_bitsleft)-32;
