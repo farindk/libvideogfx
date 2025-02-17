@@ -255,11 +255,7 @@ AC_SUBST(FEATURE_PNG)
 
 AC_ARG_WITH([ffmpeg], [AS_HELP_STRING([--with-ffmpeg], [support for ffmpeg-based video reader])], [], [with_ffmpeg=check])
 
-AS_IF([test "x$with_ffmpeg" = xno],
-  [
-   have_ffmpeg=no
-   AM_CONDITIONAL(HAVE_FFMPEG, false)
-  ],
+AS_IF([test "x$with_ffmpeg" = xyes],
   [
    AC_CHECK_HEADERS([libavcodec/avcodec.h ffmpeg/avcodec.h])
    AC_CHECK_HEADERS([libavformat/avformat.h ffmpeg/avformat.h])
@@ -382,6 +378,10 @@ AS_IF([test "x$with_ffmpeg" = xno],
 	    ]
         )
          
+  ],
+  [
+   have_ffmpeg=no
+   AM_CONDITIONAL(HAVE_FFMPEG, false)
   ]
 )
 
