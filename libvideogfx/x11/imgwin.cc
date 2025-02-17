@@ -208,7 +208,7 @@ namespace videogfx {
     wm_hints->flags = StateHint | InputHint;
 
     classhint->res_name  = NULL;
-    classhint->res_class = "Libvideogfx";
+    classhint->res_class = (char*)"Libvideogfx";
 
     XSetWMProperties(d_x11data->d_display, d_x11data->d_win, &windowName, &iconName,
 		     NULL,0, sizeh, wm_hints, classhint);
