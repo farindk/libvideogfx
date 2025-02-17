@@ -78,7 +78,7 @@ namespace videogfx {
     // construct output filename
 
     bool  number = false;
-    char* suffix = NULL;
+    const char* suffix = NULL;
 
     switch(d_format)
       {
